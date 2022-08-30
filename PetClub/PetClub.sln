@@ -1,0 +1,76 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32819.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetClub", "PetClub.csproj", "{CEA04B9C-E7BF-468E-90B4-995461DF02AD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{046268ED-F549-4204-BB1F-F0EC2574D014} = {046268ED-F549-4204-BB1F-F0EC2574D014}
+		{2295CEF6-85F6-4E9B-B292-BE65FD85EE60} = {2295CEF6-85F6-4E9B-B292-BE65FD85EE60}
+		{59F6E4C9-5782-4A62-83CB-A731733492B5} = {59F6E4C9-5782-4A62-83CB-A731733492B5}
+		{6EB3C7F6-2A5A-4CEA-B9B3-2604A53FE4AE} = {6EB3C7F6-2A5A-4CEA-B9B3-2604A53FE4AE}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetClub.Domain", "..\PetClub.Domain\PetClub.Domain.csproj", "{046268ED-F549-4204-BB1F-F0EC2574D014}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetClub.AppService", "..\PetClub.AppService\PetClub.AppService.csproj", "{2295CEF6-85F6-4E9B-B292-BE65FD85EE60}"
+	ProjectSection(ProjectDependencies) = postProject
+		{046268ED-F549-4204-BB1F-F0EC2574D014} = {046268ED-F549-4204-BB1F-F0EC2574D014}
+		{1DC3A80D-6197-4EC1-98A8-4CFF32AC1109} = {1DC3A80D-6197-4EC1-98A8-4CFF32AC1109}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetClub.Infra", "..\PetClub.Infra\PetClub.Infra.csproj", "{1DC3A80D-6197-4EC1-98A8-4CFF32AC1109}"
+	ProjectSection(ProjectDependencies) = postProject
+		{046268ED-F549-4204-BB1F-F0EC2574D014} = {046268ED-F549-4204-BB1F-F0EC2574D014}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetClub.CrossCutting.Identity", "..\PetClub.CrossCutting.Identity\PetClub.CrossCutting.Identity.csproj", "{59F6E4C9-5782-4A62-83CB-A731733492B5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{046268ED-F549-4204-BB1F-F0EC2574D014} = {046268ED-F549-4204-BB1F-F0EC2574D014}
+		{2295CEF6-85F6-4E9B-B292-BE65FD85EE60} = {2295CEF6-85F6-4E9B-B292-BE65FD85EE60}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetClub.CrossCutting.Ioc", "..\PetClub.CrossCutting.Ioc\PetClub.CrossCutting.Ioc.csproj", "{6EB3C7F6-2A5A-4CEA-B9B3-2604A53FE4AE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{046268ED-F549-4204-BB1F-F0EC2574D014} = {046268ED-F549-4204-BB1F-F0EC2574D014}
+		{2295CEF6-85F6-4E9B-B292-BE65FD85EE60} = {2295CEF6-85F6-4E9B-B292-BE65FD85EE60}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CEA04B9C-E7BF-468E-90B4-995461DF02AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEA04B9C-E7BF-468E-90B4-995461DF02AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEA04B9C-E7BF-468E-90B4-995461DF02AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEA04B9C-E7BF-468E-90B4-995461DF02AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{046268ED-F549-4204-BB1F-F0EC2574D014}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{046268ED-F549-4204-BB1F-F0EC2574D014}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{046268ED-F549-4204-BB1F-F0EC2574D014}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{046268ED-F549-4204-BB1F-F0EC2574D014}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2295CEF6-85F6-4E9B-B292-BE65FD85EE60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2295CEF6-85F6-4E9B-B292-BE65FD85EE60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2295CEF6-85F6-4E9B-B292-BE65FD85EE60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2295CEF6-85F6-4E9B-B292-BE65FD85EE60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DC3A80D-6197-4EC1-98A8-4CFF32AC1109}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DC3A80D-6197-4EC1-98A8-4CFF32AC1109}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DC3A80D-6197-4EC1-98A8-4CFF32AC1109}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DC3A80D-6197-4EC1-98A8-4CFF32AC1109}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59F6E4C9-5782-4A62-83CB-A731733492B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59F6E4C9-5782-4A62-83CB-A731733492B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59F6E4C9-5782-4A62-83CB-A731733492B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59F6E4C9-5782-4A62-83CB-A731733492B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EB3C7F6-2A5A-4CEA-B9B3-2604A53FE4AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EB3C7F6-2A5A-4CEA-B9B3-2604A53FE4AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EB3C7F6-2A5A-4CEA-B9B3-2604A53FE4AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EB3C7F6-2A5A-4CEA-B9B3-2604A53FE4AE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {74CA3854-EA3A-49FB-B0BF-A53529272571}
+	EndGlobalSection
+EndGlobal
