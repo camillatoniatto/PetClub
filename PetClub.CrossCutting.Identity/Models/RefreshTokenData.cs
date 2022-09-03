@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static PetClub.Domain.Enum.Enum;
+using PetClub.Domain.Enum;
 
 namespace PetClub.CrossCutting.Identity.Models
 {

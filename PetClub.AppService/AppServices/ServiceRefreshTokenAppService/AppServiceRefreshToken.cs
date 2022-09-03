@@ -30,7 +30,7 @@ namespace PetClub.AppService.AppServices.ServiceRefreshTokenAppService
         {
             var token = await _unitOfWork.IRepositoryRefreshTokenData.GetFirstWithOrderTypeAsync(x => x.IdUser.Equals(idUser) && x.RefreshToken.Equals(loginViewModel.RefreshToken), x => x.DateCreation, true);
             if (token == null) return null;
-            token.RecordSituation = Domain.Enum.Enum.RecordSituation.INACTIVE;
+            token.RecordSituation = RecordSituation.INACTIVE;
             var inative = _unitOfWork.IRepositoryRefreshTokenData.UpdateAsync(token);
             await _unitOfWork.CommitAsync();
 

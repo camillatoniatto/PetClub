@@ -8,5 +8,6 @@ namespace PetClub.AppService.AppServices.EmailAppService
 {
     public class AppServiceEmail : IAppServiceEmail
     {
+        // teste
     }
 }

@@ -11,6 +11,13 @@ namespace PetClub.Domain.Interfaces
         Task<int> CommitAsync();
         IRepositoryUser IRepositoryUser { get; }
         IRepositoryRefreshTokenData IRepositoryRefreshTokenData { get; }
-
+        IRepositoryCashFlow IRepositoryCashFlow { get; }
+        IRepositoryPaymentMethod IRepositoryPaymentMethod { get; }
+        IRepositoryPet IRepositoryPet { get; }
+        IRepositoryPurchaseOrder IRepositoryPurchaseOrder { get; }
+        IRepositoryPurchaseOrderItem IRepositoryPurchaseOrderItem { get; }
+        IRepositoryScheduler IRepositoryScheduler { get; }
+        IRepositoryService IRepositoryService { get; }
+        IRepositoryUsersPartners IRepositoryUsersPartners { get; }
     }
 }

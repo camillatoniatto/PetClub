@@ -44,6 +44,20 @@ namespace PetClub
                 app.UseDeveloperExceptionPage();
             }
 
+            //var builder = WebApplication.CreateBuilder(args);
+
+            //app.Run(async (context) =>
+            //{
+            //    await context.Response.WriteAsync("Hello World!");
+            //});
+
+            //app.UseHttpsRedirection();
+            //app.UseStaticFiles();
+            //app.UseRouting();
+            //app.UseAuthorization();
+            //app.MapRazorPages();
+            //app.Run();
+
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseSwaggerSetup();
