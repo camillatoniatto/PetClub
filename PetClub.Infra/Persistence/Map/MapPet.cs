@@ -17,7 +17,7 @@ namespace PetClub.Infra.Persistence.Map
             builder.Property(p => p.Name).IsRequired();
             builder.Property(p => p.Specie).IsRequired();
             builder.Property(p => p.Genre).IsRequired();
-            builder.HasOne(p => p.User).WithMany(x => x.Pet).HasForeignKey(x => x.IdUser).IsRequired();
+            builder.HasOne(p => p.User).WithMany(x => x.Pet).HasForeignKey(x => x.IdUser);
         }
     }
 }

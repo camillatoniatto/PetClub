@@ -10,25 +10,17 @@ namespace PetClub.CrossCutting.Identity.Models
 {
     public class ApplicationUser : IdentityUser
     {
-        public ApplicationUser(DateTime dateCreation, string fullName, string cpf, DateTime birthdate, bool changePassword, string image, bool isAdmin, bool isPartner)
-        {
-            DateCreation = dateCreation;
-            FullName = fullName;
-            Cpf = cpf;
-            Birthdate = birthdate;
-            ChangePassword = changePassword;
-            Image = image;
-            IsAdmin = isAdmin;
-            IsPartner = isPartner;
-        }
+        public ApplicationUser() { }
 
-        public DateTime DateCreation { get; private set; }
         public string FullName { get; set; }
         public string Cpf { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
         public DateTime Birthdate { get; set; }
-        public Boolean ChangePassword { get; set; } = false;
         public string Image { get; set; }
         public bool IsAdmin { get; set; }
         public bool IsPartner { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime WriteDate { get; set; }
     }
 }

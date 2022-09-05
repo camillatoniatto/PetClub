@@ -1,12 +1,20 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
 using PetClub.AppService.AppServices.CashFlowAppService;
 using PetClub.AppService.AppServices.NotifierAppService;
+using PetClub.AppService.ViewModels.Pet;
+using PetClub.Domain.Entities;
+using PetClub.Domain.Enum;
+using PetClub.Domain.Extensions;
 using PetClub.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PetClub.AppService.ViewModels.Service;
 
 namespace PetClub.AppService.AppServices.ServiceAppService
 {
@@ -21,6 +29,120 @@ namespace PetClub.AppService.AppServices.ServiceAppService
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _notifier = notifier;
+        }
+
+        public async Task<string> CreateService(CreateServiceViewModel model, string idUser)
+        {
+            var service = await _unitOfWork.IRepositoryService.GetByIdAsync(x => x.Title.Equals(model.Title) && x.IdPartner.Equals(idUser) && x.RecordSituation.Equals(RecordSituation.ACTIVE));
+            if (service != null)
+            {
+                _notifier.Handle(new NotificationMessage("service", "Já existe um serviço cadastrado com esse título."));
+                throw new Exception();
+            }
+            var idService = await _unitOfWork.IRepositoryService.AddReturnIdAsync(new Service(idUser, model.Title, model.Description, model.ServiceType, model.SingleUse, model.DateDuration, model.Value, DateTime.MinValue));
+            await _unitOfWork.CommitAsync();
+            return idService;
+        }
+
+        public async Task<GetServiceViewModel> GetServiceById(string idService)
+        {
+            CultureInfo culture = new CultureInfo("pt-BR");
+            var list = new List<GetPetViewModel>();
+            var service = await _unitOfWork.IRepositoryService.GetByIdAsync(x => x.Id.Equals(idService));
+
+            var serviceType = GetServiceType(service.ServiceType);
+            return new GetServiceViewModel(service.Id, service.IdPartner, service.Title, service.Description, serviceType, service.SingleUser, service.DateDuration.ToString("d", culture), service.Value.ToString("F2"), service.WriteDate.ToString("d", culture));
+        }
+
+        public async Task<List<GetServiceViewModel>> GetServiceUser(string idUser)
+        {
+            CultureInfo culture = new CultureInfo("pt-BR");
+            var list = new List<GetServiceViewModel>();
+            Func<IQueryable<Pet>, IIncludableQueryable<Pet, object>> include = t => t.Include(a => a.User);
+            var services = await _unitOfWork.IRepositoryService.GetByOrderAsync(x => x.IdPartner.Equals(idUser) && x.RecordSituation == RecordSituation.ACTIVE, x => x.Title, false);
+            foreach (var service in services)
+            {
+                var serviceType = GetServiceType(service.ServiceType);
+                var item = new GetServiceViewModel(service.Id, service.IdPartner, service.Title, service.Description, serviceType, service.SingleUser, service.DateDuration.ToString("d", culture), service.Value.ToString("F2"), service.WriteDate.ToString("d", culture));
+
+                list.Add(item);
+            }
+            return list;
+        }
+
+        /*public async Task<List<GetServiceViewModel>> GetAllServices()
+        {
+            CultureInfo culture = new CultureInfo("pt-BR");
+            var list = new List<GetServiceViewModel>();
+            Func<IQueryable<Pet>, IIncludableQueryable<Pet, object>> include = t => t.Include(a => a.User);
+            var services = await _unitOfWork.IRepositoryService.GetByOrderAsync(x => x.RecordSituation == RecordSituation.ACTIVE, x => x.Title, false);
+            foreach (var service in services)
+            {
+                var serviceType = GetServiceType(service.ServiceType);
+                var item = new GetServiceViewModel(service.Id, service.IdPartner, service.Title, service.Description, serviceType, service.SingleUser, service.DateDuration.ToString("d", culture), service.Value.ToString("F2"), service.WriteDate.ToString("d", culture));
+                list.Add(item);
+            }
+            return list;
+        }*/
+
+        public async Task UpdateService(UpdateServiceViewModel model)
+        {
+            var service = await _unitOfWork.IRepositoryService.GetByIdAsync(x => x.Id.Equals(model.IdService));
+            if (service == null)
+            {
+                _notifier.Handle(new NotificationMessage("pet", "Registro não encontrado."));
+                throw new Exception();
+            }
+
+            service.Title = model.Title;
+            service.Description = model.Description;
+            service.ServiceType = model.ServiceType;
+            service.SingleUser = model.SingleUse;
+            service.DateDuration = model.DateDuration;
+            service.Value = model.Value;
+            service.WriteDate = DateTime.Now.ToBrasilia();
+            await _unitOfWork.IRepositoryService.UpdateAsync(service);
+            await _unitOfWork.CommitAsync();
+        }
+
+        public async Task DeleteService(string idService)
+        {
+            var service = await _unitOfWork.IRepositoryService.GetByIdAsync(x => x.Id.Equals(idService));
+            if (service == null)
+            {
+                _notifier.Handle(new NotificationMessage("pet", "Registro não encontrado."));
+                throw new Exception();
+            }
+
+            service.RecordSituation = RecordSituation.INACTIVE;
+            await _unitOfWork.IRepositoryService.UpdateAsync(service);
+            await _unitOfWork.CommitAsync();
+        }
+
+        public string GetServiceType(ServiceType serviceType)
+        {
+            var result = "";
+            switch (serviceType)
+            {
+                case ServiceType.HOST:
+                    result = "Hospedagem";
+                    break;
+                case ServiceType.WALK_DOG:
+                    result = "Passeio";
+                    break;
+                case ServiceType.VET_SERVICE:
+                    result = "Serviço Veterinário";
+                    break;
+                case ServiceType.PET_GROOMING:
+                    result = "Banho e Tosa";
+                    break;
+                case ServiceType.OTHER:
+                    result = "Outros";
+                    break;
+                default:
+                    break;
+            }
+            return result;
         }
     }
 }

@@ -14,7 +14,6 @@ namespace PetClub.Infra.Persistence.Map
         public void Configure(EntityTypeBuilder<Scheduler> builder)
         {
             builder.ToTable("Scheduler");
-            builder.HasOne(p => p.UsersPartners).WithMany().HasForeignKey(p => p.IdUsersPartners);
             builder.HasOne(p => p.Pet).WithMany().HasForeignKey(p => p.IdPet);
         }
     }

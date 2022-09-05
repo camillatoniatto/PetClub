@@ -1,17 +1,17 @@
-﻿using PetClub.Domain.Entities.Base;
+﻿using PetClub.Domain.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PetClub.Domain.Enum;
 
-namespace PetClub.Domain.Entities
+namespace PetClub.AppService.ViewModels.Service
 {
-    public class Service : EntityBase
+    public class GetServiceViewModel
     {
-        public Service(string idPartner, string title, string description, ServiceType serviceType, bool singleUser, DateTime dateDuration, decimal value, DateTime writeDate)
+        public GetServiceViewModel(string idService, string idPartner, string title, string description, string serviceType, bool singleUser, string dateDuration, string value, string writeDate)
         {
+            IdService = idService;
             IdPartner = idPartner;
             Title = title;
             Description = description;
@@ -22,14 +22,14 @@ namespace PetClub.Domain.Entities
             WriteDate = writeDate;
         }
 
+        public string IdService { get; set; }
         public string IdPartner { get; set; }
-        public User User { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public ServiceType ServiceType { get; set; }
+        public string ServiceType { get; set; }
         public bool SingleUser { get; set; }
-        public DateTime DateDuration { get; set; }
-        public decimal Value { get; set; }
-        public DateTime WriteDate { get; set; }
+        public string DateDuration { get; set; }
+        public string Value { get; set; }
+        public string WriteDate { get; set; }
     }
 }

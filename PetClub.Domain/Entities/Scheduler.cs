@@ -11,7 +11,6 @@ namespace PetClub.Domain.Entities
     public class Scheduler : EntityBase
     {
         public string IdUsersPartners { get; set; }
-        public UsersPartners UsersPartners { get; set; }
         public string IdPet { get; set; }
         public Pet Pet { get; set; }
         public DateTime StartDate { get; set; }

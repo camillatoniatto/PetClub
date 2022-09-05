@@ -1,27 +1,20 @@
-﻿using PetClub.Domain.Entities.Base;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PetClub.Domain.Entities
+namespace PetClub.AppService.ViewModels.Account
 {
-    public class User : EntityBase
+    public class UserViewModel
     {
-        public string Username { get; set; }
         public string FullName { get; set; }
         public string Cpf { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public DateTime Birthdate { get; set; }
-        public Boolean ChangePassword { get; set; } = false;
+        public string Password { get; set; }
         public string Image { get; set; }
-
-        // roles
-        public bool IsAdmin { get; set; }
-        public bool IsPartner { get; set; }
-
         // endereço
         public string AddressName { get; set; }
         public string Number { get; set; }
@@ -30,10 +23,6 @@ namespace PetClub.Domain.Entities
         public string City { get; set; }
         public string State { get; set; }
         public string ZipCode { get; set; }
-        public virtual IEnumerable<Pet> Pet { get; set; }
-        public virtual IEnumerable<UsersPartners> UsersPartners { get; set; }
-        public bool AcceptedTermsOfUse { get; set; }
-        public bool IsActive { get; set; }
         public DateTime WriteDate { get; set; }
     }
 }

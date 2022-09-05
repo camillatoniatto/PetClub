@@ -18,10 +18,7 @@ namespace PetClub.Infra.Persistence.Map
             builder.Property(p => p.NetValue).IsRequired();
 
             builder.HasOne(p => p.UserCreate).WithMany().HasForeignKey(p => p.IdUserCreate);
-            builder.HasOne(p => p.PurchaseOrder).WithMany().HasForeignKey(p => p.IdPurchaseOrder);
             builder.HasOne(p => p.PaymentMethod).WithMany().HasForeignKey(p => p.IdPaymentMethod);
-            builder.HasOne(p => p.UserWriteOff).WithMany().HasForeignKey(p => p.IdUserWriteOff);
-            builder.HasOne(p => p.UserInactivate).WithMany().HasForeignKey(p => p.IdUserInactivate);
         }
     }
 }

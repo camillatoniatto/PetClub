@@ -14,7 +14,6 @@ namespace PetClub.Infra.Persistence.Map
         public void Configure(EntityTypeBuilder<PurchaseOrder> builder)
         {
             builder.ToTable("PurchaseOrder");
-            builder.HasOne(p => p.UsersPartners).WithMany().HasForeignKey(p => p.IdUsersPartners);
             builder.HasOne(p => p.PaymentMethod).WithMany().HasForeignKey(p => p.IdPaymentMethod);
         }
     }

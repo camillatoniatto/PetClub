@@ -17,7 +17,6 @@ namespace PetClub.Domain.Entities
         public User UserCreate { get; set; }
 
         public string? IdPurchaseOrder { get; set; }
-        public PurchaseOrder? PurchaseOrder { get; set; }
         public string? IdPaymentMethod { get; set; }
         public virtual PaymentMethod PaymentMethod { get; set; }
 
@@ -29,10 +28,7 @@ namespace PetClub.Domain.Entities
         public DateTime? WriteOffDate { get; set; }
 
         public string IdUserWriteOff { get; set; }
-        public User UserWriteOff { get; set; }
-
         public string IdUserInactivate { get; set; }
-        public User UserInactivate { get; set; }
 
         public DateTime WriteDate { get; set; }
     }

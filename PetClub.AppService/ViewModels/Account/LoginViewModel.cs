@@ -17,7 +17,7 @@ namespace PetClub.AppService.ViewModels.Account
         [Required(ErrorMessage = "O usuário é obrigatório.")]
         [Cpf(ErrorMessage = "O Cpf é inválido")]
         public string Cpf { get; set; }
-
+        public string UserName { get; set; }
         [Display(Name = "Senha")]
         [MaxLength(32, ErrorMessage = "")]
         public string Password { get; set; }

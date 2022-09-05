@@ -11,12 +11,12 @@ namespace PetClub.Domain.Entities
     public class PurchaseOrder : EntityBase
     {
         public string IdUsersPartners { get; set; }
-        public UsersPartners UsersPartners { get; set; }
         public string IdPaymentMethod { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
         public string FullName { get; set; }
         public string Cpf { get; set; }
         public string Email { get; set; }
+        public IEnumerable<PurchaseOrderItem> PurchaseOrderItem { get; set; }
         public PurchaseOrderSituation PurchaseOrderSituation { get; set; }
         public PaymentSituation PaymentSituation { get; set; }
         public string Observations { get; set; }

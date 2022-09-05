@@ -1,17 +1,16 @@
-﻿using PetClub.Domain.Entities.Base;
-using PetClub.Domain.Enum;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PetClub.Domain.Entities
+namespace PetClub.AppService.ViewModels.PaymentMethod
 {
-    public class PaymentMethod : EntityBase
+    public class GetPaymentMethodViewModel
     {
-        public PaymentMethod(string title, PaymentType paymentType, bool isInstallment, int numberInstallments, decimal adminTax)
+        public GetPaymentMethodViewModel(string idPaymentMethod, string title, string paymentType, bool isInstallment, int numberInstallments, decimal adminTax)
         {
+            IdPaymentMethod = idPaymentMethod;
             Title = title;
             PaymentType = paymentType;
             IsInstallment = isInstallment;
@@ -19,8 +18,9 @@ namespace PetClub.Domain.Entities
             AdminTax = adminTax;
         }
 
+        public string IdPaymentMethod { get; set; }
         public string Title { get; set; }
-        public PaymentType PaymentType { get; set; }
+        public string PaymentType { get; set; }
         public bool IsInstallment { get; set; }
         public int NumberInstallments { get; set; }
         public decimal AdminTax { get; set; }

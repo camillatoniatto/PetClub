@@ -15,7 +15,7 @@ namespace PetClub.Infra.Persistence.Map
         {
             builder.ToTable("UsersPartners");
             builder.Property(p => p.IdPartner).IsRequired();
-            builder.HasOne(p => p.User).WithMany(x => x.UsersPartners).HasForeignKey(x => x.IdUser).IsRequired();
+            builder.HasOne(p => p.User).WithMany(x => x.UsersPartners).HasForeignKey(x => x.IdUser);
         }
     }
 }

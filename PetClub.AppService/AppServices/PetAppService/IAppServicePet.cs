@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PetClub.AppService.ViewModels.Pet;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,11 @@ namespace PetClub.AppService.AppServices.PetAppService
 {
     public interface IAppServicePet
     {
+        Task<string> CreatePet(CreatePetViewModel model, string idUser);
+        Task<List<GetPetViewModel>> GetAllPets();
+        Task<GetPetViewModel> GetPetById(string idPet);
+        Task<List<GetPetViewModel>> GetPetsUser(string idUser);
+        Task UpdatePet(UpdatePetViewModel model);
+        Task DeletePet(string idPet);
     }
 }

@@ -11,8 +11,8 @@ namespace PetClub.Configurations
         public const string CLAIM_TYPE_OCCUPATION = "Occupation";
         
         // GRUPOS DE AUTORIZAÇÃO        
-        public const string ADMIN_SYSTEM = "admin_system";
-        public const string PARTER = "partner";
+        public const string ADMIN_SYSTEM = "admin_system, partner, user";
+        public const string PARTER = "partner, user";
         public const string USER = "user";
     }
 }

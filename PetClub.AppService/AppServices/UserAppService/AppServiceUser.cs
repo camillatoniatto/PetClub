@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using PetClub.AppService.AppServices.NotifierAppService;
+using PetClub.AppService.AppServices.PetAppService;
 using PetClub.AppService.Image.Model;
+using PetClub.AppService.ViewModels.Account;
 using PetClub.AppService.ViewModels.User;
 using PetClub.Domain.Entities;
 using PetClub.Domain.Interfaces;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -19,12 +22,14 @@ namespace PetClub.AppService.AppServices.UserAppService
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly INotifierAppService _notifier;
+        private readonly IAppServicePet _appServicePet;
 
-        public AppServiceUser(IUnitOfWork unitOfWork, IMapper mapper, INotifierAppService notifier)
+        public AppServiceUser(IUnitOfWork unitOfWork, IMapper mapper, INotifierAppService notifier, IAppServicePet appServicePet)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _notifier = notifier;
+            _appServicePet = appServicePet;
         }
 
         public async Task<UserUpdateViewModel> UpdateAsync(UpdatePerfilUserViewModel updatePerfilUserView, string IdUser)
@@ -63,12 +68,10 @@ namespace PetClub.AppService.AppServices.UserAppService
         public async Task<GetUserByIdViewModel> GetByIdAsync(string Id)
         {
             var user = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(Id));
-
-            // LISTA PET
-
+            var pets = await _appServicePet.GetPetsUser(Id);
             return new GetUserByIdViewModel(user.Id, user.FullName, user.Cpf, user.Email, user.PhoneNumber, user.Birthdate,
                 user.Image, user.IsAdmin, user.IsPartner, user.AddressName, user.Number, user.Complement, user.Neighborhood,
-                user.City, user.State, user.ZipCode, /*"LISTA PET AQUI", */user.IsActive, user.WriteDate);
+                user.City, user.State, user.ZipCode, pets, user.IsActive, user.WriteDate);
         }
 
         public async Task<List<GetUserByIdViewModel>> GetAllUsers(bool isActive, bool isAdmin, bool isPartner)
@@ -122,6 +125,20 @@ namespace PetClub.AppService.AppServices.UserAppService
         {
             var list = await _unitOfWork.IRepositoryUser.GetByAsync(x => x.IsActive && !x.IsPartner && !x.IsAdmin);
             return list.Count;
+        }
+
+
+        public async Task<UserBasicViewModel> GetByCpf(string Cpf)
+        {
+            var user = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Cpf.Equals(Cpf));
+            if (user != null)
+            {
+                return new UserBasicViewModel(user.Id, user.FullName, user.IsAdmin, user.IsPartner, user.AcceptedTermsOfUse, user.IsActive);
+            }
+            else
+            {
+                return null;
+            }
         }
 
 
