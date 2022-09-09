@@ -55,7 +55,7 @@ namespace PetClub.Domain.Enum
         [Display(Name = "Pendente")]
         PENDING,
         [Display(Name = "Concluido")]
-        CONCLUDEDD,
+        CONCLUDED,
         [Display(Name = "Cancelado")]
         CANCELED
     }
@@ -77,7 +77,7 @@ namespace PetClub.Domain.Enum
         [Display(Name = "Agendado")]
         SCHEDULED,
         [Display(Name = "Concluido")]
-        CONCLUDEDD,
+        CONCLUDED,
         [Display(Name = "Cancelado")]
         CANCELED, 
         [Display(Name = "Em Atendimento")]

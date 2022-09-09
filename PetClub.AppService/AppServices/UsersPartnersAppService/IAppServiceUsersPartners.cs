@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PetClub.AppService.ViewModels.UsersPartners;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,6 @@ namespace PetClub.AppService.AppServices.UsersPartnersAppService
 {
     public interface IAppServiceUsersPartners
     {
+        Task<GetUsersPartnersViewModel> GetByIdUsersPartners(string idUsersPartners);
     }
 }

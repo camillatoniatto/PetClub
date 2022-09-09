@@ -9,6 +9,14 @@ namespace PetClub.Domain.Entities
 {
     public class PurchaseOrderItem : EntityBase
     {
+        public PurchaseOrderItem(string idPurchaseOrder, string idService, int quantity, decimal value)
+        {
+            IdPurchaseOrder = idPurchaseOrder;
+            IdService = idService;
+            Quantity = quantity;
+            Value = value;
+        }
+
         public string IdPurchaseOrder { get; set; }
         public PurchaseOrder PurchaseOrder { get; set; }
         public string IdService { get; set; }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PetClub.AppService.ViewModels.PurchaseOrder;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,10 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
 {
     public interface IAppServicePurchaseOrder
     {
+        Task<string> CreatePurchaseOrder(CreatePurchaseOrderViewModel model, string idParter);
+        Task<GetPurchaseOrderViewModel> GetPurchaseOrderById(string idPurchaseOrder);
+        Task<List<GetPurchaseOrderViewModel>> GetPurchaseOrdersUser(string idUser, bool isApp);
+        Task UpdadePurchaseOrder(UpdatePurchaseOrderViewModel model);
+        Task DeletePurchaseOrder(string idPurchaseOrder);
     }
 }

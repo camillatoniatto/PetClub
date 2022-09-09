@@ -67,17 +67,14 @@ namespace PetClub.AppService.AppServices.UsersPartnersAppService
             }
         }
 
-        public async Task<UsersPartners> GetByIdUsersPartners(string idUsersPartners)
+        public async Task<GetUsersPartnersViewModel> GetByIdUsersPartners(string idUsersPartners)
         {
-            var userPartner = await _unitOfWork.IRepositoryUsersPartners.GetByIdAsync(x => x.Id.Equals(idUsersPartners));            if (userPartner != null)
-            {
-                return userPartner;
-            }
-            else
-            {
-                _notifier.Handle(new NotificationMessage("userPartner", "NotFound"));
-                throw new Exception();
-            }
+            Func<IQueryable<UsersPartners>, IIncludableQueryable<UsersPartners, object>> include = t => t.Include(a => a.User).ThenInclude(x => x.Pet);
+            var userPartners = await _unitOfWork.IRepositoryUsersPartners.GetByIdAsync(x => x.Id.Equals(idUsersPartners));
+            var partner = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(userPartners.IdPartner));
+            var user = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(userPartners.IdUser));
+            
+            return new GetUsersPartnersViewModel(idUsersPartners, user.Id, user.FullName, user.Cpf, user.Email, user.PhoneNumber, partner.Id, partner.FullName, partner.Cpf);
         }
 
         //public async Task UpdateUsersPartners(UpdateGatewayBuyerViewModel model, string idGatewayBuyer, string idUser)

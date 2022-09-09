@@ -167,7 +167,7 @@ namespace PetClub.AppService.AppServices.PaymentMethodAppService
             switch (paymentType)
             {
                 case PaymentType.CREDIT_CARD:
-                    result = "Cartão de Crédito em";
+                    result = "Cartão de Crédito";
                     break;
                 case PaymentType.CASH:
                     result = "Dinheiro";

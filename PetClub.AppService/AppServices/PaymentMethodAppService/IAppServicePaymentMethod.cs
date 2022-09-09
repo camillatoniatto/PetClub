@@ -1,4 +1,5 @@
 ﻿using PetClub.AppService.ViewModels.PaymentMethod;
+using PetClub.Domain.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace PetClub.AppService.AppServices.PaymentMethodAppService
         Task DeleteAsync(string Id);
         Task<List<GetPaymentMethodViewModel>> GetAllPaymentMethods();
         Task<GetPaymentMethodViewModel> GetByIdAsync(string Id);
+        string GetPaymentType(PaymentType paymentType);
         Task<GetPaymentMethodViewModel> UpdateAsync(UpdatePaymentMethodViewModel model);
     }
 }

@@ -10,7 +10,25 @@ namespace PetClub.Domain.Entities
 {
     public class PurchaseOrder : EntityBase
     {
-        public string IdUsersPartners { get; set; }
+        public PurchaseOrder(string idPartner, string idUser, string idPet, string idPaymentMethod, string fullName, string cpf, string email, PurchaseOrderSituation purchaseOrderSituation, PaymentSituation paymentSituation, string observations, DateTime writeDate)
+        {
+            IdPartner = idPartner;
+            IdUser = idUser;
+            IdPet = idPet;
+            IdPaymentMethod = idPaymentMethod;
+            FullName = fullName;
+            Cpf = cpf;
+            Email = email;
+            PurchaseOrderSituation = purchaseOrderSituation;
+            PaymentSituation = paymentSituation;
+            Observations = observations;
+            WriteDate = writeDate;
+        }
+
+        public string IdPartner { get; set; }
+        public User User { get; set; }
+        public string IdUser { get; set; }
+        public string IdPet { get; set; }
         public string IdPaymentMethod { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
         public string FullName { get; set; }
