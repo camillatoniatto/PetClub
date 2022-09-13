@@ -19,6 +19,7 @@ using PetClub.AppService.AppServices.PaymentMethodAppService;
 using System.Globalization;
 using PetClub.AppService.ViewModels.PurchaseOrderItem;
 using PetClub.AppService.Extensions;
+using PetClub.AppService.ViewModels.CashFlow;
 
 namespace PetClub.AppService.AppServices.PurchaseOrderAppService
 {
@@ -30,6 +31,7 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
         private readonly IAppServicePurchaseOrderItem _appServicePurchaseOrderItem;
         private readonly IAppServiceUsersPartners _appServiceUsersPartners;
         private readonly IAppServicePaymentMethod _appServicePaymentMethod;
+        private readonly IAppServiceCashFlow _appServiceCashFlow;
 
         public AppServicePurchaseOrder(
             IUnitOfWork unitOfWork, 
@@ -37,7 +39,8 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
             INotifierAppService notifier, 
             IAppServicePurchaseOrderItem appServicePurchaseOrderItem, 
             IAppServiceUsersPartners appServiceUsersPartners,
-            IAppServicePaymentMethod appServicePaymentMethod)
+            IAppServicePaymentMethod appServicePaymentMethod,
+            IAppServiceCashFlow appServiceCashFlow)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -45,6 +48,7 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
             _appServicePurchaseOrderItem = appServicePurchaseOrderItem;
             _appServiceUsersPartners = appServiceUsersPartners;
             _appServicePaymentMethod = appServicePaymentMethod;
+            _appServiceCashFlow = appServiceCashFlow;
         }
 
         public async Task<string> CreatePurchaseOrder(CreatePurchaseOrderViewModel model, string idParter)
@@ -52,6 +56,46 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
             var idOrder = await _unitOfWork.IRepositoryPurchaseOrder.AddReturnIdAsync(new PurchaseOrder(idParter, model.IdUser, model.IdPet, model.IdPaymentMethod, model.FullName, model.Cpf, model.Email, PurchaseOrderSituation.PENDING, PaymentSituation.PENDING, model.Observations, DateTime.Now.ToBrasilia()));
             await _unitOfWork.CommitAsync();
             return idOrder;
+        }
+
+        public async Task ConcluedPurchaseOrder(string idPurchaseOrder, bool isPaid)
+        {
+            var date = DateTime.Now.ToBrasilia();
+            var listService = new List<string>();
+            Func<IQueryable<PurchaseOrder>, IIncludableQueryable<PurchaseOrder, object>> include = t => t.Include(a => a.PurchaseOrderItem).ThenInclude(b => b.Service);
+            var order = await _unitOfWork.IRepositoryPurchaseOrder.GetByIdAsync(x => x.Id.Equals(idPurchaseOrder), include);
+            if (order == null)
+            {
+                _notifier.Handle(new NotificationMessage("Erro", "Não foi possível encontrar essa compra."));
+                throw new Exception();
+            }
+            if (order.PurchaseOrderItem.Count() == 0)
+            {
+                _notifier.Handle(new NotificationMessage("Erro", "Parece que essa compra ainda não tem serviços cadastrados."));
+                throw new Exception();
+            }
+
+            var user = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(order.IdUser));
+            var launchValue = 0M;
+            foreach (var item in order.PurchaseOrderItem.Where(x => x.RecordSituation.Equals(RecordSituation.ACTIVE)))
+            {
+                listService.Add(item.Service.Title);
+                launchValue += item.Value * item.Quantity;
+            }
+            var serviceTitles = String.Join(", ", listService);
+            var description = "Serviços prestados: "+ serviceTitles;
+            CreateCashFlowViewModel cashflow = new CreateCashFlowViewModel("Venda de serviço - " + user.FullName, description, order.IdPartner, idPurchaseOrder,
+                                                                           order.IdPaymentMethod, launchValue, date, isPaid ? date : DateTime.MinValue, false);
+
+
+            await _appServiceCashFlow.CreateReceivableBill(cashflow, order.IdPartner);
+            if (isPaid)
+            {
+                order.PurchaseOrderSituation = PurchaseOrderSituation.CONCLUDED;
+                order.PaymentSituation = PaymentSituation.APPROVED;
+                await _unitOfWork.IRepositoryPurchaseOrder.UpdateAsync(order);
+                await _unitOfWork.CommitAsync();
+            }
         }
 
         public async Task DeletePurchaseOrder(string idPurchaseOrder)
@@ -115,7 +159,7 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
         public async Task<GetPurchaseOrderViewModel> GetPurchaseOrderById(string idPurchaseOrder)
         {
             CultureInfo culture = new CultureInfo("pt-BR");
-            Func<IQueryable<PurchaseOrder>, IIncludableQueryable<PurchaseOrder, object>> include = t => t.Include(a => a.PaymentMethod).Include(b => b.User);
+            Func<IQueryable<PurchaseOrder>, IIncludableQueryable<PurchaseOrder, object>> include = t => t.Include(a => a.PaymentMethod);
             var order = await _unitOfWork.IRepositoryPurchaseOrder.GetByIdAsync(x => x.Id.Equals(idPurchaseOrder));
             var orderItens = await _appServicePurchaseOrderItem.GetOrderItens(idPurchaseOrder);
             var partner = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(order.IdPartner));
@@ -131,7 +175,7 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
             }
 
             return new GetPurchaseOrderViewModel(idPurchaseOrder, order.IdPartner, partner.FullName, order.IdPet, petName, 
-                order.IdPaymentMethod, payment, order.User.Id, order.FullName, order.Cpf, order.Email, purchaseOrderSituation, paymentSituation, 
+                order.IdPaymentMethod, payment, order.IdUser, order.FullName, order.Cpf, order.Email, purchaseOrderSituation, paymentSituation, 
                 order.Observations, orderItens, order.WriteDate.ToString("d", culture), order.DateCreation.ToString("d", culture));
         }
 
@@ -139,7 +183,7 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
         {
             CultureInfo culture = new CultureInfo("pt-BR");
             var list = new List<GetPurchaseOrderViewModel>();
-            Func<IQueryable<PurchaseOrder>, IIncludableQueryable<PurchaseOrder, object>> include = t => t.Include(a => a.PaymentMethod).Include(b => b.User);
+            Func<IQueryable<PurchaseOrder>, IIncludableQueryable<PurchaseOrder, object>> include = t => t.Include(a => a.PaymentMethod);
             IList<PurchaseOrder> orders = new List<PurchaseOrder>();
             if (isApp)
             {
@@ -166,7 +210,7 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
                 }
 
                 list.Add(new GetPurchaseOrderViewModel(order.Id, order.IdPartner, partner.FullName, order.IdPet, petName,
-                    order.IdPaymentMethod, payment, order.User.Id, order.FullName, order.Cpf, order.Email, purchaseOrderSituation, paymentSituation,
+                    order.IdPaymentMethod, payment, order.IdUser, order.FullName, order.Cpf, order.Email, purchaseOrderSituation, paymentSituation,
                     order.Observations, orderItens, order.WriteDate.ToString("d", culture), order.DateCreation.ToString("d", culture)));
             }
             return list;            

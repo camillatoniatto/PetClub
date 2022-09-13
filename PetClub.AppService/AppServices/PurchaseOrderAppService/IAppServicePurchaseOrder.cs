@@ -14,5 +14,6 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
         Task<List<GetPurchaseOrderViewModel>> GetPurchaseOrdersUser(string idUser, bool isApp);
         Task UpdadePurchaseOrder(UpdatePurchaseOrderViewModel model);
         Task DeletePurchaseOrder(string idPurchaseOrder);
+        Task ConcluedPurchaseOrder(string idPurchaseOrder, bool isPaid);
     }
 }

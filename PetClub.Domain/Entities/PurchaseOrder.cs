@@ -26,7 +26,6 @@ namespace PetClub.Domain.Entities
         }
 
         public string IdPartner { get; set; }
-        public User User { get; set; }
         public string IdUser { get; set; }
         public string IdPet { get; set; }
         public string IdPaymentMethod { get; set; }

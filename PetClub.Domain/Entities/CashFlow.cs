@@ -11,8 +11,25 @@ namespace PetClub.Domain.Entities
 {
     public class CashFlow : EntityBase
     {
-        public string Title { get; set; }
+        public CashFlow(string title, string description, string idUserCreate, string? idPurchaseOrder, string? idPaymentMethod, decimal launchValue, decimal netValue, DateTime expirationDate, DateTime writeOffDate, string idUserWriteOff, string idUserInactivate, bool isOutflow, DateTime writeDate)
+        {
+            Title = title;
+            Description = description;
+            IdUserCreate = idUserCreate;
+            IdPurchaseOrder = idPurchaseOrder;
+            IdPaymentMethod = idPaymentMethod;
+            LaunchValue = launchValue;
+            NetValue = netValue;
+            ExpirationDate = expirationDate;
+            WriteOffDate = writeOffDate;
+            IdUserWriteOff = idUserWriteOff;
+            IdUserInactivate = idUserInactivate;
+            this.isOutflow = isOutflow;
+            WriteDate = writeDate;
+        }
 
+        public string Title { get; set; }
+        public string Description { get; set; }
         public string IdUserCreate { get; set; }
         public User UserCreate { get; set; }
 
@@ -25,11 +42,11 @@ namespace PetClub.Domain.Entities
         public decimal NetValue { get; set; }
 
         public DateTime ExpirationDate { get; set; }
-        public DateTime? WriteOffDate { get; set; }
+        public DateTime WriteOffDate { get; set; }
 
         public string IdUserWriteOff { get; set; }
         public string IdUserInactivate { get; set; }
-
+        public bool isOutflow { get; set; }
         public DateTime WriteDate { get; set; }
     }
 }

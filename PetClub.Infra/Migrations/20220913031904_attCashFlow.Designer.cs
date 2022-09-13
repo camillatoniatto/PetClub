@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PetClub.Infra.Persistence;
 
@@ -11,9 +12,10 @@ using PetClub.Infra.Persistence;
 namespace PetClub.Infra.Migrations
 {
     [DbContext(typeof(PetClubContext))]
-    partial class PetClubContextModelSnapshot : ModelSnapshot
+    [Migration("20220913031904_attCashFlow")]
+    partial class attCashFlow
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -297,13 +299,13 @@ namespace PetClub.Infra.Migrations
                     b.Property<DateTime>("FinalDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("IdPartner")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("IdPet")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("IdUsersPartners")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RecordSituation")
                         .HasColumnType("int");
