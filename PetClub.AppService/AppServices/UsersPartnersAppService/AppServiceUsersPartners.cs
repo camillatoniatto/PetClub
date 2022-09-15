@@ -41,6 +41,13 @@ namespace PetClub.AppService.AppServices.UsersPartnersAppService
             }
             else
             {
+                if (userPartner.RecordSituation == RecordSituation.INACTIVE)
+                {
+                    userPartner.RecordSituation = RecordSituation.ACTIVE;
+                    userPartner.WriteDate = DateTime.Now.ToBrasilia();
+                    await _unitOfWork.IRepositoryUsersPartners.UpdateAsync(userPartner);
+                    await _unitOfWork.CommitAsync();
+                }
                 id = userPartner.Id;
             }
             return id;

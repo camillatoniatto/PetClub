@@ -20,6 +20,7 @@ using PetClub.AppService.AppServices.PurchaseOrderItemAppService;
 using PetClub.AppService.AppServices.SchedulerAppService;
 using PetClub.AppService.AppServices.ServiceAppService;
 using PetClub.AppService.AppServices.UsersPartnersAppService;
+using PetClub.AppService.AppServices.DashboardAppService;
 
 namespace PetClub.CrossCutting.Ioc
 {
@@ -49,6 +50,7 @@ namespace PetClub.CrossCutting.Ioc
             services.AddTransient<IAppServiceRefreshToken, AppServiceRefreshToken>();
             services.AddTransient<INotifierAppService, NotifierAppService>();
             services.AddTransient<IAppServiceCashFlow, AppServiceCashFlow>();
+            services.AddTransient<IAppServiceDashboard, AppServiceDashboard>();
             services.AddTransient<IAppServicePaymentMethod, AppServicePaymentMethod>();
             services.AddTransient<IAppServicePet, AppServicePet>();
             services.AddTransient<IAppServicePurchaseOrder, AppServicePurchaseOrder>();

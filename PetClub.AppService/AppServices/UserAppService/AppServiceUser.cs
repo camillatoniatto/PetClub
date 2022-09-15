@@ -127,6 +127,13 @@ namespace PetClub.AppService.AppServices.UserAppService
             return list.Count;
         }
 
+        public async Task<GetUsersAmountViewModel> TotalUsersAmount()
+        {
+            var admin = await AmountAdmin();
+            var partner = await AmountPartner();
+            var user = await AmountUsers();
+            return new GetUsersAmountViewModel(admin, partner, user);
+        }
 
         public async Task<UserBasicViewModel> GetByCpf(string Cpf)
         {

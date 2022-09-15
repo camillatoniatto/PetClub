@@ -10,6 +10,17 @@ namespace PetClub.Domain.Entities
 {
     public class Scheduler : EntityBase
     {
+        public Scheduler(string idPartner, string idPet, DateTime startDate, DateTime finalDate, ServiceType serviceType, SchedulerSituation schedulerSituation, DateTime writeDate)
+        {
+            IdPartner = idPartner;
+            IdPet = idPet;
+            StartDate = startDate;
+            FinalDate = finalDate;
+            ServiceType = serviceType;
+            SchedulerSituation = schedulerSituation;
+            WriteDate = writeDate;
+        }
+
         public string IdPartner { get; set; }
         public string IdPet { get; set; }
         public Pet Pet { get; set; }

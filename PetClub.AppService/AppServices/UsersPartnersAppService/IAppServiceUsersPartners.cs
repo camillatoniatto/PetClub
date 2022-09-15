@@ -9,6 +9,8 @@ namespace PetClub.AppService.AppServices.UsersPartnersAppService
 {
     public interface IAppServiceUsersPartners
     {
+        Task<string> CreateUsersPartners(string idUser, string idPartner);
         Task<GetUsersPartnersViewModel> GetByIdUsersPartners(string idUsersPartners);
+        Task<List<GetUsersPartnersViewModel>> GetUsersPartners(string idPartner);
     }
 }
