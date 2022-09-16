@@ -51,9 +51,9 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
             _appServiceCashFlow = appServiceCashFlow;
         }
 
-        public async Task<string> CreatePurchaseOrder(CreatePurchaseOrderViewModel model, string idParter)
+        public async Task<string> CreatePurchaseOrder(CreatePurchaseOrderViewModel model, string idPARTNER)
         {
-            var idOrder = await _unitOfWork.IRepositoryPurchaseOrder.AddReturnIdAsync(new PurchaseOrder(idParter, model.IdUser, model.IdPet, model.IdPaymentMethod, model.FullName, model.Cpf, model.Email, PurchaseOrderSituation.PENDING, PaymentSituation.PENDING, model.Observations, DateTime.Now.ToBrasilia()));
+            var idOrder = await _unitOfWork.IRepositoryPurchaseOrder.AddReturnIdAsync(new PurchaseOrder(idPARTNER, model.IdUser, model.IdPet, model.IdPaymentMethod, model.FullName, model.Cpf, model.Email, PurchaseOrderSituation.PENDING, PaymentSituation.PENDING, model.Observations, DateTime.Now.ToBrasilia()));
             await _unitOfWork.CommitAsync();
             return idOrder;
         }

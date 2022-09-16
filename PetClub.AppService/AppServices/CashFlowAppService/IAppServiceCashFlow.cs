@@ -11,7 +11,7 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
     {
         Task CreateReceivableBill(CreateCashFlowViewModel model, string idUser);
         Task DeleteBill(string idCashFlow, string idUser);
-        Task<List<GetCashFlowViewModel>> GetCashFlow(string idParter);
+        Task<List<GetCashFlowViewModel>> GetCashFlow(string idPARTNER);
         Task<UpdateCashFlowViewModel> UpdateAsync(UpdateCashFlowViewModel model, string idUser);
         Task WriteOff(string idCashFlow, string idUser);
     }

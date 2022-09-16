@@ -5,15 +5,16 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PetClub.Infra.Migrations
 {
-    public partial class entities : Migration
+    public partial class entites : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
+            /*migrationBuilder.CreateTable(
                 name: "AspNetUsers",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     Cpf = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
@@ -37,7 +38,7 @@ namespace PetClub.Infra.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
+                });*/
 
             migrationBuilder.CreateTable(
                 name: "PaymentMethod",
@@ -160,15 +161,17 @@ namespace PetClub.Infra.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IdUserCreate = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     IdPurchaseOrder = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IdPaymentMethod = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     LaunchValue = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     NetValue = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    WriteOffDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    WriteOffDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IdUserWriteOff = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IdUserInactivate = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    isOutflow = table.Column<bool>(type: "bit", nullable: false),
                     WriteDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateCreation = table.Column<DateTime>(type: "datetime2", nullable: false),
                     RecordSituation = table.Column<int>(type: "int", nullable: false)
@@ -194,7 +197,9 @@ namespace PetClub.Infra.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    IdUsersPartners = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IdPartner = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IdUser = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IdPet = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IdPaymentMethod = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Cpf = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -222,7 +227,7 @@ namespace PetClub.Infra.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    IdUsersPartners = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IdPartner = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IdPet = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FinalDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -353,8 +358,8 @@ namespace PetClub.Infra.Migrations
             migrationBuilder.DropTable(
                 name: "PaymentMethod");
 
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
+            /*migrationBuilder.DropTable(
+                name: "AspNetUsers");*/
         }
     }
 }

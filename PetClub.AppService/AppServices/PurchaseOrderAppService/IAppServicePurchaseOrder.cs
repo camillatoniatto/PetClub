@@ -9,7 +9,7 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
 {
     public interface IAppServicePurchaseOrder
     {
-        Task<string> CreatePurchaseOrder(CreatePurchaseOrderViewModel model, string idParter);
+        Task<string> CreatePurchaseOrder(CreatePurchaseOrderViewModel model, string idPARTNER);
         Task<GetPurchaseOrderViewModel> GetPurchaseOrderById(string idPurchaseOrder);
         Task<List<GetPurchaseOrderViewModel>> GetPurchaseOrdersUser(string idUser, bool isApp);
         Task UpdadePurchaseOrder(UpdatePurchaseOrderViewModel model);

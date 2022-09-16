@@ -31,7 +31,7 @@ namespace PetClub.Controllers
 
         [HttpPost]
         [Route("create-order")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTER)]
+        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> CreatePurchaseOrder(CreatePurchaseOrderViewModel model)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
@@ -49,7 +49,7 @@ namespace PetClub.Controllers
 
         [HttpGet]
         [Route("get-order-byid")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTER)]
+        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> GetPurchaseOrderById(string idPurchaseOrder)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
@@ -85,7 +85,7 @@ namespace PetClub.Controllers
 
         [HttpPut]
         [Route("update-order")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTER)]
+        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> UpdadePurchaseOrder(UpdatePurchaseOrderViewModel model)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
@@ -103,7 +103,7 @@ namespace PetClub.Controllers
 
         [HttpPut]
         [Route("finish-order")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTER)]
+        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> ConcluedPurchaseOrder(string idPurchaseOrder, bool isPaid)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
@@ -121,7 +121,7 @@ namespace PetClub.Controllers
 
         [HttpDelete]
         [Route("delete-order")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTER)]
+        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> DeletePurchaseOrder(string idPurchaseOrder)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);

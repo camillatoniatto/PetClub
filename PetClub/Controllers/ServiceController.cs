@@ -34,7 +34,7 @@ namespace PetClub.Controllers
 
         [HttpPost]
         [Route("create-service")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTER)]
+        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> CreateService(CreateServiceViewModel model)
         {
             var user = GetUser();
@@ -106,7 +106,7 @@ namespace PetClub.Controllers
 
         [HttpPut]
         [Route("update-service")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTER)]
+        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> UpdateService(UpdateServiceViewModel model)
         {
             var user = GetUser();
@@ -124,7 +124,7 @@ namespace PetClub.Controllers
 
         [HttpDelete]
         [Route("delete-service")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTER)]
+        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> DeleteService(string idService)
         {
             var user = GetUser();

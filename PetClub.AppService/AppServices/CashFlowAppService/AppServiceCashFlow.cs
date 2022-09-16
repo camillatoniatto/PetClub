@@ -68,13 +68,13 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
             }
         }
 
-        public async Task<List<GetCashFlowViewModel>> GetCashFlow(string idParter)
+        public async Task<List<GetCashFlowViewModel>> GetCashFlow(string idPARTNER)
         {
             var list = new List<GetCashFlowViewModel>();
             CultureInfo culture = new CultureInfo("pt-BR");
             Func<IQueryable<CashFlow>, IIncludableQueryable<CashFlow, object>> include = t => t.Include(a => a.PaymentMethod);
-            var cashflow = await _unitOfWork.IRepositoryCashFlow.GetByOrderAsync(x => x.IdUserCreate.Equals(idParter) && x.RecordSituation.Equals(RecordSituation.ACTIVE), x => x.DateCreation, false, include);
-            var partner = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(idParter));
+            var cashflow = await _unitOfWork.IRepositoryCashFlow.GetByOrderAsync(x => x.IdUserCreate.Equals(idPARTNER) && x.RecordSituation.Equals(RecordSituation.ACTIVE), x => x.DateCreation, false, include);
+            var partner = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(idPARTNER));
 
             foreach (var item in cashflow)
             {

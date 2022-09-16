@@ -60,9 +60,6 @@ namespace PetClub.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> Register([FromForm] UserViewModel user)
         {
-
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
-
             user.Cpf = OnlyNumber(user.Cpf);
             var request = await _appServiceUser.GetByCpf(user.Cpf);
             var userData = await ValidRegisterUser(user, false, false);
@@ -77,6 +74,9 @@ namespace PetClub.Controllers
             //}
 
             IdentityResult result;
+            //_userManager.SetUserNameAsync(userData, );
+            userData.UserName = user.Cpf;
+
             if (userData.IsActive)
                 result = await _userManager.CreateAsync(userData, user.Password);
             else
@@ -104,7 +104,7 @@ namespace PetClub.Controllers
 
             if (result.Succeeded)
             {
-                await _userManager.AddClaimAsync(userData, new Claim(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER));
+                await _userManager.AddClaimAsync(userData, new Claim(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PROFILE_USER));
                 await _signInManager.SignInAsync(userData, false);
 
                 var refresh = Guid.NewGuid().ToString();
@@ -142,7 +142,7 @@ namespace PetClub.Controllers
 
             if (result.Succeeded)
             {
-                await _userManager.AddClaimAsync(userData, new Claim(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.ADMIN_SYSTEM));
+                await _userManager.AddClaimAsync(userData, new Claim(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PROFILE_ADMIN));
                 await _emailSender.SendEmailAsync(user.Email, "Diretoria Datlética", Emails.RegisterAdmin("https://painel.datletica.com.br/", userData.FullName, userData.Cpf));
                 return CustomResponse();
             }
@@ -189,7 +189,7 @@ namespace PetClub.Controllers
 
             if (result.Succeeded)
             {
-                await _userManager.AddClaimAsync(userData, new Claim(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTER));
+                await _userManager.AddClaimAsync(userData, new Claim(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PROFILE_PARTNER));
                 try
                 {
                     await _emailSender.SendEmailAsync(user.Email, "Boas vindas da Datlética!", Emails.PreRegisterUser(user.FullName));

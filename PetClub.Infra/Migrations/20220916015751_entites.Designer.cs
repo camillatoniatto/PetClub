@@ -12,8 +12,8 @@ using PetClub.Infra.Persistence;
 namespace PetClub.Infra.Migrations
 {
     [DbContext(typeof(PetClubContext))]
-    [Migration("20220903143802_entities")]
-    partial class entities
+    [Migration("20220916015751_entites")]
+    partial class entites
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -31,6 +31,10 @@ namespace PetClub.Infra.Migrations
 
                     b.Property<DateTime>("DateCreation")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("datetime2");
@@ -69,8 +73,11 @@ namespace PetClub.Infra.Migrations
                     b.Property<DateTime>("WriteDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("WriteOffDate")
+                    b.Property<DateTime>("WriteOffDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("isOutflow")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -179,11 +186,19 @@ namespace PetClub.Infra.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("IdPartner")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("IdPaymentMethod")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("IdUsersPartners")
+                    b.Property<string>("IdPet")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdUser")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -284,13 +299,13 @@ namespace PetClub.Infra.Migrations
                     b.Property<DateTime>("FinalDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("IdPartner")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("IdPet")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("IdUsersPartners")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RecordSituation")
                         .HasColumnType("int");
@@ -426,6 +441,10 @@ namespace PetClub.Infra.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
