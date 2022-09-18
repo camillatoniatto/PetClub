@@ -58,7 +58,7 @@ namespace PetClub.Controllers
         [HttpPost]
         [Route("register")]
         [AllowAnonymous]
-        public async Task<ActionResult> Register([FromForm] UserViewModel user)
+        public async Task<ActionResult> Register(UserViewModel user)
         {
             user.Cpf = OnlyNumber(user.Cpf);
             var request = await _appServiceUser.GetByCpf(user.Cpf);
@@ -213,7 +213,7 @@ namespace PetClub.Controllers
         [HttpPost]
         public async Task<ActionResult> Login([FromBody] LoginViewModel loginViewModel)
         {
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
+            //if (!ModelState.IsValid) return CustomResponse(ModelState);
             var userData = await _userManager.FindByNameAsync(loginViewModel.UserName);
             var user = await _appServiceUser.GetByCpf(loginViewModel.UserName);
             if (user == null || !user.IsActive)
@@ -225,14 +225,14 @@ namespace PetClub.Controllers
             {
                 if (loginViewModel.GrantType == "password")
                 {
-                    var result = await _signInManager.PasswordSignInAsync(loginViewModel.Cpf, loginViewModel.Password, false, false);
+                    var result = await _signInManager.PasswordSignInAsync(loginViewModel.UserName, loginViewModel.Password, false, false);
                     if (result.Succeeded)
                     {
                         var refresh = Guid.NewGuid().ToString();
                         await _appServiceRefreshToken.Create(new RefreshTokenDataViewModel(user.Id, refresh));
                         var identityClaims = new ClaimsIdentity();
 
-                        var resposta =  CustomResponse(_tokenService.GenerateToken(identityClaims, userData, refresh, user.IsAdmin, user.IsPartner));
+                        var resposta = CustomResponse(_tokenService.GenerateToken(identityClaims, userData, refresh, user.IsAdmin, user.IsPartner));
                         return resposta;
                     }
                 }
@@ -348,8 +348,16 @@ namespace PetClub.Controllers
                     PhoneNumber = user.PhoneNumber,
                     IsAdmin = isAdmin,
                     IsPartner = isPartner,
-                    IsActive = false
-                };
+                    IsActive = false,
+                    AddressName = user.AddressName,
+                    Number = user.Number,
+                    Complement = user.Complement,
+                    Neighborhood = user.Neighborhood,
+                    City = user.City,
+                    State = user.State,
+                    ZipCode = user.ZipCode,
+                    Image = ""
+    };
 
                 return userInactive;
             }
@@ -364,7 +372,15 @@ namespace PetClub.Controllers
                 PhoneNumber = user.PhoneNumber,
                 IsAdmin = isAdmin,
                 IsPartner = isPartner,
-                IsActive = true
+                IsActive = true,
+                AddressName = user.AddressName,
+                Number = user.Number,
+                Complement = user.Complement,
+                Neighborhood = user.Neighborhood,
+                City = user.City,
+                State = user.State,
+                ZipCode = user.ZipCode,
+                Image = ""
             };
 
             return userData;
