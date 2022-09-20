@@ -34,13 +34,15 @@ namespace PetClub.Controllers
 
         [HttpPost]
         [Route("create-service")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> CreateService(CreateServiceViewModel model)
         {
-            var user = GetUser();
             if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
+                var user = GetUser();
+
                 var response = await _appServiceService.CreateService(model, user.Id);
                 return CustomResponse(response);
             }
@@ -52,7 +54,8 @@ namespace PetClub.Controllers
 
         [HttpGet]
         [Route("get-service-by-id")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
         public async Task<IActionResult> GetServiceById(string idService)
         {
             var user = GetUser();
@@ -70,7 +73,8 @@ namespace PetClub.Controllers
 
         [HttpGet]
         [Route("get-service-by-idUser")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
         public async Task<IActionResult> GetPetsUser()
         {
             var user = GetUser();
@@ -88,7 +92,8 @@ namespace PetClub.Controllers
 
         /*[HttpGet]
         [Route("get-all-services")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
         public async Task<IActionResult> GetAllPets()
         {
             var user = GetUser();
@@ -106,7 +111,8 @@ namespace PetClub.Controllers
 
         [HttpPut]
         [Route("update-service")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> UpdateService(UpdateServiceViewModel model)
         {
             var user = GetUser();
@@ -124,7 +130,8 @@ namespace PetClub.Controllers
 
         [HttpDelete]
         [Route("delete-service")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> DeleteService(string idService)
         {
             var user = GetUser();

@@ -1,4 +1,5 @@
 ﻿using Datletica.Api.Controllers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PetClub.AppService.AppServices.NotifierAppService;
 using PetClub.AppService.AppServices.PaymentMethodAppService;
@@ -31,7 +32,8 @@ namespace PetClub.Controllers
 
         [HttpPost]
         [Route("create-payment")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.ADMIN_SYSTEM)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.ADMIN_SYSTEM)]
         public async Task<IActionResult> AddPaymentMethod(CreatePaymentMethodViewModel model)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
@@ -48,7 +50,8 @@ namespace PetClub.Controllers
 
         [HttpPost]
         [Route("create-all-payment")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.ADMIN_SYSTEM)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.ADMIN_SYSTEM)]
         public async Task<IActionResult> CreateAllPayments()
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
@@ -65,7 +68,8 @@ namespace PetClub.Controllers
 
         [HttpGet]
         [Route("get-all-payments")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
         public async Task<IActionResult> GetAllPaymentMethods()
         {
             try
@@ -81,7 +85,8 @@ namespace PetClub.Controllers
 
         [HttpGet]
         [Route("get-payment-by-id")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
         public async Task<IActionResult> GetByIdAsync(string Id)
         {
             try
@@ -97,7 +102,8 @@ namespace PetClub.Controllers
 
         [HttpPut]
         [Route("update-payment")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
         public async Task<IActionResult> UpdateAsync(UpdatePaymentMethodViewModel model)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
@@ -114,7 +120,8 @@ namespace PetClub.Controllers
 
         [HttpDelete]
         [Route("delete-payment")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
         public async Task<IActionResult> DeleteAsync(string id)
         {
             try

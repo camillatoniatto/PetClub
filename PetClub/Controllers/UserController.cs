@@ -10,6 +10,7 @@ using PetClub.CrossCutting.Identity.Interfaces;
 using PetClub.CrossCutting.Identity.Models;
 using PetClub.AppService.ViewModels.User;
 using PetClub.Configurations;
+using System.Security.Claims;
 
 namespace PetClub.Controllers
 {
@@ -38,7 +39,8 @@ namespace PetClub.Controllers
 
         [HttpGet]
         [Route("get-all-users")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.ADMIN_SYSTEM)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.ADMIN_SYSTEM)]
         public async Task<IActionResult> GetAllUsers(bool isActive, bool isAdmin, bool isPartner)
         {
             try
@@ -55,7 +57,8 @@ namespace PetClub.Controllers
 
         [HttpGet]
         [Route("get-all-users-filter")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.ADMIN_SYSTEM)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.ADMIN_SYSTEM)]
         public async Task<IActionResult> GetAllUsersFilter(bool isActive, bool isAdmin, bool isPartner, string value)
         {
             try
@@ -72,7 +75,8 @@ namespace PetClub.Controllers
 
         [HttpGet]
         [Route("get-user-byid")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
         public async Task<IActionResult> GetByIdAsync(string idUser)
         {
             try
@@ -89,7 +93,8 @@ namespace PetClub.Controllers
 
         [HttpPut]
         [Route("update-perfil")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
         public async Task<IActionResult> UpdatePeril([FromForm] UpdatePerfilUserViewModel updatePerfilUserView)
         {
             try
@@ -105,25 +110,9 @@ namespace PetClub.Controllers
         }
 
         [HttpPut]
-        [Route("update-user-admin")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.ADMIN_SYSTEM)]
-        public async Task<IActionResult> UpdateAdmin(UserAdminUpdateViewModel model)
-        {
-            try
-            {
-                var user = GetUser();
-                var result = await _appServiceUser.UpdateAdmin(model, user.Id);
-                return CustomResponse(result);
-            }
-            catch (Exception)
-            {
-                return CustomResponse();
-            }
-        }
-
-        [HttpPut]
         [Route("amount-users-dash")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.ADMIN_SYSTEM)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.ADMIN_SYSTEM)]
         public async Task<IActionResult> TotalUsersAmount()
         {
             try

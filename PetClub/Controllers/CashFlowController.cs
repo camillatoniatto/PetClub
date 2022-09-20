@@ -32,7 +32,8 @@ namespace PetClub.Controllers
 
         [HttpPost]
         [Route("create-bill")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> CreateReceivableBill(CreateCashFlowViewModel model)
         {
             var user = GetUser();
@@ -50,7 +51,8 @@ namespace PetClub.Controllers
 
         [HttpGet]
         [Route("get-cashflow")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> GetCashFlow()
         {
             var user = GetUser();
@@ -68,7 +70,8 @@ namespace PetClub.Controllers
 
         [HttpPut]
         [Route("write-off-bill")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> WriteOff(string idCashFlow)
         {
             var user = GetUser();
@@ -86,7 +89,8 @@ namespace PetClub.Controllers
 
         [HttpPut]
         [Route("update-bill")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> UpdateAsync(UpdateCashFlowViewModel model)
         {
             var user = GetUser();
@@ -104,7 +108,8 @@ namespace PetClub.Controllers
 
         [HttpDelete]
         [Route("delete-bill")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> DeleteBill(string idCashFlow)
         {
             var user = GetUser();

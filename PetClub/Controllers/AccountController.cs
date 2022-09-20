@@ -1,4 +1,5 @@
-﻿using Datletica.Api.Controllers;
+﻿using AutoMapper.Execution;
+using Datletica.Api.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,7 @@ using PetClub.CrossCutting.Identity.Models;
 using PetClub.CrossCutting.Identity.ViewModel;
 using PetClub.Domain.Entities;
 using PetClub.Utils;
+using System.Reflection.Emit;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -91,7 +93,16 @@ namespace PetClub.Controllers
                 userById.IsAdmin = false;
                 userById.IsPartner = false;
                 userById.IsActive = true;
+                userById.AddressName = user.AddressName;
+                userById.Number = user.Number;
+                userById.Complement = user.Complement;
+                userById.Neighborhood = user.Neighborhood;
+                userById.City = user.City;
+                userById.State = user.State;
+                userById.ZipCode = user.ZipCode;
+                userById.Image = "";
                 userData = userById;
+
                 result = await _userManager.UpdateAsync(userById);
 
                 var token = await _userManager.GeneratePasswordResetTokenAsync(userById);
@@ -112,14 +123,14 @@ namespace PetClub.Controllers
 
                 var identityClaims = new ClaimsIdentity();
                 identityClaims.AddClaims(await AddClaimLogin(userData));
-                try
-                {
-                    await _emailSender.SendEmailAsync(user.Email, "Boas vindas da Datlética!", Emails.PreRegisterUser(user.FullName));
-                }
-                catch (Exception)
-                {
-                    ErrorNotifier("ErrorSendEmail", "Sua conta foi cadastrada com sucesso! Porém não foi possível concluir o envio email para '" + user.Email + "'");
-                }
+                //try
+                //{
+                //    await _emailSender.SendEmailAsync(user.Email, "Boas vindas da Datlética!", Emails.PreRegisterUser(user.FullName));
+                //}
+                //catch (Exception)
+                //{
+                //    ErrorNotifier("ErrorSendEmail", "Sua conta foi cadastrada com sucesso! Porém não foi possível concluir o envio email para '" + user.Email + "'");
+                //}
 
                 return CustomResponse(_tokenService.GenerateToken(identityClaims, userData, refresh, false, false));
             }
@@ -128,15 +139,17 @@ namespace PetClub.Controllers
         }
 
 
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.ADMIN_SYSTEM)]
         [Route("register-user-admin")]
         [HttpPost]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.ADMIN_SYSTEM)]
+        [AllowAnonymous]
+
         public async Task<ActionResult> RegisterUserAdmin([FromBody] UserViewModel user)
         {
             var userLogin = GetUser();
             if (!ModelState.IsValid) return CustomResponse(ModelState);
             user.Cpf = OnlyNumber(user.Cpf);
-            var userData = await ValidRegisterUser(user, false, true);
+            var userData = await ValidRegisterUser(user, true, false);
             if (userData == null) return CustomResponse();
             var result = await _userManager.CreateAsync(userData, userData.UserName);
 
@@ -180,6 +193,14 @@ namespace PetClub.Controllers
                 userById.IsAdmin = false;
                 userById.IsPartner = true;
                 userById.IsActive = true;
+                userById.AddressName = user.AddressName;
+                userById.Number = user.Number;
+                userById.Complement = user.Complement;
+                userById.Neighborhood = user.Neighborhood;
+                userById.City = user.City;
+                userById.State = user.State;
+                userById.ZipCode = user.ZipCode;
+                userById.Image = "";
                 userData = userById;
                 result = await _userManager.UpdateAsync(userById);
                 var claims = await _userManager.GetClaimsAsync(userData);
@@ -402,7 +423,16 @@ namespace PetClub.Controllers
                     PhoneNumber = user.PhoneNumber,
                     IsAdmin = isAdmin,
                     IsPartner = isPartner,
-                    IsActive = false
+                    IsActive = false,
+                    AddressName = user.AddressName,
+                    Number = user.Number,
+                    Complement = user.Complement,
+                    Neighborhood = user.Neighborhood,
+                    City = user.City,
+                    State = user.State,
+                    ZipCode = user.ZipCode,
+                    Image = ""
+
                 };
 
                 return userInactive;
@@ -418,10 +448,62 @@ namespace PetClub.Controllers
                 PhoneNumber = user.PhoneNumber,
                 IsAdmin = isAdmin,
                 IsPartner = isPartner,
-                IsActive = true
+                IsActive = true,
+                AddressName = user.AddressName,
+                Number = user.Number,
+                Complement = user.Complement,
+                Neighborhood = user.Neighborhood,
+                City = user.City,
+                State = user.State,
+                ZipCode = user.ZipCode,
+                Image = ""
             };
 
             return userData;
+        }
+
+        [HttpPut]
+        [Route("update-user-admin")]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.ADMIN_SYSTEM)]
+        [AllowAnonymous]
+        public async Task<IActionResult> UpdateAdmin(UserAdminUpdateViewModel model)
+        {
+            try
+            {
+                var getUser = await _appServiceUser.GetByIdAsync(model.Id);
+                var userData = await _userManager.FindByNameAsync(getUser.Cpf);
+
+                var userById = await _userManager.FindByIdAsync(userData.Id);
+                userById.IsAdmin = model.IsAdmin;
+                userById.IsPartner = model.IsPartner;
+                userData = userById;
+                var result = await _userManager.UpdateAsync(userById);
+
+                var claims = await _userManager.GetClaimsAsync(userData);
+                await _userManager.RemoveClaimAsync(userData, claims.FirstOrDefault());
+                if (result.Succeeded)
+                {
+                    if (model.IsAdmin)
+                    {
+                        await _userManager.AddClaimAsync(userData, new Claim(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PROFILE_ADMIN));
+                    }
+                    else if (model.IsPartner)
+                    {
+                        await _userManager.AddClaimAsync(userData, new Claim(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PROFILE_PARTNER));
+                    }
+                    else
+                    {
+                        await _userManager.AddClaimAsync(userData, new Claim(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PROFILE_USER));
+                    }
+                }
+                
+
+                return CustomResponse(userData);
+            }
+            catch (Exception)
+            {
+                return CustomResponse();
+            }
         }
 
         private async Task<IList<Claim>> AddClaimLogin(ApplicationUser user)

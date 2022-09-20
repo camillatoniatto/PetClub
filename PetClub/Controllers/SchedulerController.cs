@@ -32,7 +32,8 @@ namespace PetClub.Controllers
 
         [HttpPost]
         [Route("create-scheduler")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> CreateScheduler(CreateSchedulerViewModel model)
         {
             var user = GetUser();
@@ -50,7 +51,8 @@ namespace PetClub.Controllers
 
         [HttpGet]
         [Route("get-scheduler-partner")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> GetSchedulersByPartner()
         {
             var user = GetUser();
@@ -67,7 +69,8 @@ namespace PetClub.Controllers
 
         [HttpGet]
         [Route("get-scheduler-pet")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
         public async Task<IActionResult> GetSchedulersByPet(string idPet)
         {
             try
@@ -83,7 +86,8 @@ namespace PetClub.Controllers
 
         [HttpGet]
         [Route("get-scheduler-byid")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
         public async Task<IActionResult> GetSchedulersById(string idScheduler)
         {
             try
@@ -99,7 +103,8 @@ namespace PetClub.Controllers
 
         [HttpPut]
         [Route("update-scheduler")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> UpdateScheduler(UpdateSchedulerViewModel model)
         {
             try
@@ -115,7 +120,8 @@ namespace PetClub.Controllers
 
         [HttpDelete]
         [Route("delete-scheduler")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> DeleteScheduler(string idScheduler)
         {
             try

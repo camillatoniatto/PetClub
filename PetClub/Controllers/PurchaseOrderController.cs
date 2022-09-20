@@ -1,4 +1,5 @@
 ﻿using Datletica.Api.Controllers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PetClub.AppService.AppServices.NotifierAppService;
 using PetClub.AppService.AppServices.PaymentMethodAppService;
@@ -31,7 +32,8 @@ namespace PetClub.Controllers
 
         [HttpPost]
         [Route("create-order")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> CreatePurchaseOrder(CreatePurchaseOrderViewModel model)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
@@ -49,7 +51,8 @@ namespace PetClub.Controllers
 
         [HttpGet]
         [Route("get-order-byid")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> GetPurchaseOrderById(string idPurchaseOrder)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
@@ -67,7 +70,8 @@ namespace PetClub.Controllers
 
         [HttpGet]
         [Route("get-list-order-user")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
         public async Task<IActionResult> GetPurchaseOrdersUser(bool isApp)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
@@ -85,7 +89,8 @@ namespace PetClub.Controllers
 
         [HttpPut]
         [Route("update-order")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> UpdadePurchaseOrder(UpdatePurchaseOrderViewModel model)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
@@ -103,7 +108,8 @@ namespace PetClub.Controllers
 
         [HttpPut]
         [Route("finish-order")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> ConcluedPurchaseOrder(string idPurchaseOrder, bool isPaid)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
@@ -121,7 +127,8 @@ namespace PetClub.Controllers
 
         [HttpDelete]
         [Route("delete-order")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> DeletePurchaseOrder(string idPurchaseOrder)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);

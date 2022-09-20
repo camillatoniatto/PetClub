@@ -33,7 +33,8 @@ namespace PetClub.Controllers
 
         [HttpPost]
         [Route("get-user-cpf")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> CreateUsersPartners(string cpf, bool save)
         {
             try
@@ -54,7 +55,8 @@ namespace PetClub.Controllers
 
         [HttpGet]
         [Route("get-users-partner")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> GetUsersPartners()
         {
             var user = GetUser();
@@ -71,7 +73,8 @@ namespace PetClub.Controllers
 
         [HttpGet]
         [Route("get-users-partner-details")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> GetByIdUsersPartners(string idUsersPartners)
         {
             try

@@ -35,7 +35,8 @@ namespace PetClub.Controllers
 
         [HttpPost]
         [Route("create-pet")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
+        [AllowAnonymous]
         public async Task<IActionResult> CreatePet(CreatePetViewModel model)
         {
             var user = GetUser();
@@ -53,7 +54,8 @@ namespace PetClub.Controllers
 
         [HttpGet]
         [Route("get-pet-by-id")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
+        [AllowAnonymous]
+        // [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
         public async Task<IActionResult> GetPetById(string idPet)
         {
             var user = GetUser();
@@ -71,7 +73,8 @@ namespace PetClub.Controllers
 
         [HttpGet]
         [Route("get-pet-by-idUser")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
         public async Task<IActionResult> GetPetsUser()
         {
             var user = GetUser();
@@ -89,7 +92,8 @@ namespace PetClub.Controllers
 
         [HttpGet]
         [Route("get-all-pets")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
         public async Task<IActionResult> GetAllPets()
         {
             var user = GetUser();
@@ -107,7 +111,8 @@ namespace PetClub.Controllers
 
         [HttpPut]
         [Route("update-pet")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
         public async Task<IActionResult> UpdatePet(UpdatePetViewModel model)
         {
             var user = GetUser();
@@ -125,7 +130,8 @@ namespace PetClub.Controllers
 
         [HttpDelete]
         [Route("delete-pet")]
-        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
         public async Task<IActionResult> DeletePet(string idPet)
         {
             var user = GetUser();
