@@ -60,7 +60,7 @@ namespace PetClub.Controllers
         [HttpPost]
         [Route("register")]
         [AllowAnonymous]
-        public async Task<ActionResult> Register(UserViewModel user)
+        public async Task<ActionResult> Register(UserViewModel user, bool isPartner, bool isAdmin)
         {
             user.Cpf = OnlyNumber(user.Cpf);
             var request = await _appServiceUser.GetByCpf(user.Cpf);
@@ -90,8 +90,8 @@ namespace PetClub.Controllers
                 userById.Cpf = user.Cpf;
                 userById.FullName = user.FullName;
                 userById.PhoneNumber = user.PhoneNumber;
-                userById.IsAdmin = false;
-                userById.IsPartner = false;
+                userById.IsAdmin = isAdmin;
+                userById.IsPartner = isPartner;
                 userById.IsActive = true;
                 userById.AddressName = user.AddressName;
                 userById.Number = user.Number;
@@ -115,7 +115,18 @@ namespace PetClub.Controllers
 
             if (result.Succeeded)
             {
-                await _userManager.AddClaimAsync(userData, new Claim(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PROFILE_USER));
+                if (isAdmin)
+                {
+                    await _userManager.AddClaimAsync(userData, new Claim(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PROFILE_ADMIN));
+                }
+                else if (isPartner)
+                {
+                    await _userManager.AddClaimAsync(userData, new Claim(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PROFILE_USER));
+                }
+                else
+                {
+                    await _userManager.AddClaimAsync(userData, new Claim(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PROFILE_USER));
+                }
                 await _signInManager.SignInAsync(userData, false);
 
                 var refresh = Guid.NewGuid().ToString();
@@ -123,109 +134,10 @@ namespace PetClub.Controllers
 
                 var identityClaims = new ClaimsIdentity();
                 identityClaims.AddClaims(await AddClaimLogin(userData));
-                //try
-                //{
-                //    await _emailSender.SendEmailAsync(user.Email, "Boas vindas da Datlética!", Emails.PreRegisterUser(user.FullName));
-                //}
-                //catch (Exception)
-                //{
-                //    ErrorNotifier("ErrorSendEmail", "Sua conta foi cadastrada com sucesso! Porém não foi possível concluir o envio email para '" + user.Email + "'");
-                //}
 
                 return CustomResponse(_tokenService.GenerateToken(identityClaims, userData, refresh, false, false));
             }
 
-            return CustomResponse(ModelState);
-        }
-
-
-        [Route("register-user-admin")]
-        [HttpPost]
-        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.ADMIN_SYSTEM)]
-        [AllowAnonymous]
-
-        public async Task<ActionResult> RegisterUserAdmin([FromBody] UserViewModel user)
-        {
-            var userLogin = GetUser();
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
-            user.Cpf = OnlyNumber(user.Cpf);
-            var userData = await ValidRegisterUser(user, true, false);
-            if (userData == null) return CustomResponse();
-            var result = await _userManager.CreateAsync(userData, userData.UserName);
-
-            if (result.Succeeded)
-            {
-                await _userManager.AddClaimAsync(userData, new Claim(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PROFILE_ADMIN));
-                await _emailSender.SendEmailAsync(user.Email, "Diretoria Datlética", Emails.RegisterAdmin("https://painel.datletica.com.br/", userData.FullName, userData.Cpf));
-                return CustomResponse();
-            }
-
-            foreach (var error in result.Errors)
-            {
-                ErrorNotifier("Cpf", error.Description);
-            }
-            return CustomResponse(ModelState);
-        }
-
-        [HttpPost]
-        [Route("register-user-partner")]
-        [AllowAnonymous]
-        public async Task<ActionResult> RegisterUserAssociate([FromBody] UserViewModel user)
-        {
-            var userLogin = GetUser();
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
-            user.Cpf = OnlyNumber(user.Cpf);
-            user.Password = user.Cpf;
-            var userData = await ValidRegisterUser(user, false, true);
-            if (userData == null) return CustomResponse();
-            IdentityResult result;
-            if (userData.IsActive)
-                result = await _userManager.CreateAsync(userData, user.Password);
-            else
-            {
-                var userById = await _userManager.FindByIdAsync(userData.Id);
-                userById.UserName = user.Cpf;
-                userById.Email = user.Email;
-                userById.Birthdate = user.Birthdate;
-                userById.Cpf = user.Cpf;
-                userById.FullName = user.FullName;
-                userById.PhoneNumber = user.PhoneNumber;
-                userById.IsAdmin = false;
-                userById.IsPartner = true;
-                userById.IsActive = true;
-                userById.AddressName = user.AddressName;
-                userById.Number = user.Number;
-                userById.Complement = user.Complement;
-                userById.Neighborhood = user.Neighborhood;
-                userById.City = user.City;
-                userById.State = user.State;
-                userById.ZipCode = user.ZipCode;
-                userById.Image = "";
-                userData = userById;
-                result = await _userManager.UpdateAsync(userById);
-                var claims = await _userManager.GetClaimsAsync(userData);
-                await _userManager.RemoveClaimAsync(userData, claims.FirstOrDefault());
-                // return await UserController.UpdateAssociate(new UserAssociatedUpdateViewModel(userData.Id, user.FullName, user.Cpf, user.Email, user.PhoneNumber, null, user.RegisterAcademic, user.AccessToAll, user.AccessToFinancial, user.AccessToProducts, user.AccessToEvents, user.AccessToCommunity, user.IsAssociate, user.IsAthlete, user.IsFan, user.IsDirector, true));
-            }
-
-            if (result.Succeeded)
-            {
-                await _userManager.AddClaimAsync(userData, new Claim(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PROFILE_PARTNER));
-                try
-                {
-                    await _emailSender.SendEmailAsync(user.Email, "Boas vindas da Datlética!", Emails.PreRegisterUser(user.FullName));
-                }
-                catch (Exception)
-                {
-                    ErrorNotifier("ErrorSendEmail", "Usuário cadastrado com sucesso! Porém não foi possível concluir o envio email para '" + user.Email + "'");
-                }
-                return CustomResponse();
-            }
-
-            foreach (var error in result.Errors)
-            {
-                ErrorNotifier("Cpf", error.Description);
-            }
             return CustomResponse(ModelState);
         }
 
