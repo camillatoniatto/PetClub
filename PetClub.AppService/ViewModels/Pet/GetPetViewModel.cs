@@ -9,10 +9,11 @@ namespace PetClub.AppService.ViewModels.Pet
 {
     public class GetPetViewModel
     {
-        public GetPetViewModel(string idPet, string idUser, string name, string genre, string specie, string brand, string birthdate, bool isAlive, string writeDate)
+        public GetPetViewModel(string idPet, string idUser, string tutor, string name, string genre, string specie, string brand, string birthdate, bool isAlive, string writeDate)
         {
             IdPet = idPet;
             IdUser = idUser;
+            Tutor = tutor;
             Name = name;
             Genre = genre;
             Specie = specie;
@@ -24,6 +25,7 @@ namespace PetClub.AppService.ViewModels.Pet
 
         public string IdPet { get; set; }
         public string IdUser { get; set; }
+        public string Tutor { get; set; }
         public string Name { get; set; }
         public string Genre { get; set; }
         public string Specie { get; set; }

@@ -39,7 +39,8 @@ namespace PetClub.AppService.AppServices.ServiceAppService
                 _notifier.Handle(new NotificationMessage("service", "Já existe um serviço cadastrado com esse título."));
                 throw new Exception();
             }
-            var idService = await _unitOfWork.IRepositoryService.AddReturnIdAsync(new Service(idUser, model.Title, model.Description, model.ServiceType, model.SingleUse, model.DateDuration, model.Value, DateTime.MinValue));
+            var serviceType = IntToEnumServiceType(model.ServiceType);
+            var idService = await _unitOfWork.IRepositoryService.AddReturnIdAsync(new Service(idUser, model.Title, model.Description, serviceType, model.SingleUse, model.DateDuration, model.Value, DateTime.MinValue));
             await _unitOfWork.CommitAsync();
             return idService;
         }
@@ -54,6 +55,30 @@ namespace PetClub.AppService.AppServices.ServiceAppService
             return new GetServiceViewModel(service.Id, service.IdPartner, service.Title, service.Description, serviceType, service.SingleUser, service.DateDuration.ToString("d", culture), service.Value.ToString("F2"), service.WriteDate.ToString("d", culture));
         }
 
+        public async Task<List<GetServiceViewModel>> GetServices(bool log)
+        {
+            CultureInfo culture = new CultureInfo("pt-BR");
+            var list = new List<GetServiceViewModel>();
+            Func<IQueryable<Pet>, IIncludableQueryable<Pet, object>> include = t => t.Include(a => a.User);
+            IList<Service> services = new List<Service>();
+            if (log)
+            {
+                services = await _unitOfWork.IRepositoryService.GetByOrderAsync(x => x.RecordSituation == RecordSituation.INACTIVE, x => x.Title, false);
+
+            }
+            else
+            {
+                services = await _unitOfWork.IRepositoryService.GetByOrderAsync(x => x.RecordSituation == RecordSituation.ACTIVE, x => x.Title, false);
+            }
+            foreach (var service in services)
+            {
+                var serviceType = GetServiceType(service.ServiceType);
+                var item = new GetServiceViewModel(service.Id, service.IdPartner, service.Title, service.Description, serviceType, service.SingleUser, service.DateDuration.ToString("d", culture), service.Value.ToString("F2"), service.WriteDate.ToString("d", culture));
+
+                list.Add(item);
+            }
+            return list;
+        }
         public async Task<List<GetServiceViewModel>> GetServiceUser(string idUser)
         {
             CultureInfo culture = new CultureInfo("pt-BR");
@@ -140,6 +165,30 @@ namespace PetClub.AppService.AppServices.ServiceAppService
                     result = "Outros";
                     break;
                 default:
+                    break;
+            }
+            return result;
+        }
+
+        public ServiceType IntToEnumServiceType(int value)
+        {
+            var result = ServiceType.HOST;
+            switch (value)
+            {
+                case 0:
+                    result = ServiceType.HOST;
+                    break;
+                case 1:
+                    result = ServiceType.WALK_DOG;
+                    break;
+                case 2:
+                    result = ServiceType.VET_SERVICE;
+                    break;
+                case 3:
+                    result = ServiceType.PET_GROOMING;
+                    break;
+                case 4:
+                    result = ServiceType.OTHER;
                     break;
             }
             return result;

@@ -72,10 +72,48 @@ namespace PetClub.Controllers
         }
 
         [HttpGet]
+        [Route("get-services")]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
+        public async Task<IActionResult> GetServices()
+        {
+            var user = GetUser();
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+            try
+            {
+                var response = await _appServiceService.GetServices(true);
+                return CustomResponse(response);
+            }
+            catch
+            {
+                return CustomResponse();
+            }
+        }
+
+        [HttpGet]
+        [Route("get-log-services")]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
+        public async Task<IActionResult> GetLogServices()
+        {
+            var user = GetUser();
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+            try
+            {
+                var response = await _appServiceService.GetServices(false);
+                return CustomResponse(response);
+            }
+            catch
+            {
+                return CustomResponse();
+            }
+        }
+
+        [HttpGet]
         [Route("get-service-by-idUser")]
         [AllowAnonymous]
         //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
-        public async Task<IActionResult> GetPetsUser()
+        public async Task<IActionResult> GetServiceUser()
         {
             var user = GetUser();
             if (!ModelState.IsValid) return CustomResponse(ModelState);

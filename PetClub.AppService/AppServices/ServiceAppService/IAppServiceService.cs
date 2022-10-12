@@ -12,6 +12,7 @@ namespace PetClub.AppService.AppServices.ServiceAppService
         Task<string> CreateService(CreateServiceViewModel model, string idUser);
         Task DeleteService(string idService);
         Task<GetServiceViewModel> GetServiceById(string idService);
+        Task<List<GetServiceViewModel>> GetServices(bool log);
         Task<List<GetServiceViewModel>> GetServiceUser(string idUser);
         Task UpdateService(UpdateServiceViewModel model);
     }

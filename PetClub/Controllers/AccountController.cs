@@ -148,7 +148,7 @@ namespace PetClub.Controllers
         {
             //if (!ModelState.IsValid) return CustomResponse(ModelState);
             var userData = await _userManager.FindByNameAsync(loginViewModel.UserName);
-            var user = await _appServiceUser.GetByCpf(loginViewModel.UserName);
+            var user = await _userManager.FindByNameAsync(loginViewModel.UserName);
             if (user == null || !user.IsActive)
             {
                 ErrorNotifier("username", "Usuário não encontrado");
@@ -158,12 +158,13 @@ namespace PetClub.Controllers
             {
                 if (loginViewModel.GrantType == "password")
                 {
-                    var result = await _signInManager.PasswordSignInAsync(loginViewModel.UserName, loginViewModel.Password, false, false);
+                    var result = await _signInManager.PasswordSignInAsync(loginViewModel.UserName, loginViewModel.Password, true, false);
                     if (result.Succeeded)
                     {
                         var refresh = Guid.NewGuid().ToString();
                         await _appServiceRefreshToken.Create(new RefreshTokenDataViewModel(user.Id, refresh));
                         var identityClaims = new ClaimsIdentity();
+                        identityClaims.AddClaims(await AddClaimLogin(user));
 
                         var resposta = CustomResponse(_tokenService.GenerateToken(identityClaims, userData, refresh, user.IsAdmin, user.IsPartner));
                         return resposta;
