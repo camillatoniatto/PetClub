@@ -33,16 +33,24 @@ namespace PetClub.AppService.AppServices.ServiceAppService
 
         public async Task<string> CreateService(CreateServiceViewModel model, string idUser)
         {
-            var service = await _unitOfWork.IRepositoryService.GetByIdAsync(x => x.Title.Equals(model.Title) && x.IdPartner.Equals(idUser) && x.RecordSituation.Equals(RecordSituation.ACTIVE));
-            if (service != null)
+            try
             {
-                _notifier.Handle(new NotificationMessage("service", "Já existe um serviço cadastrado com esse título."));
-                throw new Exception();
+                var service = await _unitOfWork.IRepositoryService.GetByIdAsync(x => x.Title.Equals(model.Title) && x.IdPartner.Equals(idUser) && x.RecordSituation.Equals(RecordSituation.ACTIVE));
+                if (service != null)
+                {
+                    _notifier.Handle(new NotificationMessage("service", "Já existe um serviço cadastrado com esse título."));
+                    throw new Exception();
+                }
+                var serviceType = IntToEnumServiceType(model.ServiceType);
+                var idService = await _unitOfWork.IRepositoryService.AddReturnIdAsync(new Service(idUser, model.Title, model.Description, serviceType, model.SingleUse, model.DateDuration, model.Value, DateTime.MinValue));
+                await _unitOfWork.CommitAsync();
+                return idService;
             }
-            var serviceType = IntToEnumServiceType(model.ServiceType);
-            var idService = await _unitOfWork.IRepositoryService.AddReturnIdAsync(new Service(idUser, model.Title, model.Description, serviceType, model.SingleUse, model.DateDuration, model.Value, DateTime.MinValue));
-            await _unitOfWork.CommitAsync();
-            return idService;
+            catch (Exception e)
+            {
+                _notifier.Handle(new NotificationMessage("", e.Message));
+                return e.Message;
+            }
         }
 
         public async Task<GetServiceViewModel> GetServiceById(string idService)
@@ -140,6 +148,7 @@ namespace PetClub.AppService.AppServices.ServiceAppService
             }
 
             service.RecordSituation = RecordSituation.INACTIVE;
+            service.WriteDate = DateTime.Now.ToBrasilia();
             await _unitOfWork.IRepositoryService.UpdateAsync(service);
             await _unitOfWork.CommitAsync();
         }

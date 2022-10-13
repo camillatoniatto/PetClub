@@ -11,8 +11,8 @@ namespace PetClub.AppService.AppServices.UserAppService
     public interface IAppServiceUser
     {
         Task AcceptTermsOfUse(string idUser);
-        Task<List<GetUserByIdViewModel>> GetAllUsers(bool isActive, bool isAdmin, bool isPartner);
-        Task<List<GetUserByIdViewModel>> GetAllUsersFilter(bool isActive, bool isAdmin, bool isPartner, string value);
+        Task<List<GetUserByIdViewModel>> GetAllUsers();
+        Task<List<GetUserByIdViewModel>> GetAllUsersFilter(string value);
         Task<UserBasicViewModel> GetByCpf(string Cpf);
         Task<GetUserByIdViewModel> GetByIdAsync(string Id);
         Task<GetUsersAmountViewModel> TotalUsersAmount();

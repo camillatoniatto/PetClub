@@ -16,6 +16,7 @@ using PetClub.CrossCutting.Identity.Interfaces;
 using PetClub.CrossCutting.Identity.Models;
 using PetClub.CrossCutting.Identity.ViewModel;
 using PetClub.Domain.Entities;
+using PetClub.Domain.Extensions;
 using PetClub.Utils;
 using System.Reflection.Emit;
 using System.Security.Claims;
@@ -101,6 +102,7 @@ namespace PetClub.Controllers
                 userById.State = user.State;
                 userById.ZipCode = user.ZipCode;
                 userById.Image = "";
+                userById.WriteDate = DateTime.Now.ToBrasilia();
                 userData = userById;
 
                 result = await _userManager.UpdateAsync(userById);

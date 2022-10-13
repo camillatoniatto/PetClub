@@ -3,6 +3,7 @@ using PetClub.CrossCutting.Identity.Interfaces;
 using PetClub.CrossCutting.Identity.Models;
 using PetClub.CrossCutting.Identity.ViewModel;
 using PetClub.Domain.Entities;
+using PetClub.Domain.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -34,8 +35,9 @@ namespace PetClub.CrossCutting.Identity.Services
                 AccessToken = encodedtoken,
                 RefreshToken = refreshToken,
                 ExpiresIn = TimeSpan.FromDays(7).TotalSeconds,
-                User = new UserTokenViewModel
-                {
+                DateExpire = DateTime.Now.ToBrasilia().AddDays(7),
+                //User = new UserTokenViewModel
+                //{
                     IdUser = user.Id,
                     FullName = user.FullName,
                     Cpf = user.Cpf,
@@ -45,7 +47,7 @@ namespace PetClub.CrossCutting.Identity.Services
                     Image = user.Image,
                     IsAdmin = isAdmin,
                     IsPartner = isPartner
-                }
+                //}
             };
             return response;
         }

@@ -41,12 +41,12 @@ namespace PetClub.Controllers
         [Route("get-all-users")]
         [AllowAnonymous]
         //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.ADMIN_SYSTEM)]
-        public async Task<IActionResult> GetAllUsers(bool isActive, bool isAdmin, bool isPartner)
+        public async Task<IActionResult> GetAllUsers()
         {
             try
             {
                 var user = GetUser();
-                var result = await _appServiceUser.GetAllUsers(isActive, isAdmin, isPartner);
+                var result = await _appServiceUser.GetAllUsers();
                 return CustomResponse(result);
             }
             catch (Exception)
@@ -59,12 +59,12 @@ namespace PetClub.Controllers
         [Route("get-all-users-filter")]
         [AllowAnonymous]
         //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.ADMIN_SYSTEM)]
-        public async Task<IActionResult> GetAllUsersFilter(bool isActive, bool isAdmin, bool isPartner, string value)
+        public async Task<IActionResult> GetAllUsersFilter(string value)
         {
             try
             {
                 var user = GetUser();
-                var result = await _appServiceUser.GetAllUsersFilter(isActive, isAdmin, isPartner, value);
+                var result = await _appServiceUser.GetAllUsersFilter(value);
                 return CustomResponse(result);
             }
             catch (Exception)

@@ -81,7 +81,8 @@ namespace PetClub.Controllers
             if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
-                var response = await _appServiceService.GetServices(true);
+                var log = false;
+                var response = await _appServiceService.GetServices(log);
                 return CustomResponse(response);
             }
             catch
@@ -100,7 +101,8 @@ namespace PetClub.Controllers
             if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
-                var response = await _appServiceService.GetServices(false);
+                var log = true;
+                var response = await _appServiceService.GetServices(log);
                 return CustomResponse(response);
             }
             catch

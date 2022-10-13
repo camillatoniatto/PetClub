@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using PetClub.AppService.ViewModels.Pet;
 using System.Globalization;
 using PetClub.Domain.Extensions;
+using System.Data;
 
 namespace PetClub.AppService.AppServices.PetAppService
 {
@@ -33,19 +34,27 @@ namespace PetClub.AppService.AppServices.PetAppService
 
         public async Task<string> CreatePet(CreatePetViewModel model, string idUser)
         {
-            var pet = await _unitOfWork.IRepositoryPet.GetByIdAsync(x => x.Name.Equals(model.Name) && x.Specie.Equals(model.Specie) && x.Brand.Equals(model.Brand) && x.IdUser.Equals(idUser) && x.Birthdate.Equals(model.Birthdate) && x.IsAlive.Equals(true));
-            if (pet != null)
+            try
             {
-                _notifier.Handle(new NotificationMessage("pet", "Ops, parece que esse animal já foi cadastrado anteriormente."));
-                throw new Exception();
-            }
-            var genre = Genre.MALE;
-            if (model.Genre == 1)
-                genre = Genre.FEMALE;
+                var pet = await _unitOfWork.IRepositoryPet.GetByIdAsync(x => x.Name.Equals(model.Name) && x.Specie.Equals(model.Specie) && x.Brand.Equals(model.Brand) && x.IdUser.Equals(idUser) && x.Birthdate.Equals(model.Birthdate) && x.IsAlive.Equals(true));
+                if (pet != null)
+                {
+                    _notifier.Handle(new NotificationMessage("pet", "Ops, parece que esse animal já foi cadastrado anteriormente."));
+                    throw new Exception();
+                }
+                var genre = Genre.MALE;
+                if (model.Genre == 1)
+                    genre = Genre.FEMALE;
 
-            var idPet = await _unitOfWork.IRepositoryPet.AddReturnIdAsync(new Pet(idUser, model.Name, genre, model.Specie, model.Brand, model.Birthdate, true, DateTime.MinValue));
-            await _unitOfWork.CommitAsync();
-            return idPet;
+                var idPet = await _unitOfWork.IRepositoryPet.AddReturnIdAsync(new Pet(idUser, model.Name, genre, model.Specie, model.Brand, model.Birthdate, true, DateTime.MinValue));
+                await _unitOfWork.CommitAsync();
+                return idPet;
+            }
+            catch (Exception e)
+            {
+                _notifier.Handle(new NotificationMessage("", e.Message));
+                return e.Message;
+            }
         }
 
         public async Task<GetPetViewModel> GetPetById(string idPet)
@@ -98,10 +107,16 @@ namespace PetClub.AppService.AppServices.PetAppService
                 throw new Exception();
             }
 
+            var genre = Genre.MALE;
+            if (model.Genre == 1)
+                genre = Genre.FEMALE;
+
+
             pet.Name = model.Name;
             pet.Specie = model.Specie;
             pet.Brand = model.Brand;
             pet.Birthdate = model.Birthdate;
+            pet.Genre = genre;
             pet.IsAlive = model.IsAlive;
             pet.WriteDate = DateTime.Now.ToBrasilia();
             await _unitOfWork.IRepositoryPet.UpdateAsync(pet);
@@ -128,10 +143,10 @@ namespace PetClub.AppService.AppServices.PetAppService
             switch (genre)
             {
                 case Genre.MALE:
-                    result = "macho";
+                    result = "Macho";
                     break;
                 case Genre.FEMALE:
-                    result = "fêmea";
+                    result = "Fêmea";
                     break;
             }
             return result;

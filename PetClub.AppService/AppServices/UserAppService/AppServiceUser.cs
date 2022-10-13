@@ -67,17 +67,21 @@ namespace PetClub.AppService.AppServices.UserAppService
 
         public async Task<GetUserByIdViewModel> GetByIdAsync(string Id)
         {
+            CultureInfo culture = new CultureInfo("pt-BR");
+
             var user = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(Id));
             var pets = await _appServicePet.GetPetsUser(Id);
-            return new GetUserByIdViewModel(user.Id, user.FullName, user.Cpf, user.Email, user.PhoneNumber, user.Birthdate,
+            var roles = GetRoles(user);
+
+            return new GetUserByIdViewModel(user.Id, user.FullName, user.Cpf, user.Email, user.PhoneNumber, user.Birthdate.ToString("d", culture),
                 user.Image, user.IsAdmin, user.IsPartner, user.AddressName, user.Number, user.Complement, user.Neighborhood,
-                user.City, user.State, user.ZipCode, pets, user.IsActive, user.WriteDate);
+                user.City, user.State, user.ZipCode, pets, user.IsActive, roles, user.WriteDate);
         }
 
-        public async Task<List<GetUserByIdViewModel>> GetAllUsers(bool isActive, bool isAdmin, bool isPartner)
+        public async Task<List<GetUserByIdViewModel>> GetAllUsers()
         {
             var list = new List<GetUserByIdViewModel>();
-            var users = await _unitOfWork.IRepositoryUser.GetByOrderAsync(x => x.IsPartner.Equals(isPartner) && x.IsAdmin.Equals(isAdmin) && x.IsActive.Equals(isActive), x => x.FullName, false);
+            var users = await _unitOfWork.IRepositoryUser.GetByOrderAsync(x => x.Id != null, x => x.FullName, false);
             foreach (var user in users)
             {
                 var data = await GetByIdAsync(user.Id);
@@ -86,9 +90,9 @@ namespace PetClub.AppService.AppServices.UserAppService
             return list;
         }
 
-        public async Task<List<GetUserByIdViewModel>> GetAllUsersFilter(bool isActive, bool isAdmin, bool isPartner, string value)
+        public async Task<List<GetUserByIdViewModel>> GetAllUsersFilter(string value)
         {
-            var list = await GetAllUsers(isActive, isAdmin, isPartner);
+            var list = await GetAllUsers();
 
             var listFiltered = list.Where(x => x.FullName.Contains(value, System.StringComparison.CurrentCultureIgnoreCase)
                                         || x.Email.Contains(value, System.StringComparison.CurrentCultureIgnoreCase)
@@ -195,6 +199,20 @@ namespace PetClub.AppService.AppServices.UserAppService
                     sbReturn.Append(letter);
             }
             return sbReturn.ToString();
+        }
+
+        public string GetRoles(User user)
+        {
+            var listRoles = new List<string>();
+            if (user.IsPartner)
+                listRoles.Add("Parceiro");
+            if (user.IsAdmin)
+                listRoles.Add("Administrador");
+            if(!user.IsPartner && !user.IsAdmin)
+                listRoles.Add("Usuário");
+
+            var result = String.Join(", ", listRoles);
+            return result;
         }
     }
 }
