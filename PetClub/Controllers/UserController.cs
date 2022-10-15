@@ -99,8 +99,7 @@ namespace PetClub.Controllers
         {
             try
             {
-                var user = GetUser();
-                var result = await _appServiceUser.UpdateAsync(updatePerfilUserView, user.Id);
+                var result = await _appServiceUser.UpdateAsync(updatePerfilUserView);
                 return CustomResponse(result);
             }
             catch (Exception)

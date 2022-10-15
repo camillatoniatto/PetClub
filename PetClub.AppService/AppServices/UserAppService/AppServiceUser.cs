@@ -32,37 +32,53 @@ namespace PetClub.AppService.AppServices.UserAppService
             _appServicePet = appServicePet;
         }
 
-        public async Task<UserUpdateViewModel> UpdateAsync(UpdatePerfilUserViewModel updatePerfilUserView, string IdUser)
+        public async Task<UserUpdateViewModel> UpdateAsync(UpdatePerfilUserViewModel updatePerfilUserView)
         {
-            var img = new EventImage();
-            img.Value = updatePerfilUserView.Image;
-
-            string urlImage = "PetClub";
-            var user = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(IdUser));
-
-            //if (!string.IsNullOrEmpty(user.Imagem))
-            //{
-            //    urlImage = await _appServiceAwsS3.UploadImageToS3(img, "User");
-            //    await _appServiceAwsS3.DeleteAsync(user.Imagem);
-            //}
-            var date = DateTime.MinValue;
-
-            user.FullName = updatePerfilUserView.Name != null ? updatePerfilUserView.Name : user.FullName;
-            user.Image = urlImage != null ? urlImage : user.Image;
-            user.Email = updatePerfilUserView.Email != null ? updatePerfilUserView.Email : user.Email;
-            user.Birthdate = updatePerfilUserView.Birthdate != date ? updatePerfilUserView.Birthdate : user.Birthdate;
-            user.PhoneNumber = updatePerfilUserView.PhoneNumber != null ? updatePerfilUserView.PhoneNumber : user.PhoneNumber;
-            var result = await _unitOfWork.IRepositoryUser.UpdateAsync(user);
-            await _unitOfWork.CommitAsync();
-            UserUpdateViewModel upt = new UserUpdateViewModel
+            try
             {
-                Name = result.FullName,
-                Email = result.Email,
-                Birthdate = result.Birthdate,
-                Image = result.Image,
-                PhoneNumber = result.PhoneNumber,
-            };
-            return upt;
+                var img = new EventImage();
+                img.Value = updatePerfilUserView.Image;
+
+                string urlImage = "PetClub";
+                var user = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Username.Equals(updatePerfilUserView.Id));
+
+                //if (!string.IsNullOrEmpty(user.Imagem))
+                //{
+                //    urlImage = await _appServiceAwsS3.UploadImageToS3(img, "User");
+                //    await _appServiceAwsS3.DeleteAsync(user.Imagem);
+                //}
+                var date = DateTime.MinValue;
+
+                user.FullName = updatePerfilUserView.Name != null ? updatePerfilUserView.Name : user.FullName;
+                //user.Image = urlImage != null ? urlImage : user.Image;
+                user.Email = updatePerfilUserView.Email != null ? updatePerfilUserView.Email : user.Email;
+                user.Birthdate = updatePerfilUserView.Birthdate != date ? updatePerfilUserView.Birthdate : user.Birthdate;
+                user.PhoneNumber = updatePerfilUserView.PhoneNumber != null ? updatePerfilUserView.PhoneNumber : user.PhoneNumber;
+                user.AddressName = updatePerfilUserView.AddressName != null ? updatePerfilUserView.AddressName : user.AddressName;
+                user.Number = updatePerfilUserView.Number != null ? updatePerfilUserView.AddressName : user.AddressName;
+                user.Complement = updatePerfilUserView.Complement != null ? updatePerfilUserView.Complement : user.Complement;
+                user.Neighborhood = updatePerfilUserView.Neighborhood != null ? updatePerfilUserView.Neighborhood : user.Neighborhood;
+                user.City = updatePerfilUserView.City != null ? updatePerfilUserView.City : user.City;
+                user.State = updatePerfilUserView.State != null ? updatePerfilUserView.State : user.State;
+                user.ZipCode = updatePerfilUserView.ZipCode != null ? updatePerfilUserView.ZipCode : user.ZipCode;
+                var result = await _unitOfWork.IRepositoryUser.UpdateAsync(user);
+                await _unitOfWork.CommitAsync();
+                UserUpdateViewModel upt = new UserUpdateViewModel
+                {
+                    Name = result.FullName,
+                    Email = result.Email,
+                    Birthdate = result.Birthdate,
+                    Image = result.Image,
+                    PhoneNumber = result.PhoneNumber,
+                };
+                return upt;
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+            
         }
 
         public async Task<GetUserByIdViewModel> GetByIdAsync(string Id)

@@ -61,11 +61,11 @@ namespace PetClub.Controllers
         [HttpPost]
         [Route("register")]
         [AllowAnonymous]
-        public async Task<ActionResult> Register(UserViewModel user, bool isPartner, bool isAdmin)
+        public async Task<ActionResult> Register(UserViewModel user)
         {
             user.Cpf = OnlyNumber(user.Cpf);
             var request = await _appServiceUser.GetByCpf(user.Cpf);
-            var userData = await ValidRegisterUser(user, false, false);
+            var userData = await ValidRegisterUser(user, user.IsAdmin, user.IsPartner);
             if (userData == null) return CustomResponse();
 
             string imageUrl = string.Empty;
@@ -79,6 +79,10 @@ namespace PetClub.Controllers
             IdentityResult result;
             //_userManager.SetUserNameAsync(userData, );
             userData.UserName = user.Cpf;
+            if (string.IsNullOrEmpty(user.Password))
+            {
+                user.Password = userData.UserName;
+            }
 
             if (userData.IsActive)
                 result = await _userManager.CreateAsync(userData, user.Password);
@@ -91,8 +95,8 @@ namespace PetClub.Controllers
                 userById.Cpf = user.Cpf;
                 userById.FullName = user.FullName;
                 userById.PhoneNumber = user.PhoneNumber;
-                userById.IsAdmin = isAdmin;
-                userById.IsPartner = isPartner;
+                userById.IsAdmin = user.IsAdmin;
+                userById.IsPartner = user.IsPartner;
                 userById.IsActive = true;
                 userById.AddressName = user.AddressName;
                 userById.Number = user.Number;
@@ -117,11 +121,11 @@ namespace PetClub.Controllers
 
             if (result.Succeeded)
             {
-                if (isAdmin)
+                if (user.IsAdmin)
                 {
                     await _userManager.AddClaimAsync(userData, new Claim(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PROFILE_ADMIN));
                 }
-                else if (isPartner)
+                else if (user.IsPartner)
                 {
                     await _userManager.AddClaimAsync(userData, new Claim(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PROFILE_USER));
                 }
@@ -137,7 +141,7 @@ namespace PetClub.Controllers
                 var identityClaims = new ClaimsIdentity();
                 identityClaims.AddClaims(await AddClaimLogin(userData));
 
-                return CustomResponse(_tokenService.GenerateToken(identityClaims, userData, refresh, false, false));
+                return CustomResponse(_tokenService.GenerateToken(identityClaims, userData, refresh, user.IsAdmin, user.IsPartner));
             }
 
             return CustomResponse(ModelState);

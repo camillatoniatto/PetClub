@@ -17,6 +17,6 @@ namespace PetClub.AppService.AppServices.UserAppService
         Task<GetUserByIdViewModel> GetByIdAsync(string Id);
         Task<GetUsersAmountViewModel> TotalUsersAmount();
         Task<GetUserByIdViewModel> UpdateAdmin(UserAdminUpdateViewModel user, string idAdmin);
-        Task<UserUpdateViewModel> UpdateAsync(UpdatePerfilUserViewModel updatePerfilUserView, string IdUser);
+        Task<UserUpdateViewModel> UpdateAsync(UpdatePerfilUserViewModel updatePerfilUserView);
     }
 }
