@@ -36,11 +36,11 @@ namespace PetClub.AppService.AppServices.UserAppService
         {
             try
             {
-                var img = new EventImage();
-                img.Value = updatePerfilUserView.Image;
+                //var img = new EventImage();
+                //img.Value = updatePerfilUserView.Image;
 
                 string urlImage = "PetClub";
-                var user = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Username.Equals(updatePerfilUserView.Id));
+                var user = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(updatePerfilUserView.Id));
 
                 //if (!string.IsNullOrEmpty(user.Imagem))
                 //{
@@ -49,13 +49,13 @@ namespace PetClub.AppService.AppServices.UserAppService
                 //}
                 var date = DateTime.MinValue;
 
-                user.FullName = updatePerfilUserView.Name != null ? updatePerfilUserView.Name : user.FullName;
+                user.FullName = updatePerfilUserView.FullName != null ? updatePerfilUserView.FullName : user.FullName;
                 //user.Image = urlImage != null ? urlImage : user.Image;
                 user.Email = updatePerfilUserView.Email != null ? updatePerfilUserView.Email : user.Email;
                 user.Birthdate = updatePerfilUserView.Birthdate != date ? updatePerfilUserView.Birthdate : user.Birthdate;
                 user.PhoneNumber = updatePerfilUserView.PhoneNumber != null ? updatePerfilUserView.PhoneNumber : user.PhoneNumber;
                 user.AddressName = updatePerfilUserView.AddressName != null ? updatePerfilUserView.AddressName : user.AddressName;
-                user.Number = updatePerfilUserView.Number != null ? updatePerfilUserView.AddressName : user.AddressName;
+                user.Number = updatePerfilUserView.Number != null ? updatePerfilUserView.Number : user.Number;
                 user.Complement = updatePerfilUserView.Complement != null ? updatePerfilUserView.Complement : user.Complement;
                 user.Neighborhood = updatePerfilUserView.Neighborhood != null ? updatePerfilUserView.Neighborhood : user.Neighborhood;
                 user.City = updatePerfilUserView.City != null ? updatePerfilUserView.City : user.City;
@@ -157,7 +157,7 @@ namespace PetClub.AppService.AppServices.UserAppService
 
         public async Task<UserBasicViewModel> GetByCpf(string Cpf)
         {
-            var user = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Cpf.Equals(Cpf));
+            var user = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Username.Equals(Cpf));
             if (user != null)
             {
                 return new UserBasicViewModel(user.Id, user.FullName, user.IsAdmin, user.IsPartner, user.AcceptedTermsOfUse, user.IsActive);

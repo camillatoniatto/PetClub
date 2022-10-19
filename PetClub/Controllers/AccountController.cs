@@ -85,7 +85,16 @@ namespace PetClub.Controllers
             }
 
             if (userData.IsActive)
+            {
+                userData.AddressName = userData.AddressName != null ? userData.AddressName : "";
+                userData.Number = userData.Number != null ? userData.Number : "";
+                userData.Complement = userData.Complement != null ? userData.Complement : "";
+                userData.Neighborhood = userData.Neighborhood != null ? userData.Neighborhood : "";
+                userData.City = userData.City != null ? userData.City : "";
+                userData.State = userData.State != null ? userData.State : "";
+                userData.ZipCode = userData.ZipCode != null ? userData.ZipCode : "";
                 result = await _userManager.CreateAsync(userData, user.Password);
+            }
             else
             {
                 var userById = await _userManager.FindByIdAsync(userData.Id);
@@ -98,13 +107,13 @@ namespace PetClub.Controllers
                 userById.IsAdmin = user.IsAdmin;
                 userById.IsPartner = user.IsPartner;
                 userById.IsActive = true;
-                userById.AddressName = user.AddressName;
-                userById.Number = user.Number;
-                userById.Complement = user.Complement;
-                userById.Neighborhood = user.Neighborhood;
-                userById.City = user.City;
-                userById.State = user.State;
-                userById.ZipCode = user.ZipCode;
+                userById.AddressName = user.AddressName != null ? user.AddressName : "";
+                userById.Number = user.Number != null ? user.Number : "";
+                userById.Complement = user.Complement != null ? user.Complement : "";
+                userById.Neighborhood = user.Neighborhood != null ? user.Neighborhood : "";
+                userById.City = user.City != null ? user.City : "";
+                userById.State = user.State != null ? user.State : "";
+                userById.ZipCode = user.ZipCode != null ? user.ZipCode : "";
                 userById.Image = "";
                 userById.WriteDate = DateTime.Now.ToBrasilia();
                 userData = userById;
@@ -423,6 +432,15 @@ namespace PetClub.Controllers
             {
                 return CustomResponse();
             }
+        }
+
+        [HttpPost]
+        [Route("auth")]
+        [AllowAnonymous]
+        public async Task<IActionResult> AuthToken()
+        {
+            var user = GetUser();
+            return CustomResponse(user);
         }
 
         private async Task<IList<Claim>> AddClaimLogin(ApplicationUser user)

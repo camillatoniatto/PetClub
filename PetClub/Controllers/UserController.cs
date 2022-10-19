@@ -95,7 +95,7 @@ namespace PetClub.Controllers
         [Route("update-perfil")]
         [AllowAnonymous]
         //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
-        public async Task<IActionResult> UpdatePeril([FromForm] UpdatePerfilUserViewModel updatePerfilUserView)
+        public async Task<IActionResult> UpdatePerfil(UpdatePerfilUserViewModel updatePerfilUserView)
         {
             try
             {
