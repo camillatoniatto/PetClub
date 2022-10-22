@@ -101,6 +101,23 @@ namespace PetClub.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("check-dates-scheduler")]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
+        public async Task<IActionResult> CheckQuantitySchedylers(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                var check = await _appServiceScheduler.CheckQuantitySchedylers(startDate, endDate);
+                return CustomResponse(check);
+            }
+            catch
+            {
+                return CustomResponse();
+            }
+        }
+
         [HttpPut]
         [Route("update-scheduler")]
         [AllowAnonymous]
@@ -116,7 +133,7 @@ namespace PetClub.Controllers
             {
                 return CustomResponse();
             }
-        }
+        }        
 
         [HttpDelete]
         [Route("delete-scheduler")]

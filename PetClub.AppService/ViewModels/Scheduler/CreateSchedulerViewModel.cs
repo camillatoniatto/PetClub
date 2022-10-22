@@ -13,7 +13,7 @@ namespace PetClub.AppService.ViewModels.Scheduler
         public string IdPet { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime FinalDate { get; set; }
-        public ServiceType ServiceType { get; set; }
+        public int ServiceType { get; set; }
         public SchedulerSituation SchedulerSituation { get; set; }
     }
 }

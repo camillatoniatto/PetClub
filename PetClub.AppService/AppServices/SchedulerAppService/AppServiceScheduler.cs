@@ -49,7 +49,7 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
                     throw new Exception();
                 }
                 await CheckAvailable(model.IdPet, model.StartDate, model.FinalDate);
-
+                var serviceType = GetSchedulerServiceTypeInt(model.ServiceType);
                 var partner = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(model.IdPartner));
                 var pet = await _unitOfWork.IRepositoryPet.GetByIdAsync(x => x.Id.Equals(model.IdPet));
                 if (pet != null)
@@ -58,7 +58,7 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
                     throw new Exception();
                 }
                 var scheduler = await _unitOfWork.IRepositoryScheduler.AddReturnIdAsync(new Scheduler(model.IdPartner, model.IdPet, model.StartDate, model.FinalDate,
-                                                                                            model.ServiceType, model.SchedulerSituation, DateTime.Now.ToBrasilia()));
+                                                                                            serviceType, model.SchedulerSituation, DateTime.Now.ToBrasilia()));
                 await _unitOfWork.CommitAsync();
                 return scheduler;
             }
@@ -79,6 +79,14 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
                 _notifier.Handle(new NotificationMessage("Erro", "Já existe um agendamento em aberto para este animal entre as datas "+ startDate.ToString("d", culture)+ " e "+ endDate.ToString("d", culture)));
                 throw new Exception();
             }
+        }
+
+        public async Task<int> CheckQuantitySchedylers(DateTime startDate, DateTime endDate)
+        {
+            CultureInfo culture = new CultureInfo("pt-BR");
+            var schedulers = await _unitOfWork.IRepositoryScheduler.GetByOrderAsync(x => x.StartDate >= startDate && x.FinalDate <= endDate
+                                        && (x.SchedulerSituation != SchedulerSituation.CANCELED && x.SchedulerSituation != SchedulerSituation.CONCLUDED), x => x.DateCreation, false);
+            return schedulers.Count();
         }
 
         public async Task<List<GetSchedulerViewModel>> GetSchedulersByPartner(string idPartner)
@@ -145,6 +153,7 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
                     throw new Exception();
                 }
                 await CheckAvailable(model.IdPet, model.StartDate, model.FinalDate);
+                var serviceType = GetSchedulerServiceTypeInt(model.ServiceType);
 
                 var partner = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(model.IdPartner));
                 var pet = await _unitOfWork.IRepositoryPet.GetByIdAsync(x => x.Id.Equals(model.IdPet));
@@ -156,7 +165,7 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
                 scheduler.IdPet = model.IdPet;
                 scheduler.StartDate = model.StartDate;
                 scheduler.FinalDate = model.FinalDate;
-                scheduler.ServiceType = model.ServiceType;
+                scheduler.ServiceType = serviceType;
                 scheduler.SchedulerSituation = model.SchedulerSituation;
                 scheduler.WriteDate = DateTime.Now.ToBrasilia();
                 await _unitOfWork.IRepositoryScheduler.UpdateAsync(scheduler);
@@ -176,6 +185,30 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
             scheduler.SchedulerSituation = SchedulerSituation.CANCELED;
             await _unitOfWork.IRepositoryScheduler.UpdateAsync(scheduler);
             await _unitOfWork.CommitAsync();
+        }
+
+        public ServiceType GetSchedulerServiceTypeInt(int serviceType)
+        {
+            var type = ServiceType.HOST;
+            switch (serviceType)
+            {
+                case 0:
+                    type = ServiceType.HOST;
+                    break;
+                case 1:
+                    type = ServiceType.WALK_DOG;
+                    break;
+                case 2:
+                    type = ServiceType.VET_SERVICE;
+                    break;
+                case 3:
+                    type = ServiceType.PET_GROOMING;
+                    break;
+                case 4:
+                    type = ServiceType.OTHER;
+                    break;
+            }
+            return type;
         }
 
         public string GetSchedulerServiceType(ServiceType serviceType)

@@ -40,6 +40,7 @@ namespace PetClub.Controllers
             if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
+                model.IdUserCreate = user.Id;
                 await _appServiceCashFlow.CreateReceivableBill(model, user.Id);
                 return CustomResponse();
             }

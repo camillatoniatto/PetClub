@@ -31,21 +31,41 @@ namespace PetClub.Controllers
             _appServiceUser = appServiceUser;
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("get-user-cpf")]
         [AllowAnonymous]
         //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
-        public async Task<IActionResult> CreateUsersPartners(string cpf, bool save)
+        public async Task<IActionResult> GetUser(string cpf)
+        {
+            try
+            {
+                var partner = GetUser();
+                var userCpf = await _appServiceUser.GetByCpf(cpf);
+                if (userCpf != null)
+                {
+                    var user = await _appServiceUser.GetByIdAsync(userCpf.Id);
+                    return CustomResponse(user);
+                }
+                return CustomResponse(userCpf);
+            }
+            catch
+            {
+                return CustomResponse();
+            }
+        }
+
+        [HttpPost]
+        [Route("create-partner-client")]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
+        public async Task<IActionResult> CreateUsersPartners(string cpf)
         {
             try
             {
                 var partner = GetUser();
                 var user = await _appServiceUser.GetByCpf(cpf);
-                if (save)
-                {
-                    var response = await _appServiceUsersPartners.CreateUsersPartners(user.Id, partner.Id);
-                }
-                return CustomResponse(user);
+                var response = await _appServiceUsersPartners.CreateUsersPartners(user.Id, partner.Id);
+                return CustomResponse(response);
             }
             catch
             {

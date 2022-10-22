@@ -11,6 +11,7 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
     public interface IAppServiceScheduler
     {
         Task CheckAvailable(string idPet, DateTime startDate, DateTime endDate);
+        Task<int> CheckQuantitySchedylers(DateTime startDate, DateTime endDate);
         Task<string> CreateScheduler(CreateSchedulerViewModel model);
         Task DeleteScheduler(string idScheduler);
         Task<GetSchedulerViewModel> GetSchedulersById(string idScheduler);
