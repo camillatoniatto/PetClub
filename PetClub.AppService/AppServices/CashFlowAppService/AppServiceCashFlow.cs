@@ -57,6 +57,8 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
 
                     cashFlow = new CashFlow(model.Title, model.Description, idUser, model.IdPurchaseOrder, model.IdPaymentMethod, model.LaunchValue, 
                                     netValue, dateTypePayment, model.WriteOffDate, userWriteOff, null, model.isOutflow, DateTime.Now.ToBrasilia());
+                    await _unitOfWork.IRepositoryCashFlow.AddAsync(cashFlow);
+
                 }
 
                 await _unitOfWork.CommitAsync();
@@ -79,7 +81,7 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
             foreach (var item in cashflow)
             {
                 var order = await _unitOfWork.IRepositoryPurchaseOrder.GetByIdAsync(x => x.Id.Equals(item.IdPurchaseOrder));
-                var payment = GetPaymentType(item.PaymentMethod.PaymentType);
+                var payment = GetPaymentType(item.PaymentMethod.PaymentType, item.PaymentMethod.NumberInstallments);
 
                 string status = "Pendente";
                 if (!string.IsNullOrEmpty(item.IdPurchaseOrder) && order.PaymentSituation == PaymentSituation.CANCELED)
@@ -146,7 +148,7 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
                         bill.IdUserWriteOff = idUser;
                     }
 
-                    var upd = _unitOfWork.IRepositoryCashFlow.UpdateAsync(bill);
+                    var upd = await _unitOfWork.IRepositoryCashFlow.UpdateAsync(bill);
                     await _unitOfWork.CommitAsync();
                 }
                 else
@@ -220,13 +222,13 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
             }
         }
 
-        public string GetPaymentType(PaymentType paymentType)
+        public string GetPaymentType(PaymentType paymentType, int installment)
         {
             var result = "";
             switch (paymentType)
             {
                 case PaymentType.CREDIT_CARD:
-                    result = "Cartão de crédito";
+                    result = "Cartão de crédito em "+installment+"X";
                     break;
                 case PaymentType.CASH:
                     result = "Dinheiro";

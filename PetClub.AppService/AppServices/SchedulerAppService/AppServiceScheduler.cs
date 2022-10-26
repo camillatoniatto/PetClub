@@ -50,6 +50,8 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
                 }
                 await CheckAvailable(model.IdPet, model.StartDate, model.FinalDate);
                 var serviceType = GetSchedulerServiceTypeInt(model.ServiceType);
+                var schedulerSituation = GetSchedulerSituationTypeInt(model.SchedulerSituation);
+                
                 var partner = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(model.IdPartner));
                 var pet = await _unitOfWork.IRepositoryPet.GetByIdAsync(x => x.Id.Equals(model.IdPet));
                 if (pet != null)
@@ -58,7 +60,7 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
                     throw new Exception();
                 }
                 var scheduler = await _unitOfWork.IRepositoryScheduler.AddReturnIdAsync(new Scheduler(model.IdPartner, model.IdPet, model.StartDate, model.FinalDate,
-                                                                                            serviceType, model.SchedulerSituation, DateTime.Now.ToBrasilia()));
+                                                                                            serviceType, schedulerSituation, DateTime.Now.ToBrasilia()));
                 await _unitOfWork.CommitAsync();
                 return scheduler;
             }
@@ -153,6 +155,7 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
                     throw new Exception();
                 }
                 await CheckAvailable(model.IdPet, model.StartDate, model.FinalDate);
+                var schedulerSituation = GetSchedulerSituationTypeInt(model.SchedulerSituation);
                 var serviceType = GetSchedulerServiceTypeInt(model.ServiceType);
 
                 var partner = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(model.IdPartner));
@@ -166,7 +169,7 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
                 scheduler.StartDate = model.StartDate;
                 scheduler.FinalDate = model.FinalDate;
                 scheduler.ServiceType = serviceType;
-                scheduler.SchedulerSituation = model.SchedulerSituation;
+                scheduler.SchedulerSituation = schedulerSituation;
                 scheduler.WriteDate = DateTime.Now.ToBrasilia();
                 await _unitOfWork.IRepositoryScheduler.UpdateAsync(scheduler);
                 await _unitOfWork.CommitAsync();
@@ -206,6 +209,27 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
                     break;
                 case 4:
                     type = ServiceType.OTHER;
+                    break;
+            }
+            return type;
+        }
+
+        public SchedulerSituation GetSchedulerSituationTypeInt(int shedulerSituation)
+        {
+            var type = SchedulerSituation.SCHEDULED;
+            switch (shedulerSituation)
+            {
+                case 0:
+                    type = SchedulerSituation.SCHEDULED;
+                    break;
+                case 1:
+                    type = SchedulerSituation.CONCLUDED;
+                    break;
+                case 2:
+                    type = SchedulerSituation.CANCELED;
+                    break;
+                case 3:
+                    type = SchedulerSituation.IN_SERVICE;
                     break;
             }
             return type;

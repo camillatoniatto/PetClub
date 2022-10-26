@@ -14,6 +14,6 @@ namespace PetClub.AppService.ViewModels.Scheduler
         public DateTime StartDate { get; set; }
         public DateTime FinalDate { get; set; }
         public int ServiceType { get; set; }
-        public SchedulerSituation SchedulerSituation { get; set; }
+        public int SchedulerSituation { get; set; }
     }
 }
