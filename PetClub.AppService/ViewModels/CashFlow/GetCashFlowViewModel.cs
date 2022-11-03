@@ -10,8 +10,9 @@ namespace PetClub.AppService.ViewModels.CashFlow
 {
     public class GetCashFlowViewModel
     {
-        public GetCashFlowViewModel(string status, string title, string description, string idUserCreate, string userCreateName, string? idPurchaseOrder, string? idPaymentMethod, string? paymentMethod, decimal launchValue, decimal netValue, string expirationDate, string writeOffDate, string idUserWriteOff, string userWriteOffName, string idUserInactivate, string userInactivateName, bool isOutflow, DateTime writeDate)
+        public GetCashFlowViewModel(string id, string status, string title, string description, string idUserCreate, string userCreateName, string? idPurchaseOrder, string? idPaymentMethod, string? paymentMethod, decimal launchValue, decimal netValue, string expirationDate, string writeOffDate, string idUserWriteOff, string userWriteOffName, string idUserInactivate, string userInactivateName, bool isOutflow, DateTime writeDate)
         {
+            Id = id;
             Status = status;
             Title = title;
             Description = description;
@@ -32,6 +33,7 @@ namespace PetClub.AppService.ViewModels.CashFlow
             WriteDate = writeDate;
         }
 
+        public string Id { get; set; }
         public string Status { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }

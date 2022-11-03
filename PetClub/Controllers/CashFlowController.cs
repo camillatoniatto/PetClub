@@ -37,7 +37,6 @@ namespace PetClub.Controllers
         public async Task<IActionResult> CreateReceivableBill(CreateCashFlowViewModel model)
         {
             var user = GetUser();
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 model.IdUserCreate = user.Id;
@@ -57,11 +56,10 @@ namespace PetClub.Controllers
         public async Task<IActionResult> GetCashFlow()
         {
             var user = GetUser();
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
-                await _appServiceCashFlow.GetCashFlow(user.Id);
-                return CustomResponse();
+                var cashflow = await _appServiceCashFlow.GetCashFlow(user.Id);
+                return CustomResponse(cashflow);
             }
             catch
             {
@@ -76,7 +74,6 @@ namespace PetClub.Controllers
         public async Task<IActionResult> WriteOff(string idCashFlow)
         {
             var user = GetUser();
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 await _appServiceCashFlow.WriteOff(idCashFlow, user.Id);
@@ -95,7 +92,6 @@ namespace PetClub.Controllers
         public async Task<IActionResult> UpdateAsync(UpdateCashFlowViewModel model)
         {
             var user = GetUser();
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 await _appServiceCashFlow.UpdateAsync(model, user.Id);
@@ -114,7 +110,6 @@ namespace PetClub.Controllers
         public async Task<IActionResult> DeleteBill(string idCashFlow)
         {
             var user = GetUser();
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 await _appServiceCashFlow.DeleteBill(idCashFlow, user.Id);

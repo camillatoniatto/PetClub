@@ -75,13 +75,13 @@ namespace PetClub.Controllers
         [Route("get-pet-by-idUser")]
         [AllowAnonymous]
         //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
-        public async Task<IActionResult> GetPetsUser()
+        public async Task<IActionResult> GetPetsUser(string idUser)
         {
             var user = GetUser();
             if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
-                var response = await _appServicePet.GetPetsUser(user.Id);
+                var response = await _appServicePet.GetPetsUser(idUser);
                 return CustomResponse(response);
             }
             catch

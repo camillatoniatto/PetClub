@@ -39,6 +39,11 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
                 if (payment != null)
                 {
                     netValue = model.LaunchValue - (model.LaunchValue * payment.AdminTax / 100);
+
+                    if (!string.IsNullOrEmpty(model.IdPurchaseOrder))
+                    {
+                        netValue = model.LaunchValue;
+                    }
                 }
 
                 CashFlow cashFlow;
@@ -51,12 +56,12 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
                         dateTypePayment = DateTime.Now.ToBrasilia().AddDays(30 * i);
                     }
 
-                    string userWriteOff = null;
+                    string userWriteOff = "";
                     if (model.WriteOffDate != DateTime.MinValue)
                         userWriteOff = idUser;
 
                     cashFlow = new CashFlow(model.Title, model.Description, idUser, model.IdPurchaseOrder, model.IdPaymentMethod, model.LaunchValue, 
-                                    netValue, dateTypePayment, model.WriteOffDate, userWriteOff, null, model.isOutflow, DateTime.Now.ToBrasilia());
+                                    netValue, dateTypePayment, model.WriteOffDate, userWriteOff, "", model.isOutflow, DateTime.Now.ToBrasilia());
                     await _unitOfWork.IRepositoryCashFlow.AddAsync(cashFlow);
 
                 }
@@ -108,7 +113,7 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
 
                 var userCreate = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(item.IdUserCreate));
 
-                list.Add(new GetCashFlowViewModel(status, item.Title, item.Description, item.IdUserCreate, userCreate.FullName, item.IdPurchaseOrder, item.IdPaymentMethod, payment, item.LaunchValue,
+                list.Add(new GetCashFlowViewModel(item.Id, status, item.Title, item.Description, item.IdUserCreate, userCreate.FullName, item.IdPurchaseOrder, item.IdPaymentMethod, payment, item.LaunchValue,
                                                   item.NetValue, item.ExpirationDate.ToString("d", culture), item.WriteOffDate != DateTime.MinValue ? item.WriteOffDate.ToString("d", culture) : null, 
                                                   item.IdUserWriteOff, userCreate.FullName, item.IdUserInactivate, null, item.isOutflow, item.WriteDate));
             }
