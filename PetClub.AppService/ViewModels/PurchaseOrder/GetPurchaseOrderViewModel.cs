@@ -10,7 +10,7 @@ namespace PetClub.AppService.ViewModels.PurchaseOrder
 {
     public class GetPurchaseOrderViewModel
     {
-        public GetPurchaseOrderViewModel(string idPurchaseOrder, string idPartner, string partnerName, string idPet, string petName, string idPaymentMethod, string paymentType, string idUser, string fullName, string cpf, string email, string purchaseOrderSituation, string paymentSituation, string observations, List<GetOrderItensViewModel> purchaseOrderItem, string writeDate, string createDate)
+        public GetPurchaseOrderViewModel(string idPurchaseOrder, string idPartner, string partnerName, string idPet, string petName, string idPaymentMethod, string paymentType, string idUser, string fullName, string cpf, string email, string purchaseOrderSituation, string paymentSituation, string observations, string totalValue, string writeDate, string createDate, List<GetOrderItensViewModel> purchaseOrderItem)
         {
             IdPurchaseOrder = idPurchaseOrder;
             IdPartner = idPartner;
@@ -26,9 +26,10 @@ namespace PetClub.AppService.ViewModels.PurchaseOrder
             PurchaseOrderSituation = purchaseOrderSituation;
             PaymentSituation = paymentSituation;
             Observations = observations;
-            PurchaseOrderItem = purchaseOrderItem;
+            TotalValue = totalValue;
             WriteDate = writeDate;
             CreateDate = createDate;
+            PurchaseOrderItem = purchaseOrderItem;
         }
 
         public string IdPurchaseOrder { get; set; }
@@ -45,8 +46,10 @@ namespace PetClub.AppService.ViewModels.PurchaseOrder
         public string PurchaseOrderSituation { get; set; }
         public string PaymentSituation { get; set; }
         public string Observations { get; set; }
-        public List<GetOrderItensViewModel> PurchaseOrderItem { get; set; }
+        public string TotalValue { get; set; }
         public string WriteDate { get; set; }
         public string CreateDate { get; set; }
+        public List<GetOrderItensViewModel> PurchaseOrderItem { get; set; }
+
     }
 }

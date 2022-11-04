@@ -51,9 +51,20 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
             _appServiceCashFlow = appServiceCashFlow;
         }
 
-        public async Task<string> CreatePurchaseOrder(CreatePurchaseOrderViewModel model, string idPARTNER)
+        public async Task<string> CreatePurchaseOrder(CreatePurchaseOrderViewModel model, string idPartner)
         {
-            var idOrder = await _unitOfWork.IRepositoryPurchaseOrder.AddReturnIdAsync(new PurchaseOrder(idPARTNER, model.IdUser, model.IdPet, model.IdPaymentMethod, model.FullName, model.Cpf, model.Email, PurchaseOrderSituation.PENDING, PaymentSituation.PENDING, model.Observations, DateTime.Now.ToBrasilia()));
+            var idOrder = await _unitOfWork.IRepositoryPurchaseOrder.AddReturnIdAsync(new PurchaseOrder(idPartner, model.IdUser, model.IdPet, model.IdPaymentMethod, model.FullName, model.Cpf, model.Email, PurchaseOrderSituation.PENDING, PaymentSituation.PENDING, model.Observations, DateTime.Now.ToBrasilia()));
+            foreach (var item in model.PurchaseOrderItens)
+            {
+                var orderItem = new CreatePurchaseOrderItemViewModel
+                {
+                    IdPurchaseOrder = idOrder,
+                    IdService = item.IdService,
+                    Quantity = item.Quantity
+                };
+                await _appServicePurchaseOrderItem.AddPurchaseOrderItem(orderItem);
+            }
+
             await _unitOfWork.CommitAsync();
             return idOrder;
         }
@@ -140,11 +151,11 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
             order.PurchaseOrderSituation = model.PurchaseOrderSituation;
             order.PaymentSituation = model.PaymentSituation;
             order.IdPaymentMethod = model.IdPaymentMethod;
-            order.IdPet = model.IdPet;
-            order.Cpf = model.Cpf;
-            order.FullName = model.FullName;
-            order.Email = model.FullName;
-            order.IdUser = model.IdUser;
+            //order.IdPet = model.IdPet;
+            //order.Cpf = model.Cpf;
+            //order.FullName = model.FullName;
+            //order.Email = model.Email;
+            //order.IdUser = model.IdUser;
             order.WriteDate = DateTime.Now.ToBrasilia();
             await _unitOfWork.IRepositoryPurchaseOrder.UpdateAsync(order);
 
@@ -160,7 +171,7 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
         {
             CultureInfo culture = new CultureInfo("pt-BR");
             Func<IQueryable<PurchaseOrder>, IIncludableQueryable<PurchaseOrder, object>> include = t => t.Include(a => a.PaymentMethod);
-            var order = await _unitOfWork.IRepositoryPurchaseOrder.GetByIdAsync(x => x.Id.Equals(idPurchaseOrder));
+            var order = await _unitOfWork.IRepositoryPurchaseOrder.GetByIdAsync(x => x.Id.Equals(idPurchaseOrder), include);
             var orderItens = await _appServicePurchaseOrderItem.GetOrderItens(idPurchaseOrder);
             var partner = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(order.IdPartner));
             var payment = _appServicePaymentMethod.GetPaymentType(order.PaymentMethod.PaymentType);
@@ -174,9 +185,15 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
                 petName = pet.Name;
             }
 
+            var total = 0M;
+            foreach (var item in orderItens)
+            {
+                total += item.Quantity * item.Value;
+            }
+
             return new GetPurchaseOrderViewModel(idPurchaseOrder, order.IdPartner, partner.FullName, order.IdPet, petName, 
                 order.IdPaymentMethod, payment, order.IdUser, order.FullName, order.Cpf, order.Email, purchaseOrderSituation, paymentSituation, 
-                order.Observations, orderItens, order.WriteDate.ToString("d", culture), order.DateCreation.ToString("d", culture));
+                order.Observations, total.ToString("F2"), order.WriteDate.ToString("d", culture), order.DateCreation.ToString("d", culture), orderItens);
         }
 
         public async Task<List<GetPurchaseOrderViewModel>> GetPurchaseOrdersUser(string idUser, bool isApp)
@@ -187,11 +204,11 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
             IList<PurchaseOrder> orders = new List<PurchaseOrder>();
             if (isApp)
             {
-                orders = await _unitOfWork.IRepositoryPurchaseOrder.GetByOrderAsync(x => x.IdUser.Equals(idUser), x => x.DateCreation, false);
+                orders = await _unitOfWork.IRepositoryPurchaseOrder.GetByOrderAsync(x => x.IdUser.Equals(idUser), x => x.DateCreation, false, include);
             }
             else
             {
-                orders = await _unitOfWork.IRepositoryPurchaseOrder.GetByOrderAsync(x => x.IdPartner.Equals(idUser), x => x.DateCreation, false);
+                orders = await _unitOfWork.IRepositoryPurchaseOrder.GetByOrderAsync(x => x.IdPartner.Equals(idUser), x => x.DateCreation, false, include);
             }
 
             foreach (var order in orders)
@@ -209,9 +226,16 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
                     petName = pet.Name;
                 }
 
+                var total = 0M;
+                foreach (var item in orderItens)
+                {
+                    total += item.Quantity * item.Value;
+                }
+
                 list.Add(new GetPurchaseOrderViewModel(order.Id, order.IdPartner, partner.FullName, order.IdPet, petName,
                     order.IdPaymentMethod, payment, order.IdUser, order.FullName, order.Cpf, order.Email, purchaseOrderSituation, paymentSituation,
-                    order.Observations, orderItens, order.WriteDate.ToString("d", culture), order.DateCreation.ToString("d", culture)));
+                    order.Observations, total.ToString("F2"), order.WriteDate.ToString("d", culture), order.DateCreation.ToString("d", culture), orderItens));
+
             }
             return list;            
         }

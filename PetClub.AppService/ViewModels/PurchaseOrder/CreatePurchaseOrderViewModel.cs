@@ -16,5 +16,12 @@ namespace PetClub.AppService.ViewModels.PurchaseOrder
         public string Cpf { get; set; }
         public string Email { get; set; }
         public string Observations { get; set; }
+        public List<CreatePurchaseOrderItensViewModel> PurchaseOrderItens { get; set; }
+    }
+
+    public class CreatePurchaseOrderItensViewModel
+    {
+        public string IdService { get; set; }
+        public int Quantity { get; set; }
     }
 }

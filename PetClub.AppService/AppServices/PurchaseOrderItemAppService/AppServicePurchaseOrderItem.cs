@@ -34,21 +34,23 @@ namespace PetClub.AppService.AppServices.PurchaseOrderItemAppService
 
         public async Task<string> AddPurchaseOrderItem(CreatePurchaseOrderItemViewModel model)
         {
-            var order = await _unitOfWork.IRepositoryPurchaseOrder.GetByIdAsync(x => x.Id.Equals(model.IdPurchaseOrder));
-            if (order == null)
+            try
             {
-                _notifier.Handle(new NotificationMessage("erro", "Pedido não encontrado."));
+                var service = await _unitOfWork.IRepositoryService.GetByIdAsync(x => x.Id.Equals(model.IdService));
+                if (service == null)
+                {
+                    _notifier.Handle(new NotificationMessage("erro", "Serviço não encontrado."));
+                    throw new Exception();
+                }
+                var idOrderItem = await _unitOfWork.IRepositoryPurchaseOrderItem.AddReturnIdAsync(new PurchaseOrderItem(model.IdPurchaseOrder, model.IdService, model.Quantity, service.Value));
+                await _unitOfWork.CommitAsync();
+                return idOrderItem;
+            }
+            catch (Exception e)
+            {
+                _notifier.Handle(new NotificationMessage("erro", e.Message));
                 throw new Exception();
             }
-            var service = await _unitOfWork.IRepositoryService.GetByIdAsync(x => x.Id.Equals(model.IdService));
-            if (service == null)
-            {
-                _notifier.Handle(new NotificationMessage("erro", "Serviço não encontrado."));
-                throw new Exception();
-            }
-            var idOrderItem = await _unitOfWork.IRepositoryPurchaseOrderItem.AddReturnIdAsync(new PurchaseOrderItem(model.IdPurchaseOrder, model.IdService, model.Quantity, service.Value));
-            await _unitOfWork.CommitAsync();
-            return idOrderItem;
         }
 
         public async Task UpdadeOrDeleteItem(UpdatePurchaseOrderItemViewModel model, bool upd)
@@ -90,7 +92,7 @@ namespace PetClub.AppService.AppServices.PurchaseOrderItemAppService
             CultureInfo culture = new CultureInfo("pt-BR");
             var list = new List<GetOrderItensViewModel>();
             Func<IQueryable<PurchaseOrderItem>, IIncludableQueryable<PurchaseOrderItem, object>> include = t => t.Include(a => a.Service);
-            var orderItens = await _unitOfWork.IRepositoryPurchaseOrderItem.GetByOrderAsync(x => x.IdPurchaseOrder.Equals(idPurchaseOrder) && x.RecordSituation == RecordSituation.ACTIVE, x => x.DateCreation, false);
+            var orderItens = await _unitOfWork.IRepositoryPurchaseOrderItem.GetByOrderAsync(x => x.IdPurchaseOrder.Equals(idPurchaseOrder) && x.RecordSituation == RecordSituation.ACTIVE, x => x.DateCreation, false, include);
             foreach (var item in orderItens)
             {
                 list.Add(new GetOrderItensViewModel(item.Id, item.IdPurchaseOrder, item.IdService, item.Service.Title, item.Service.Description, item.Quantity, item.Value, item.WriteDate.ToString("d", culture)));
