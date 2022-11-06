@@ -54,7 +54,7 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
                 
                 var partner = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(model.IdPartner));
                 var pet = await _unitOfWork.IRepositoryPet.GetByIdAsync(x => x.Id.Equals(model.IdPet));
-                if (pet != null)
+                if (pet == null)
                 {
                     _notifier.Handle(new NotificationMessage("Erro", "Animal não encontrado."));
                     throw new Exception();
@@ -160,7 +160,7 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
 
                 var partner = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(model.IdPartner));
                 var pet = await _unitOfWork.IRepositoryPet.GetByIdAsync(x => x.Id.Equals(model.IdPet));
-                if (pet != null)
+                if (pet == null)
                 {
                     _notifier.Handle(new NotificationMessage("Erro", "Animal não encontrado."));
                     throw new Exception();
