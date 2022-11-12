@@ -40,7 +40,6 @@ namespace PetClub.Controllers
         public async Task<IActionResult> CreatePet(CreatePetViewModel model)
         {
             var user = GetUser();
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 var response = await _appServicePet.CreatePet(model, user.Id);
@@ -59,7 +58,6 @@ namespace PetClub.Controllers
         public async Task<IActionResult> GetPetById(string idPet)
         {
             var user = GetUser();
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 var response = await _appServicePet.GetPetById(idPet);
@@ -78,7 +76,6 @@ namespace PetClub.Controllers
         public async Task<IActionResult> GetPetsUser(string idUser)
         {
             var user = GetUser();
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 var response = await _appServicePet.GetPetsUser(idUser);
@@ -97,7 +94,6 @@ namespace PetClub.Controllers
         public async Task<IActionResult> GetAllPets()
         {
             var user = GetUser();
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 var response = await _appServicePet.GetAllPets();
@@ -116,7 +112,6 @@ namespace PetClub.Controllers
         public async Task<IActionResult> UpdatePet(UpdatePetViewModel model)
         {
             var user = GetUser();
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 await _appServicePet.UpdatePet(model);
@@ -135,7 +130,6 @@ namespace PetClub.Controllers
         public async Task<IActionResult> DeletePet(string idPet)
         {
             var user = GetUser();
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 await _appServicePet.DeletePet(idPet);

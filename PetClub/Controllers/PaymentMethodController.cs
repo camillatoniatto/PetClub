@@ -36,7 +36,6 @@ namespace PetClub.Controllers
         //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.ADMIN_SYSTEM)]
         public async Task<IActionResult> AddPaymentMethod(CreatePaymentMethodViewModel model)
         {
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 await _appServicePaymentMethod.AddPaymentMethod(model);
@@ -54,7 +53,6 @@ namespace PetClub.Controllers
         //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.ADMIN_SYSTEM)]
         public async Task<IActionResult> CreateAllPayments()
         {
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 await _appServicePaymentMethod.CreateAllPayments();
@@ -106,7 +104,6 @@ namespace PetClub.Controllers
         //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
         public async Task<IActionResult> UpdateAsync(UpdatePaymentMethodViewModel model)
         {
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 var response = await _appServicePaymentMethod.UpdateAsync(model);

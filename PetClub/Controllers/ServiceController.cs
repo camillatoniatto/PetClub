@@ -38,7 +38,6 @@ namespace PetClub.Controllers
         //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> CreateService(CreateServiceViewModel model)
         {
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 var user = GetUser();
@@ -59,7 +58,6 @@ namespace PetClub.Controllers
         public async Task<IActionResult> GetServiceById(string idService)
         {
             var user = GetUser();
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 var response = await _appServiceService.GetServiceById(idService);
@@ -78,7 +76,6 @@ namespace PetClub.Controllers
         public async Task<IActionResult> GetServices()
         {
             var user = GetUser();
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 var log = false;
@@ -98,7 +95,6 @@ namespace PetClub.Controllers
         public async Task<IActionResult> GetLogServices()
         {
             var user = GetUser();
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 var log = true;
@@ -118,7 +114,6 @@ namespace PetClub.Controllers
         public async Task<IActionResult> GetServiceUser()
         {
             var user = GetUser();
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 var response = await _appServiceService.GetServiceUser(user.Id);
@@ -156,7 +151,6 @@ namespace PetClub.Controllers
         public async Task<IActionResult> UpdateService(UpdateServiceViewModel model)
         {
             var user = GetUser();
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 await _appServiceService.UpdateService(model);
@@ -175,7 +169,6 @@ namespace PetClub.Controllers
         public async Task<IActionResult> DeleteService(string idService)
         {
             var user = GetUser();
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 await _appServiceService.DeleteService(idService);

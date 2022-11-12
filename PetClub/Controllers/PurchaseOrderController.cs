@@ -55,7 +55,6 @@ namespace PetClub.Controllers
         //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> GetPurchaseOrderById(string idPurchaseOrder)
         {
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 var user = GetUser();
@@ -74,7 +73,6 @@ namespace PetClub.Controllers
         //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
         public async Task<IActionResult> GetPurchaseOrdersUser(bool isApp)
         {
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 var user = GetUser();
@@ -93,7 +91,6 @@ namespace PetClub.Controllers
         //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> UpdadePurchaseOrder(UpdatePurchaseOrderViewModel model)
         {
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 //var user = GetUser();
@@ -112,7 +109,6 @@ namespace PetClub.Controllers
         //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> ConcluedPurchaseOrder(string idPurchaseOrder, bool isPaid)
         {
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 //var user = GetUser();
@@ -131,7 +127,6 @@ namespace PetClub.Controllers
         //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> DeletePurchaseOrder(string idPurchaseOrder)
         {
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
             try
             {
                 //var user = GetUser();

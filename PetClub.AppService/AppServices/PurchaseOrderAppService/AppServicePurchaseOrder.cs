@@ -53,7 +53,8 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
 
         public async Task<string> CreatePurchaseOrder(CreatePurchaseOrderViewModel model, string idPartner)
         {
-            var idOrder = await _unitOfWork.IRepositoryPurchaseOrder.AddReturnIdAsync(new PurchaseOrder(idPartner, model.IdUser, model.IdPet, model.IdPaymentMethod, model.FullName, model.Cpf, model.Email, PurchaseOrderSituation.PENDING, PaymentSituation.PENDING, model.Observations, DateTime.Now.ToBrasilia()));
+            var client = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(model.IdUser));
+            var idOrder = await _unitOfWork.IRepositoryPurchaseOrder.AddReturnIdAsync(new PurchaseOrder(idPartner, model.IdUser, model.IdPet, model.IdPaymentMethod, client.FullName, client.Cpf, client.Email, PurchaseOrderSituation.PENDING, PaymentSituation.PENDING, model.Observations, DateTime.Now.ToBrasilia()));
             foreach (var item in model.PurchaseOrderItens)
             {
                 var orderItem = new CreatePurchaseOrderItemViewModel
