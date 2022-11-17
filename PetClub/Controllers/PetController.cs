@@ -39,10 +39,9 @@ namespace PetClub.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> CreatePet(CreatePetViewModel model)
         {
-            var user = GetUser();
             try
             {
-                var response = await _appServicePet.CreatePet(model, user.Id);
+                var response = await _appServicePet.CreatePet(model);
                 return CustomResponse(response);
             }
             catch
@@ -88,15 +87,33 @@ namespace PetClub.Controllers
         }
 
         [HttpGet]
-        [Route("get-all-pets")]
+        [Route("get-all-pets-admin")]
         [AllowAnonymous]
         //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
-        public async Task<IActionResult> GetAllPets()
+        public async Task<IActionResult> GetAllPetsAdmin()
         {
             var user = GetUser();
             try
             {
                 var response = await _appServicePet.GetAllPets();
+                return CustomResponse(response);
+            }
+            catch
+            {
+                return CustomResponse();
+            }
+        }
+
+        [HttpGet]
+        [Route("get-all-pets-partner")]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
+        public async Task<IActionResult> GetAllPetsPartner()
+        {
+            var user = GetUser();
+            try
+            {
+                var response = await _appServicePet.GetAllPetsClient(user.Id);
                 return CustomResponse(response);
             }
             catch

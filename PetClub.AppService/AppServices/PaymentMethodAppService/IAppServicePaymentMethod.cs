@@ -15,7 +15,7 @@ namespace PetClub.AppService.AppServices.PaymentMethodAppService
         Task DeleteAsync(string Id);
         Task<List<GetPaymentMethodViewModel>> GetAllPaymentMethods();
         Task<GetPaymentMethodViewModel> GetByIdAsync(string Id);
-        string GetPaymentType(PaymentType paymentType);
+        string GetPaymentType(PaymentType paymentType, int installments);
         Task<GetPaymentMethodViewModel> UpdateAsync(UpdatePaymentMethodViewModel model);
     }
 }

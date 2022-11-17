@@ -130,7 +130,7 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
         {
             CultureInfo culture = new CultureInfo("pt-BR");
             var list = new List<GetSchedulerViewModel>();
-            var scheduler = await _unitOfWork.IRepositoryScheduler.GetByIdAsync(x => x.IdPartner.Equals(idScheduler));
+            var scheduler = await _unitOfWork.IRepositoryScheduler.GetByIdAsync(x => x.Id.Equals(idScheduler));
             var pet = await _appServicePet.GetPetById(scheduler.IdPet);
             var serviceType = GetSchedulerServiceType(scheduler.ServiceType);
             var schedulerSituation = GetSchedulerSituation(scheduler.SchedulerSituation, scheduler.StartDate);
@@ -149,7 +149,7 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
                     throw new Exception();
                 }
                 var scheduler = await _unitOfWork.IRepositoryScheduler.GetByIdAsync(x => x.Id.Equals(model.IdScheduler));
-                if (model.StartDate > model.FinalDate || scheduler.StartDate > model.FinalDate || model.StartDate > scheduler.FinalDate)
+                if (model.StartDate > model.FinalDate)
                 {
                     _notifier.Handle(new NotificationMessage("Date", "A data de início não pode ser maior que a data final."));
                     throw new Exception();

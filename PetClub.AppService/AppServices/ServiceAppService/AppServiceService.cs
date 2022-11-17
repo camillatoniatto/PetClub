@@ -60,43 +60,62 @@ namespace PetClub.AppService.AppServices.ServiceAppService
             var service = await _unitOfWork.IRepositoryService.GetByIdAsync(x => x.Id.Equals(idService));
 
             var serviceType = GetServiceType(service.ServiceType);
-            return new GetServiceViewModel(service.Id, service.IdPartner, service.Title, service.Description, serviceType, service.SingleUser, service.DateDuration.ToString("d", culture), service.Value.ToString("F2"), service.WriteDate.ToString("d", culture));
+            return new GetServiceViewModel(service.Id, service.IdPartner, service.Title, service.Description, serviceType, (int)service.ServiceType, service.SingleUser, service.DateDuration.ToString("d", culture), service.Value.ToString("F2"), service.Value, service.WriteDate.ToString("d", culture), service.User.FullName);
         }
 
-        public async Task<List<GetServiceViewModel>> GetServices(bool log)
+        public async Task<List<GetServiceViewModel>> GetServices(bool log, string idUser)
         {
             CultureInfo culture = new CultureInfo("pt-BR");
             var list = new List<GetServiceViewModel>();
-            Func<IQueryable<Pet>, IIncludableQueryable<Pet, object>> include = t => t.Include(a => a.User);
+            Func<IQueryable<Service>, IIncludableQueryable<Service, object>> include = t => t.Include(a => a.User);
             IList<Service> services = new List<Service>();
             if (log)
             {
-                services = await _unitOfWork.IRepositoryService.GetByOrderAsync(x => x.RecordSituation == RecordSituation.INACTIVE, x => x.Title, false);
+                services = await _unitOfWork.IRepositoryService.GetByOrderAsync(x => x.IdPartner.Equals(idUser) && x.RecordSituation == RecordSituation.INACTIVE, x => x.Title, false, include);
 
             }
             else
             {
-                services = await _unitOfWork.IRepositoryService.GetByOrderAsync(x => x.RecordSituation == RecordSituation.ACTIVE, x => x.Title, false);
+                services = await _unitOfWork.IRepositoryService.GetByOrderAsync(x => x.IdPartner.Equals(idUser) && x.RecordSituation == RecordSituation.ACTIVE, x => x.Title, false, include);
             }
             foreach (var service in services)
             {
                 var serviceType = GetServiceType(service.ServiceType);
-                var item = new GetServiceViewModel(service.Id, service.IdPartner, service.Title, service.Description, serviceType, service.SingleUser, service.DateDuration.ToString("d", culture), service.Value.ToString("F2"), service.WriteDate.ToString("d", culture));
+                var item = new GetServiceViewModel(service.Id, service.IdPartner, service.Title, service.Description, serviceType, (int)service.ServiceType, service.SingleUser, service.DateDuration.ToString("d", culture), service.Value.ToString("F2"), service.Value, service.WriteDate.ToString("d", culture), service.User.FullName);
+
 
                 list.Add(item);
             }
             return list;
         }
+
+        public async Task<List<GetServiceViewModel>> GetServicesAdmin()
+        {
+            CultureInfo culture = new CultureInfo("pt-BR");
+            var list = new List<GetServiceViewModel>();
+            Func<IQueryable<Service>, IIncludableQueryable<Service, object>> include = t => t.Include(a => a.User);
+            var services = await _unitOfWork.IRepositoryService.GetByOrderAsync(x => x.RecordSituation == RecordSituation.ACTIVE, x => x.Title, false, include);
+            foreach (var service in services)
+            {
+                var serviceType = GetServiceType(service.ServiceType);
+                var item = new GetServiceViewModel(service.Id, service.IdPartner, service.Title, service.Description, serviceType, (int)service.ServiceType, service.SingleUser, service.DateDuration.ToString("d", culture), service.Value.ToString("F2"), service.Value, service.WriteDate.ToString("d", culture), service.User.FullName);
+
+
+                list.Add(item);
+            }
+            return list;
+        }
+
         public async Task<List<GetServiceViewModel>> GetServiceUser(string idUser)
         {
             CultureInfo culture = new CultureInfo("pt-BR");
             var list = new List<GetServiceViewModel>();
-            Func<IQueryable<Pet>, IIncludableQueryable<Pet, object>> include = t => t.Include(a => a.User);
-            var services = await _unitOfWork.IRepositoryService.GetByOrderAsync(x => x.IdPartner.Equals(idUser) && x.RecordSituation == RecordSituation.ACTIVE, x => x.Title, false);
+            Func<IQueryable<Service>, IIncludableQueryable<Service, object>> include = t => t.Include(a => a.User);
+            var services = await _unitOfWork.IRepositoryService.GetByOrderAsync(x => x.IdPartner.Equals(idUser) && x.RecordSituation == RecordSituation.ACTIVE, x => x.Title, false, include);
             foreach (var service in services)
             {
                 var serviceType = GetServiceType(service.ServiceType);
-                var item = new GetServiceViewModel(service.Id, service.IdPartner, service.Title, service.Description, serviceType, service.SingleUser, service.DateDuration.ToString("d", culture), service.Value.ToString("F2"), service.WriteDate.ToString("d", culture));
+                var item = new GetServiceViewModel(service.Id, service.IdPartner, service.Title, service.Description, serviceType, (int)service.ServiceType, service.SingleUser, service.DateDuration.ToString("d", culture), service.Value.ToString("F2"), service.Value, service.WriteDate.ToString("d", culture), service.User.FullName);
 
                 list.Add(item);
             }

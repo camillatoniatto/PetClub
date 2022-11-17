@@ -32,11 +32,11 @@ namespace PetClub.AppService.AppServices.PetAppService
             _notifier = notifier;
         }
 
-        public async Task<string> CreatePet(CreatePetViewModel model, string idUser)
+        public async Task<string> CreatePet(CreatePetViewModel model)
         {
             try
             {
-                var pet = await _unitOfWork.IRepositoryPet.GetByIdAsync(x => x.Name.Equals(model.Name) && x.Specie.Equals(model.Specie) && x.Brand.Equals(model.Brand) && x.IdUser.Equals(idUser) && x.Birthdate.Equals(model.Birthdate) && x.IsAlive.Equals(true));
+                var pet = await _unitOfWork.IRepositoryPet.GetByIdAsync(x => x.Name.Equals(model.Name) && x.Specie.Equals(model.Specie) && x.Brand.Equals(model.Brand) && x.IdUser.Equals(model.idUser) && x.Birthdate.Equals(model.Birthdate) && x.IsAlive.Equals(true));
                 if (pet != null)
                 {
                     _notifier.Handle(new NotificationMessage("pet", "Ops, parece que esse animal já foi cadastrado anteriormente."));
@@ -46,7 +46,7 @@ namespace PetClub.AppService.AppServices.PetAppService
                 if (model.Genre == 1)
                     genre = Genre.FEMALE;
 
-                var idPet = await _unitOfWork.IRepositoryPet.AddReturnIdAsync(new Pet(idUser, model.Name, genre, model.Specie, model.Brand, model.Birthdate, true, DateTime.MinValue));
+                var idPet = await _unitOfWork.IRepositoryPet.AddReturnIdAsync(new Pet(model.idUser, model.Name, genre, model.Specie, model.Brand, model.Birthdate, true, DateTime.MinValue));
                 await _unitOfWork.CommitAsync();
                 return idPet;
             }
@@ -94,6 +94,30 @@ namespace PetClub.AppService.AppServices.PetAppService
                 var genre = GetGenre(pet.Genre);
                 var item = new GetPetViewModel(pet.Id, pet.IdUser, pet.User.FullName, pet.Name, genre, pet.Specie, pet.Brand, pet.Birthdate.ToString("d", culture), pet.IsAlive, pet.WriteDate.ToString("d", culture));
                 list.Add(item);
+            }
+            return list;
+        }
+
+        public async Task<List<GetPetViewModel>> GetAllPetsClient(string idUser)
+        {
+            CultureInfo culture = new CultureInfo("pt-BR");
+            var list = new List<GetPetViewModel>();
+            var clients = await _unitOfWork.IRepositoryUsersPartners.GetByAsync(x => x.IdPartner.Equals(idUser));
+            foreach (var client in clients)
+            {
+                Func<IQueryable<Pet>, IIncludableQueryable<Pet, object>> include = t => t.Include(a => a.User);
+                var pets = await _unitOfWork.IRepositoryPet.GetByOrderAsync(x => x.IdUser.Equals(client.IdUser) && x.RecordSituation == RecordSituation.ACTIVE, x => x.Name, false, include);
+                foreach (var pet in pets)
+                {
+                    var genre = GetGenre(pet.Genre);
+                    var item = new GetPetViewModel(pet.Id, pet.IdUser, pet.User.FullName, pet.Name, genre, pet.Specie, pet.Brand, pet.Birthdate.ToString("d", culture), pet.IsAlive, pet.WriteDate.ToString("d", culture));
+                    list.Add(item);
+                }
+            }
+            var myPets = await GetPetsUser(idUser);
+            foreach (var my in myPets)
+            {
+                list.Add(my);
             }
             return list;
         }

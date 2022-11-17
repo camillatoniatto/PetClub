@@ -79,7 +79,24 @@ namespace PetClub.Controllers
             try
             {
                 var log = false;
-                var response = await _appServiceService.GetServices(log);
+                var response = await _appServiceService.GetServices(log, user.Id);
+                return CustomResponse(response);
+            }
+            catch
+            {
+                return CustomResponse();
+            }
+        }
+
+        [HttpGet]
+        [Route("get-services-admin")]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.USER)]
+        public async Task<IActionResult> GetServicesAdmin()
+        {
+            try
+            {
+                var response = await _appServiceService.GetServicesAdmin();
                 return CustomResponse(response);
             }
             catch
@@ -98,7 +115,7 @@ namespace PetClub.Controllers
             try
             {
                 var log = true;
-                var response = await _appServiceService.GetServices(log);
+                var response = await _appServiceService.GetServices(log, user.Id);
                 return CustomResponse(response);
             }
             catch

@@ -9,6 +9,7 @@ namespace PetClub.AppService.ViewModels.Pet
 {
     public class CreatePetViewModel
     {
+        public string idUser { get; set; }
         public string Name { get; set; }
         public int Genre { get; set; }
         public string Specie { get; set; }

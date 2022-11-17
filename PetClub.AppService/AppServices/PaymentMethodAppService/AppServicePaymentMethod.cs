@@ -58,6 +58,7 @@ namespace PetClub.AppService.AppServices.PaymentMethodAppService
             {
                 await AddPaymentMethod(new CreatePaymentMethodViewModel("PetClub Pay", PaymentType.CASH, false, 1, 0M));
                 await AddPaymentMethod(new CreatePaymentMethodViewModel("PetClub Pay", PaymentType.PIX, false, 1, 4M));
+                await AddPaymentMethod(new CreatePaymentMethodViewModel("PetClub Pay", PaymentType.DEBIT, false, 1, 6M));
                 await AddPaymentMethod(new CreatePaymentMethodViewModel("PetClub Pay", PaymentType.CREDIT_CARD, true, 1, 6M));
                 await AddPaymentMethod(new CreatePaymentMethodViewModel("PetClub Pay", PaymentType.CREDIT_CARD, true, 2, 6M));
                 await AddPaymentMethod(new CreatePaymentMethodViewModel("PetClub Pay", PaymentType.CREDIT_CARD, true, 3, 6M));
@@ -70,7 +71,6 @@ namespace PetClub.AppService.AppServices.PaymentMethodAppService
                 await AddPaymentMethod(new CreatePaymentMethodViewModel("PetClub Pay", PaymentType.CREDIT_CARD, true, 10, 6M));
                 await AddPaymentMethod(new CreatePaymentMethodViewModel("PetClub Pay", PaymentType.CREDIT_CARD, true, 11, 6M));
                 await AddPaymentMethod(new CreatePaymentMethodViewModel("PetClub Pay", PaymentType.CREDIT_CARD, true, 12, 6M));
-                await AddPaymentMethod(new CreatePaymentMethodViewModel("PetClub Pay", PaymentType.DEBIT, false, 1, 6M));
             }            
         }
 
@@ -90,8 +90,8 @@ namespace PetClub.AppService.AppServices.PaymentMethodAppService
             await _unitOfWork.IRepositoryPaymentMethod.UpdateAsync(payment);
             await _unitOfWork.CommitAsync();
 
-            var paymentType = GetPaymentType(payment.PaymentType);
-            return new GetPaymentMethodViewModel(payment.Id, payment.Title, paymentType, payment.IsInstallment, payment.NumberInstallments, payment.AdminTax);
+            var paymentType = GetPaymentType(payment.PaymentType, payment.NumberInstallments);
+            return new GetPaymentMethodViewModel(payment.Id, payment.Title, paymentType, payment.IsInstallment, payment.NumberInstallments, payment.AdminTax, payment.DateCreation);
         }
 
         public async Task DeleteAsync(string Id)
@@ -114,17 +114,17 @@ namespace PetClub.AppService.AppServices.PaymentMethodAppService
             var list = new List<GetPaymentMethodViewModel>();
             foreach (var payment in paymentMethods)
             {
-                var paymentType = GetPaymentType(payment.PaymentType);
-                list.Add(new GetPaymentMethodViewModel(payment.Id, payment.Title, paymentType, payment.IsInstallment, payment.NumberInstallments, payment.AdminTax));
+                var paymentType = GetPaymentType(payment.PaymentType, payment.NumberInstallments);
+                list.Add(new GetPaymentMethodViewModel(payment.Id, payment.Title, paymentType, payment.IsInstallment, payment.NumberInstallments, payment.AdminTax, payment.DateCreation));
             }
-            return list;
+            return list.OrderBy(x => x.DateCreation).ToList();
         }        
 
         public async Task<GetPaymentMethodViewModel> GetByIdAsync(string Id)
         {
             var payment = await _unitOfWork.IRepositoryPaymentMethod.GetByIdAsync(x => x.Id.Equals(Id));
-            var paymentType = GetPaymentType(payment.PaymentType);
-            return new GetPaymentMethodViewModel(payment.Id, payment.Title, paymentType, payment.IsInstallment, payment.NumberInstallments, payment.AdminTax);
+            var paymentType = GetPaymentType(payment.PaymentType, payment.NumberInstallments);
+            return new GetPaymentMethodViewModel(payment.Id, payment.Title, paymentType, payment.IsInstallment, payment.NumberInstallments, payment.AdminTax, payment.DateCreation);
         }
 
         public async Task<List<SelectPaymentMethodViewModel>> GetNumberInstallmentsPerPaymentType(string idAthletic, PaymentType paymentMethodType)
@@ -161,13 +161,13 @@ namespace PetClub.AppService.AppServices.PaymentMethodAppService
         //    return response;
         //}
 
-        public string GetPaymentType(PaymentType paymentType)
+        public string GetPaymentType(PaymentType paymentType, int installments)
         {
             var result = "";
             switch (paymentType)
             {
                 case PaymentType.CREDIT_CARD:
-                    result = "Cartão de Crédito";
+                    result = "Cartão de Crédito em "+installments+"X";
                     break;
                 case PaymentType.CASH:
                     result = "Dinheiro";

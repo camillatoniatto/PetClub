@@ -175,7 +175,7 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
             var order = await _unitOfWork.IRepositoryPurchaseOrder.GetByIdAsync(x => x.Id.Equals(idPurchaseOrder), include);
             var orderItens = await _appServicePurchaseOrderItem.GetOrderItens(idPurchaseOrder);
             var partner = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(order.IdPartner));
-            var payment = _appServicePaymentMethod.GetPaymentType(order.PaymentMethod.PaymentType);
+            var payment = _appServicePaymentMethod.GetPaymentType(order.PaymentMethod.PaymentType, order.PaymentMethod.NumberInstallments);
             var purchaseOrderSituation = GetPurchaseOrderSituation(order.PurchaseOrderSituation);
             var paymentSituation = GetPaymentSituation(order.PaymentSituation);
 
@@ -216,7 +216,7 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
             {
                 var orderItens = await _appServicePurchaseOrderItem.GetOrderItens(order.Id);
                 var partner = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(order.IdPartner));
-                var payment = _appServicePaymentMethod.GetPaymentType(order.PaymentMethod.PaymentType);
+                var payment = _appServicePaymentMethod.GetPaymentType(order.PaymentMethod.PaymentType, order.PaymentMethod.NumberInstallments);
                 var purchaseOrderSituation = GetPurchaseOrderSituation(order.PurchaseOrderSituation);
                 var paymentSituation = GetPaymentSituation(order.PaymentSituation);
 

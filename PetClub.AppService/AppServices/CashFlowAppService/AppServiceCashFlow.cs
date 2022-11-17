@@ -38,11 +38,10 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
                 var payment = await _unitOfWork.IRepositoryPaymentMethod.GetByIdAsync(x => x.Id.Equals(model.IdPaymentMethod));
                 if (payment != null)
                 {
-                    netValue = model.LaunchValue - (model.LaunchValue * payment.AdminTax / 100);
-
+                    netValue = model.LaunchValue;
                     if (!string.IsNullOrEmpty(model.IdPurchaseOrder))
                     {
-                        netValue = model.LaunchValue;
+                        netValue = model.LaunchValue - (model.LaunchValue * payment.AdminTax / 100);
                     }
                 }
 
