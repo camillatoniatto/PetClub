@@ -54,7 +54,7 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
         public async Task<string> CreatePurchaseOrder(CreatePurchaseOrderViewModel model, string idPartner)
         {
             var client = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(model.IdUser));
-            var idOrder = await _unitOfWork.IRepositoryPurchaseOrder.AddReturnIdAsync(new PurchaseOrder(idPartner, model.IdUser, model.IdPet, model.IdPaymentMethod, client.FullName, client.Cpf, client.Email, PurchaseOrderSituation.PENDING, PaymentSituation.PENDING, model.Observations, DateTime.Now.ToBrasilia()));
+            var idOrder = await _unitOfWork.IRepositoryPurchaseOrder.AddReturnIdAsync(new PurchaseOrder(idPartner, model.IdUser, model.IdPet, model.IdPaymentMethod, client.FullName, client.Cpf, client.Email, PurchaseOrderSituation.CONCLUDED, PaymentSituation.APPROVED, model.Observations, DateTime.Now.ToBrasilia()));
             foreach (var item in model.PurchaseOrderItens)
             {
                 var orderItem = new CreatePurchaseOrderItemViewModel
@@ -67,6 +67,30 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
             }
 
             await _unitOfWork.CommitAsync();
+
+            var launchValue = 0M;
+
+            if (!string.IsNullOrEmpty(idOrder))
+            {
+                var orderItens = await _unitOfWork.IRepositoryPurchaseOrderItem.GetByAsync(x => x.IdPurchaseOrder.Equals(idOrder));
+                var date = DateTime.Now.ToBrasilia();
+                var listService = new List<string>();
+                foreach (var item in orderItens)
+                {
+                    listService.Add(item.Service.Title);
+                    launchValue += item.Value * item.Quantity;
+                }
+                var serviceTitles = String.Join(", ", listService);
+                var description = "Serviços prestados: " + serviceTitles;
+                CreateCashFlowViewModel cashflow = new CreateCashFlowViewModel("Venda de serviço - " + client.FullName, description, idPartner, idOrder,
+                                                                               model.IdPaymentMethod, launchValue, date, date, false);
+
+
+                await _appServiceCashFlow.CreateReceivableBill(cashflow, idPartner);
+                await _unitOfWork.CommitAsync();
+            }
+
+
             return idOrder;
         }
 
