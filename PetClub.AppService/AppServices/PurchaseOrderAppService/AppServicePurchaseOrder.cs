@@ -75,14 +75,14 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
                 var orderItens = await _unitOfWork.IRepositoryPurchaseOrderItem.GetByAsync(x => x.IdPurchaseOrder.Equals(idOrder));
                 var date = DateTime.Now.ToBrasilia();
                 var listService = new List<string>();
-                foreach (var item in orderItens)
+                foreach (var item in orderItens.Where(x => x.Quantity > 0))
                 {
                     listService.Add(item.Service.Title);
                     launchValue += item.Value * item.Quantity;
                 }
                 var serviceTitles = String.Join(", ", listService);
-                var description = "Serviços prestados: " + serviceTitles;
-                CreateCashFlowViewModel cashflow = new CreateCashFlowViewModel("Venda de serviço - " + client.FullName, description, idPartner, idOrder,
+                var description = "Serviços: " + serviceTitles;
+                CreateCashFlowViewModel cashflow = new CreateCashFlowViewModel("Venda: " + idOrder, description, idPartner, idOrder,
                                                                                model.IdPaymentMethod, launchValue, date, date, false);
 
 
@@ -137,24 +137,22 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
         public async Task DeletePurchaseOrder(string idPurchaseOrder)
         {
             var order = await _unitOfWork.IRepositoryPurchaseOrder.GetByIdAsync(x => x.Id.Equals(idPurchaseOrder));
+            var bill = await _unitOfWork.IRepositoryCashFlow.GetByIdAsync(x => x.IdPurchaseOrder.Equals(idPurchaseOrder));
+
             if (order == null)
             {
                 _notifier.Handle(new NotificationMessage("erro", "Pedido não encontrado."));
                 throw new Exception();
             }
-            if (order.PaymentSituation == PaymentSituation.APPROVED || order.PurchaseOrderSituation == PurchaseOrderSituation.CONCLUDED)
-            {
-                _notifier.Handle(new NotificationMessage("erro", "Não é possivel deletar uma compra que já foi paga e/ou finalizada."));
-                throw new Exception();
-            }
             if (order.PaymentSituation == PaymentSituation.CANCELED)
             {
-                _notifier.Handle(new NotificationMessage("erro", "Não é possivel deletar uma compra que já foi cancelada."));
+                _notifier.Handle(new NotificationMessage("erro", "Não é possivel cancelar uma compra que já foi cancelada."));
                 throw new Exception();
             }
-
-            order.RecordSituation = RecordSituation.INACTIVE;
+            bill.RecordSituation = RecordSituation.INACTIVE;
+            order.PurchaseOrderSituation = PurchaseOrderSituation.CANCELED;
             await _unitOfWork.IRepositoryPurchaseOrder.UpdateAsync(order);
+            await _unitOfWork.IRepositoryCashFlow.UpdateAsync(bill);
             var orderItens = await _unitOfWork.IRepositoryPurchaseOrderItem.GetByOrderAsync(x => x.IdPurchaseOrder.Equals(idPurchaseOrder) && x.RecordSituation == RecordSituation.ACTIVE, x => x.DateCreation, false);
             foreach (var item in orderItens)
             {
@@ -274,7 +272,7 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
                     result = "Pendente";
                     break;
                 case PurchaseOrderSituation.CONCLUDED:
-                    result = "Concluído";
+                    result = "Concluido";
                     break;
                 case PurchaseOrderSituation.CANCELED:
                     result = "Cancelado";

@@ -49,9 +49,9 @@ namespace PetClub.Controllers
                 var result = await _appServiceUser.GetAllUsers();
                 return CustomResponse(result);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -67,9 +67,9 @@ namespace PetClub.Controllers
                 var result = await _appServiceUser.GetAllUsersFilter(value);
                 return CustomResponse(result);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -85,9 +85,9 @@ namespace PetClub.Controllers
                 var result = await _appServiceUser.GetByIdAsync(idUser);
                 return CustomResponse(result);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -102,9 +102,9 @@ namespace PetClub.Controllers
                 var result = await _appServiceUser.UpdateAsync(updatePerfilUserView);
                 return CustomResponse(result);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -119,9 +119,9 @@ namespace PetClub.Controllers
                 var response = await _appServiceUser.TotalUsersAmount();
                 return CustomResponse(response);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
     }

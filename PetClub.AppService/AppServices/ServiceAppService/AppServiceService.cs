@@ -60,7 +60,10 @@ namespace PetClub.AppService.AppServices.ServiceAppService
             var service = await _unitOfWork.IRepositoryService.GetByIdAsync(x => x.Id.Equals(idService));
 
             var serviceType = GetServiceType(service.ServiceType);
-            return new GetServiceViewModel(service.Id, service.IdPartner, service.Title, service.Description, serviceType, (int)service.ServiceType, service.SingleUser, service.DateDuration.ToString("d", culture), service.Value.ToString("F2"), service.Value, service.WriteDate.ToString("d", culture), service.User.FullName);
+            var purchaseServices = await _unitOfWork.IRepositoryPurchaseOrderItem.GetByAsync(x => x.IdService.Equals(service.Id) && x.RecordSituation.Equals(RecordSituation.ACTIVE));
+            var sold = 0;
+            sold = purchaseServices.Count();
+            return new GetServiceViewModel(service.Id, service.IdPartner, service.Title, service.Description, serviceType, (int)service.ServiceType, service.SingleUser, service.DateDuration.ToString("d", culture), service.Value.ToString("F2"), service.Value, service.WriteDate.ToString("d", culture), service.User.FullName, sold);
         }
 
         public async Task<List<GetServiceViewModel>> GetServices(bool log, string idUser)
@@ -81,9 +84,10 @@ namespace PetClub.AppService.AppServices.ServiceAppService
             foreach (var service in services)
             {
                 var serviceType = GetServiceType(service.ServiceType);
-                var item = new GetServiceViewModel(service.Id, service.IdPartner, service.Title, service.Description, serviceType, (int)service.ServiceType, service.SingleUser, service.DateDuration.ToString("d", culture), service.Value.ToString("F2"), service.Value, service.WriteDate.ToString("d", culture), service.User.FullName);
-
-
+                var purchaseServices = await _unitOfWork.IRepositoryPurchaseOrderItem.GetByAsync(x => x.IdService.Equals(service.Id) && x.RecordSituation.Equals(RecordSituation.ACTIVE));
+                var sold = 0;
+                sold = purchaseServices.Count();
+                var item = new GetServiceViewModel(service.Id, service.IdPartner, service.Title, service.Description, serviceType, (int)service.ServiceType, service.SingleUser, service.DateDuration.ToString("d", culture), service.Value.ToString("F2"), service.Value, service.WriteDate.ToString("d", culture), service.User.FullName, sold);
                 list.Add(item);
             }
             return list;
@@ -98,7 +102,10 @@ namespace PetClub.AppService.AppServices.ServiceAppService
             foreach (var service in services)
             {
                 var serviceType = GetServiceType(service.ServiceType);
-                var item = new GetServiceViewModel(service.Id, service.IdPartner, service.Title, service.Description, serviceType, (int)service.ServiceType, service.SingleUser, service.DateDuration.ToString("d", culture), service.Value.ToString("F2"), service.Value, service.WriteDate.ToString("d", culture), service.User.FullName);
+                var purchaseServices = await _unitOfWork.IRepositoryPurchaseOrderItem.GetByAsync(x => x.IdService.Equals(service.Id) && x.RecordSituation.Equals(RecordSituation.ACTIVE));
+                var sold = 0;
+                sold = purchaseServices.Count();
+                var item = new GetServiceViewModel(service.Id, service.IdPartner, service.Title, service.Description, serviceType, (int)service.ServiceType, service.SingleUser, service.DateDuration.ToString("d", culture), service.Value.ToString("F2"), service.Value, service.WriteDate.ToString("d", culture), service.User.FullName, sold);
 
 
                 list.Add(item);
@@ -115,7 +122,10 @@ namespace PetClub.AppService.AppServices.ServiceAppService
             foreach (var service in services)
             {
                 var serviceType = GetServiceType(service.ServiceType);
-                var item = new GetServiceViewModel(service.Id, service.IdPartner, service.Title, service.Description, serviceType, (int)service.ServiceType, service.SingleUser, service.DateDuration.ToString("d", culture), service.Value.ToString("F2"), service.Value, service.WriteDate.ToString("d", culture), service.User.FullName);
+                var purchaseServices = await _unitOfWork.IRepositoryPurchaseOrderItem.GetByAsync(x => x.IdService.Equals(service.Id) && x.RecordSituation.Equals(RecordSituation.ACTIVE));
+                var sold = 0;
+                sold = purchaseServices.Count();
+                var item = new GetServiceViewModel(service.Id, service.IdPartner, service.Title, service.Description, serviceType, (int)service.ServiceType, service.SingleUser, service.DateDuration.ToString("d", culture), service.Value.ToString("F2"), service.Value, service.WriteDate.ToString("d", culture), service.User.FullName, sold);
 
                 list.Add(item);
             }

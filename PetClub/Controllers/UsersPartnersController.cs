@@ -48,9 +48,9 @@ namespace PetClub.Controllers
                 }
                 return CustomResponse(userCpf);
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -67,9 +67,9 @@ namespace PetClub.Controllers
                 var response = await _appServiceUsersPartners.CreateUsersPartners(user.Id, partner.Id);
                 return CustomResponse(response);
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -85,9 +85,9 @@ namespace PetClub.Controllers
                 var response = await _appServiceUsersPartners.GetUsersPartners(user.Id);
                 return CustomResponse(response);
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -102,9 +102,9 @@ namespace PetClub.Controllers
                 var response = await _appServiceUsersPartners.GetByIdUsersPartners(idUsersPartners);
                 return CustomResponse(response);
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
     }

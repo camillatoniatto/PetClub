@@ -45,9 +45,9 @@ namespace PetClub.Controllers
                 var response = await _appServiceService.CreateService(model, user.Id);
                 return CustomResponse(response);
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -63,9 +63,9 @@ namespace PetClub.Controllers
                 var response = await _appServiceService.GetServiceById(idService);
                 return CustomResponse(response);
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -82,9 +82,9 @@ namespace PetClub.Controllers
                 var response = await _appServiceService.GetServices(log, user.Id);
                 return CustomResponse(response);
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -99,9 +99,9 @@ namespace PetClub.Controllers
                 var response = await _appServiceService.GetServicesAdmin();
                 return CustomResponse(response);
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -118,9 +118,9 @@ namespace PetClub.Controllers
                 var response = await _appServiceService.GetServices(log, user.Id);
                 return CustomResponse(response);
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -136,9 +136,9 @@ namespace PetClub.Controllers
                 var response = await _appServiceService.GetServiceUser(user.Id);
                 return CustomResponse(response);
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -173,9 +173,9 @@ namespace PetClub.Controllers
                 await _appServiceService.UpdateService(model);
                 return CustomResponse();
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -191,9 +191,9 @@ namespace PetClub.Controllers
                 await _appServiceService.DeleteService(idService);
                 return CustomResponse();
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
     }

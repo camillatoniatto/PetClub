@@ -74,7 +74,23 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
             }
         }
 
-        public async Task<List<GetCashFlowViewModel>> GetCashFlow(string idPARTNER)
+        public async Task<List<GetCashFlowViewModel>> GetCashFlow(string idUser)
+        {
+            var list = new List<GetCashFlowViewModel>();
+            var user = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(idUser));
+            if (user.IsPartner)
+            {
+                list = await GetCashFlowPartner(idUser);
+            }
+            else
+            {
+                list = await GetCashFlowAdmin();
+            }
+            return list;
+
+        }
+
+        public async Task<List<GetCashFlowViewModel>> GetCashFlowPartner(string idPARTNER)
         {
             var list = new List<GetCashFlowViewModel>();
             CultureInfo culture = new CultureInfo("pt-BR");
@@ -113,7 +129,51 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
                 var userCreate = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(item.IdUserCreate));
 
                 list.Add(new GetCashFlowViewModel(item.Id, status, item.Title, item.Description, item.IdUserCreate, userCreate.FullName, item.IdPurchaseOrder, item.IdPaymentMethod, payment, item.LaunchValue,
-                                                  item.NetValue, item.ExpirationDate.ToString("d", culture), item.WriteOffDate != DateTime.MinValue ? item.WriteOffDate.ToString("d", culture) : null, 
+                                                  item.NetValue, item.ExpirationDate.ToString("d", culture), item.WriteOffDate != DateTime.MinValue ? item.WriteOffDate.ToString("d", culture) : null,
+                                                  item.IdUserWriteOff, userCreate.FullName, item.IdUserInactivate, null, item.isOutflow, item.WriteDate));
+            }
+            return list;
+        }
+
+        public async Task<List<GetCashFlowViewModel>> GetCashFlowAdmin()
+        {
+            var list = new List<GetCashFlowViewModel>();
+            CultureInfo culture = new CultureInfo("pt-BR");
+            Func<IQueryable<CashFlow>, IIncludableQueryable<CashFlow, object>> include = t => t.Include(a => a.PaymentMethod);
+            var cashflow = await _unitOfWork.IRepositoryCashFlow.GetByOrderAsync(x => x.RecordSituation.Equals(RecordSituation.ACTIVE), x => x.DateCreation, false, include);
+            foreach (var item in cashflow)
+            {
+                var partner = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(item.IdUserCreate));
+                var order = await _unitOfWork.IRepositoryPurchaseOrder.GetByIdAsync(x => x.Id.Equals(item.IdPurchaseOrder));
+                var payment = GetPaymentType(item.PaymentMethod.PaymentType, item.PaymentMethod.NumberInstallments);
+
+                string status = "Pendente";
+                if (!string.IsNullOrEmpty(item.IdPurchaseOrder) && order.PaymentSituation == PaymentSituation.CANCELED)
+                    status = "Cancelado";
+                else
+                {
+                    var date = DateTime.Now.ToBrasilia().Date;
+                    if (item.WriteOffDate != DateTime.MinValue)
+                    {
+                        if (item.isOutflow)
+                        {
+                            status = "Pago";
+                        }
+                        else
+                        {
+                            status = "Recebido";
+                        }
+                    }
+                    else if (item.WriteOffDate == DateTime.MinValue && date > item.ExpirationDate)
+                    {
+                        status = "Em atraso";
+                    }
+                }
+
+                var userCreate = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(item.IdUserCreate));
+
+                list.Add(new GetCashFlowViewModel(item.Id, status, item.Title, item.Description, item.IdUserCreate, userCreate.FullName, item.IdPurchaseOrder, item.IdPaymentMethod, payment, item.LaunchValue,
+                                                  item.NetValue, item.ExpirationDate.ToString("d", culture), item.WriteOffDate != DateTime.MinValue ? item.WriteOffDate.ToString("d", culture) : null,
                                                   item.IdUserWriteOff, userCreate.FullName, item.IdUserInactivate, null, item.isOutflow, item.WriteDate));
             }
             return list;
@@ -191,7 +251,7 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
             catch (Exception)
             {
                 _notifier.Handle(new NotificationMessage("Erro", "Erro ao dar baixa!"));
-                throw new Exception();
+                throw new Exception("Erro ao dar baixa!");
             }
         }
 
@@ -199,11 +259,17 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
         {
             try
             {
+                var user = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(idUser));
                 var Bills = await _unitOfWork.IRepositoryCashFlow.GetByIdAsync(x => x.Id.Equals(idCashFlow));
-                if (Bills.IdUserWriteOff != null)
-                {                    
+                if (Bills == null)
+                {
+                    _notifier.Handle(new NotificationMessage("Erro", "Não é possível encontrar essa conta."));
+                    throw new Exception("Não é possível encontrar essa conta.");
+                }
+                if (Bills.IdUserWriteOff != null && !user.IsAdmin)
+                {
                     _notifier.Handle(new NotificationMessage("Erro", "Não é possível deletar uma conta que já foi dado baixa."));
-                    throw new Exception();
+                    throw new Exception("Não é possível deletar uma conta que já foi dado baixa.");
                 }
 
                 if (Bills.IdPurchaseOrder != null)
@@ -220,10 +286,36 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
                 await _unitOfWork.IRepositoryCashFlow.UpdateAsync(Bills);
                 await _unitOfWork.CommitAsync();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw new ArgumentException("Não foi possível deletar essa conta");
+                _notifier.Handle(new NotificationMessage("Erro", e.Message));
+                throw new Exception(e.Message);
             }
+            
+        }
+
+        public async Task<ResumeCashflowViewModel> ResumeCashFlow(string idUser)
+        {
+            var user = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(idUser));
+            IList<CashFlow> cashflow = new List<CashFlow>();
+            var list = await GetCashFlow(idUser);
+
+            var entrada = 0M;
+            var saida = 0M;
+            var saldo = 0M;
+            foreach (var bill in list)
+            {
+                if (bill.IsOutflow)
+                {
+                    saida += bill.LaunchValue;
+                }
+                else
+                {
+                    entrada += bill.LaunchValue;
+                }
+            }
+            saldo = entrada - saida;
+            return new ResumeCashflowViewModel(entrada.ToString("F2"), saida.ToString("F2"), saldo.ToString("F2"));
         }
 
         public string GetPaymentType(PaymentType paymentType, int installment)

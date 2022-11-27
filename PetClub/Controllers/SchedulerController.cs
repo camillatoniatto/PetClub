@@ -43,9 +43,9 @@ namespace PetClub.Controllers
                 var response = await _appServiceScheduler.CreateScheduler(model);
                 return CustomResponse(response);
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -61,9 +61,9 @@ namespace PetClub.Controllers
                 var response = await _appServiceScheduler.GetSchedulersByPartner(user.Id);
                 return CustomResponse(response);
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -78,9 +78,9 @@ namespace PetClub.Controllers
                 var response = await _appServiceScheduler.GetSchedulersByPet(idPet);
                 return CustomResponse(response);
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -95,9 +95,9 @@ namespace PetClub.Controllers
                 var response = await _appServiceScheduler.GetSchedulersById(idScheduler);
                 return CustomResponse(response);
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -112,9 +112,9 @@ namespace PetClub.Controllers
                 var check = await _appServiceScheduler.CheckQuantitySchedylers(startDate, endDate);
                 return CustomResponse(check);
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -129,9 +129,9 @@ namespace PetClub.Controllers
                 await _appServiceScheduler.UpdateScheduler(model);
                 return CustomResponse();
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }        
 
@@ -146,9 +146,9 @@ namespace PetClub.Controllers
                 await _appServiceScheduler.DeleteScheduler(idScheduler);
                 return CustomResponse();
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
     }

@@ -65,11 +65,15 @@ namespace PetClub.AppService.AppServices.PetAppService
             var pet = await _unitOfWork.IRepositoryPet.GetByIdAsync(x => x.Id.Equals(idPet), include);
 
             var genre = GetGenre(pet.Genre);
-            return new GetPetViewModel(pet.Id, pet.IdUser, pet.User.FullName, pet.Name, genre, pet.Specie, pet.Brand, pet.Birthdate.ToString("d", culture), pet.IsAlive, pet.WriteDate.ToString("d", culture));
+            return new GetPetViewModel(pet.Id, pet.IdUser, pet.User.FullName, pet.Name, (int)pet.Genre, genre, pet.Specie, pet.Brand, pet.Birthdate.ToString("d", culture), pet.IsAlive, pet.WriteDate.ToString("d", culture));
         }
 
-        public async Task<List<GetPetViewModel>> GetPetsUser(string idUser)
+        public async Task<List<GetPetViewModel>> GetPetsUser(string idUser, string otherId)
         {
+            if (idUser.Equals("undefined"))
+            {
+                idUser = otherId;
+            }
             CultureInfo culture = new CultureInfo("pt-BR");
             var list = new List<GetPetViewModel>();
             Func<IQueryable<Pet>, IIncludableQueryable<Pet, object>> include = t => t.Include(a => a.User);
@@ -77,7 +81,7 @@ namespace PetClub.AppService.AppServices.PetAppService
             foreach (var pet in pets)
             {
                 var genre = GetGenre(pet.Genre);
-                var item = new GetPetViewModel(pet.Id, idUser, pet.User.FullName, pet.Name, genre, pet.Specie, pet.Brand, pet.Birthdate.ToString("d", culture), pet.IsAlive, pet.WriteDate.ToString("d", culture));
+                var item = new GetPetViewModel(pet.Id, idUser, pet.User.FullName, pet.Name, (int)pet.Genre, genre, pet.Specie, pet.Brand, pet.Birthdate.ToString("d", culture), pet.IsAlive, pet.WriteDate.ToString("d", culture));
                 list.Add(item);
             }
             return list;
@@ -92,7 +96,7 @@ namespace PetClub.AppService.AppServices.PetAppService
             foreach (var pet in pets)
             {
                 var genre = GetGenre(pet.Genre);
-                var item = new GetPetViewModel(pet.Id, pet.IdUser, pet.User.FullName, pet.Name, genre, pet.Specie, pet.Brand, pet.Birthdate.ToString("d", culture), pet.IsAlive, pet.WriteDate.ToString("d", culture));
+                var item = new GetPetViewModel(pet.Id, pet.IdUser, pet.User.FullName, pet.Name, (int)pet.Genre, genre, pet.Specie, pet.Brand, pet.Birthdate.ToString("d", culture), pet.IsAlive, pet.WriteDate.ToString("d", culture));
                 list.Add(item);
             }
             return list;
@@ -110,11 +114,11 @@ namespace PetClub.AppService.AppServices.PetAppService
                 foreach (var pet in pets)
                 {
                     var genre = GetGenre(pet.Genre);
-                    var item = new GetPetViewModel(pet.Id, pet.IdUser, pet.User.FullName, pet.Name, genre, pet.Specie, pet.Brand, pet.Birthdate.ToString("d", culture), pet.IsAlive, pet.WriteDate.ToString("d", culture));
+                    var item = new GetPetViewModel(pet.Id, pet.IdUser, pet.User.FullName, pet.Name, (int)pet.Genre, genre, pet.Specie, pet.Brand, pet.Birthdate.ToString("d", culture), pet.IsAlive, pet.WriteDate.ToString("d", culture));
                     list.Add(item);
                 }
             }
-            var myPets = await GetPetsUser(idUser);
+            var myPets = await GetPetsUser(idUser, idUser);
             foreach (var my in myPets)
             {
                 list.Add(my);

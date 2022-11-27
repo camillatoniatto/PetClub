@@ -44,9 +44,9 @@ namespace PetClub.Controllers
                 var response = await _appServicePet.CreatePet(model);
                 return CustomResponse(response);
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -62,9 +62,9 @@ namespace PetClub.Controllers
                 var response = await _appServicePet.GetPetById(idPet);
                 return CustomResponse(response);
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -77,12 +77,12 @@ namespace PetClub.Controllers
             var user = GetUser();
             try
             {
-                var response = await _appServicePet.GetPetsUser(idUser);
+                var response = await _appServicePet.GetPetsUser(idUser, user.Id);
                 return CustomResponse(response);
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -98,9 +98,9 @@ namespace PetClub.Controllers
                 var response = await _appServicePet.GetAllPets();
                 return CustomResponse(response);
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -116,9 +116,9 @@ namespace PetClub.Controllers
                 var response = await _appServicePet.GetAllPetsClient(user.Id);
                 return CustomResponse(response);
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -134,9 +134,9 @@ namespace PetClub.Controllers
                 await _appServicePet.UpdatePet(model);
                 return CustomResponse();
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -152,9 +152,9 @@ namespace PetClub.Controllers
                 await _appServicePet.DeletePet(idPet);
                 return CustomResponse();
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
     }

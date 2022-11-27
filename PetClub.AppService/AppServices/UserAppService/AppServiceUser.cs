@@ -86,7 +86,7 @@ namespace PetClub.AppService.AppServices.UserAppService
             CultureInfo culture = new CultureInfo("pt-BR");
 
             var user = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(Id));
-            var pets = await _appServicePet.GetPetsUser(Id);
+            var pets = await _appServicePet.GetPetsUser(Id, Id);
             var roles = GetRoles(user);
 
             return new GetUserByIdViewModel(user.Id, user.FullName, user.Cpf, user.Email, user.PhoneNumber, user.Birthdate.ToString("d", culture),

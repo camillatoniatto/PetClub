@@ -43,9 +43,9 @@ namespace PetClub.Controllers
                 var response = await _appServicePurchaseOrder.CreatePurchaseOrder(model, user.Id);
                 return CustomResponse(response);
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -61,9 +61,9 @@ namespace PetClub.Controllers
                 var response = await _appServicePurchaseOrder.GetPurchaseOrderById(idPurchaseOrder);
                 return CustomResponse(response);
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -79,9 +79,9 @@ namespace PetClub.Controllers
                 var response = await _appServicePurchaseOrder.GetPurchaseOrdersUser(user.Id, isApp);
                 return CustomResponse(response);
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -97,9 +97,9 @@ namespace PetClub.Controllers
                 await _appServicePurchaseOrder.UpdadePurchaseOrder(model);
                 return CustomResponse();
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -115,9 +115,9 @@ namespace PetClub.Controllers
                 await _appServicePurchaseOrder.ConcluedPurchaseOrder(idPurchaseOrder, isPaid);
                 return CustomResponse();
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -133,9 +133,9 @@ namespace PetClub.Controllers
                 await _appServicePurchaseOrder.DeletePurchaseOrder(idPurchaseOrder);
                 return CustomResponse();
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
     }

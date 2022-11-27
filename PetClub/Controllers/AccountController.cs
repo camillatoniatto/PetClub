@@ -162,6 +162,8 @@ namespace PetClub.Controllers
         public async Task<ActionResult> Login([FromBody] LoginViewModel loginViewModel)
         {
             //if (!ModelState.IsValid) return CustomResponse(ModelState);
+            loginViewModel.UserName = OnlyNumber(loginViewModel.UserName);
+
             var userData = await _userManager.FindByNameAsync(loginViewModel.UserName);
             var user = await _userManager.FindByNameAsync(loginViewModel.UserName);
             if (user == null || !user.IsActive)
@@ -267,9 +269,9 @@ namespace PetClub.Controllers
                 }
                 return CustomResponse();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -428,9 +430,9 @@ namespace PetClub.Controllers
 
                 return CustomResponse(userData);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 

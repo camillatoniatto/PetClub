@@ -43,9 +43,9 @@ namespace PetClub.Controllers
                 await _appServiceCashFlow.CreateReceivableBill(model, user.Id);
                 return CustomResponse();
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -61,9 +61,44 @@ namespace PetClub.Controllers
                 var cashflow = await _appServiceCashFlow.GetCashFlow(user.Id);
                 return CustomResponse(cashflow);
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("get-cashflow-admin")]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
+        public async Task<IActionResult> GetCashFlowAdmin()
+        {
+            var user = GetUser();
+            try
+            {
+                var cashflow = await _appServiceCashFlow.GetCashFlowAdmin();
+                return CustomResponse(cashflow);
+            }
+            catch (Exception e)
+            {
+                return CustomResponse(e.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("get-resume-cashflow")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResumeCashFlow()
+        {
+            var user = GetUser();
+            try
+            {
+                var cashflow = await _appServiceCashFlow.ResumeCashFlow(user.Id);
+                return CustomResponse(cashflow);
+            }
+            catch (Exception e)
+            {
+                return CustomResponse(e.Message);
             }
         }
 
@@ -79,9 +114,9 @@ namespace PetClub.Controllers
                 await _appServiceCashFlow.WriteOff(idCashFlow, user.Id);
                 return CustomResponse();
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -97,9 +132,9 @@ namespace PetClub.Controllers
                 await _appServiceCashFlow.UpdateAsync(model, user.Id);
                 return CustomResponse();
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
 
@@ -109,15 +144,16 @@ namespace PetClub.Controllers
         //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
         public async Task<IActionResult> DeleteBill(string idCashFlow)
         {
-            var user = GetUser();
             try
             {
+                var user = GetUser();
+
                 await _appServiceCashFlow.DeleteBill(idCashFlow, user.Id);
                 return CustomResponse();
             }
-            catch
+            catch (Exception e)
             {
-                return CustomResponse();
+                return CustomResponse(e.Message);
             }
         }
     }

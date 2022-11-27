@@ -12,7 +12,7 @@ namespace PetClub.AppService.AppServices.PetAppService
         Task<string> CreatePet(CreatePetViewModel model);
         Task<List<GetPetViewModel>> GetAllPets();
         Task<GetPetViewModel> GetPetById(string idPet);
-        Task<List<GetPetViewModel>> GetPetsUser(string idUser);
+        Task<List<GetPetViewModel>> GetPetsUser(string idUser, string otherId);
         Task UpdatePet(UpdatePetViewModel model);
         Task DeletePet(string idPet);
         Task<List<GetPetViewModel>> GetAllPetsClient(string idUser);
