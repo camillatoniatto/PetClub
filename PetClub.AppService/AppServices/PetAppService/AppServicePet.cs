@@ -40,7 +40,7 @@ namespace PetClub.AppService.AppServices.PetAppService
                 if (pet != null)
                 {
                     _notifier.Handle(new NotificationMessage("pet", "Ops, parece que esse animal já foi cadastrado anteriormente."));
-                    throw new Exception();
+                    throw new Exception("Parece que esse animal já foi cadastrado anteriormente.");
                 }
                 var genre = Genre.MALE;
                 if (model.Genre == 1)
@@ -132,7 +132,7 @@ namespace PetClub.AppService.AppServices.PetAppService
             if (pet == null)
             {
                 _notifier.Handle(new NotificationMessage("pet", "Pet não encontrado."));
-                throw new Exception();
+                throw new Exception("Pet não encontrado.");
             }
 
             var genre = Genre.MALE;
@@ -157,7 +157,7 @@ namespace PetClub.AppService.AppServices.PetAppService
             if (pet == null)
             {
                 _notifier.Handle(new NotificationMessage("pet", "Pet não encontrado."));
-                throw new Exception();
+                throw new Exception("Pet não encontrado.");
             }
 
             pet.RecordSituation = RecordSituation.INACTIVE;

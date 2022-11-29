@@ -70,7 +70,7 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
             catch (Exception)
             {
                 _notifier.Handle(new NotificationMessage("Erro", "Erro ao gerar uma conta!"));
-                throw new Exception();
+                throw new Exception("Erro ao gerar uma conta!");
             }
         }
 
@@ -187,7 +187,7 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
                 if (!bill.isOutflow && bill.IdPurchaseOrder != null)
                 {
                     _notifier.Handle(new NotificationMessage("Erro", "Não é possível editar uma entrada de caixa"));
-                    throw new Exception();
+                    throw new Exception("Não é possível editar uma entrada de caixa");
                 }
 
                 if (bill.WriteOffDate != DateTime.MinValue)
@@ -218,12 +218,14 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
                 else
                 {
                     _notifier.Handle(new NotificationMessage("Erro", "Não é possível editar uma conta já baixada!"));
-                    throw new Exception();
+                    throw new Exception("Não é possível editar uma conta já baixada!");
                 }
             }
             catch (Exception)
             {
                 _notifier.Handle(new NotificationMessage("Erro", "Erro ao atualizar essa conta!"));
+                throw new Exception("Erro ao atualizar essa conta!");
+
             }
             return model;
 

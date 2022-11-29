@@ -103,12 +103,12 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
             if (order == null)
             {
                 _notifier.Handle(new NotificationMessage("Erro", "Não foi possível encontrar essa compra."));
-                throw new Exception();
+                throw new Exception("Não foi possível encontrar essa compra.");
             }
             if (order.PurchaseOrderItem.Count() == 0)
             {
                 _notifier.Handle(new NotificationMessage("Erro", "Parece que essa compra ainda não tem serviços cadastrados."));
-                throw new Exception();
+                throw new Exception("Parece que essa compra ainda não tem serviços cadastrados.");
             }
 
             var user = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(order.IdUser));
@@ -142,12 +142,12 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
             if (order == null)
             {
                 _notifier.Handle(new NotificationMessage("erro", "Pedido não encontrado."));
-                throw new Exception();
+                throw new Exception("Pedido não encontrado.");
             }
             if (order.PaymentSituation == PaymentSituation.CANCELED)
             {
                 _notifier.Handle(new NotificationMessage("erro", "Não é possivel cancelar uma compra que já foi cancelada."));
-                throw new Exception();
+                throw new Exception("Não é possivel cancelar uma compra que já foi cancelada.");
             }
             bill.RecordSituation = RecordSituation.INACTIVE;
             order.PurchaseOrderSituation = PurchaseOrderSituation.CANCELED;
@@ -168,7 +168,7 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
             if (order == null)
             {
                 _notifier.Handle(new NotificationMessage("erro", "Pedido não encontrado."));
-                throw new Exception();
+                throw new Exception("Pedido não encontrado.");
             }
 
             order.PurchaseOrderSituation = model.PurchaseOrderSituation;

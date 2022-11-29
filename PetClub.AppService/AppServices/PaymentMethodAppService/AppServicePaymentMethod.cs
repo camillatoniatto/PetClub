@@ -39,7 +39,7 @@ namespace PetClub.AppService.AppServices.PaymentMethodAppService
                 if (method.Count > 0)
                 {
                     _notifier.Handle(new NotificationMessage("payment", "Já existe essa forma de pagamento"));
-                    throw new Exception();
+                    throw new Exception("Já existe essa forma de pagamento");
                 }
 
                 await _unitOfWork.IRepositoryPaymentMethod.AddAsync(new PaymentMethod(model.Title, model.PaymentType, model.IsInstallment, model.NumberInstallments, model.AdminTax));

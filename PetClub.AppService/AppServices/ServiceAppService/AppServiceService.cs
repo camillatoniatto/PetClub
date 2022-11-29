@@ -39,7 +39,7 @@ namespace PetClub.AppService.AppServices.ServiceAppService
                 if (service != null)
                 {
                     _notifier.Handle(new NotificationMessage("service", "Já existe um serviço cadastrado com esse título."));
-                    throw new Exception();
+                    throw new Exception("Já existe um serviço cadastrado com esse título.");
                 }
                 var serviceType = IntToEnumServiceType(model.ServiceType);
                 var idService = await _unitOfWork.IRepositoryService.AddReturnIdAsync(new Service(idUser, model.Title, model.Description, serviceType, model.SingleUse, model.DateDuration, model.Value, DateTime.MinValue));
@@ -62,7 +62,11 @@ namespace PetClub.AppService.AppServices.ServiceAppService
             var serviceType = GetServiceType(service.ServiceType);
             var purchaseServices = await _unitOfWork.IRepositoryPurchaseOrderItem.GetByAsync(x => x.IdService.Equals(service.Id) && x.RecordSituation.Equals(RecordSituation.ACTIVE));
             var sold = 0;
-            sold = purchaseServices.Count();
+            foreach (var itemOrder in purchaseServices)
+            {
+                sold += itemOrder.Quantity;
+
+            }
             return new GetServiceViewModel(service.Id, service.IdPartner, service.Title, service.Description, serviceType, (int)service.ServiceType, service.SingleUser, service.DateDuration.ToString("d", culture), service.Value.ToString("F2"), service.Value, service.WriteDate.ToString("d", culture), service.User.FullName, sold);
         }
 
@@ -86,7 +90,11 @@ namespace PetClub.AppService.AppServices.ServiceAppService
                 var serviceType = GetServiceType(service.ServiceType);
                 var purchaseServices = await _unitOfWork.IRepositoryPurchaseOrderItem.GetByAsync(x => x.IdService.Equals(service.Id) && x.RecordSituation.Equals(RecordSituation.ACTIVE));
                 var sold = 0;
-                sold = purchaseServices.Count();
+                foreach (var itemOrder in purchaseServices)
+                {
+                    sold += itemOrder.Quantity;
+
+                }
                 var item = new GetServiceViewModel(service.Id, service.IdPartner, service.Title, service.Description, serviceType, (int)service.ServiceType, service.SingleUser, service.DateDuration.ToString("d", culture), service.Value.ToString("F2"), service.Value, service.WriteDate.ToString("d", culture), service.User.FullName, sold);
                 list.Add(item);
             }
@@ -104,7 +112,11 @@ namespace PetClub.AppService.AppServices.ServiceAppService
                 var serviceType = GetServiceType(service.ServiceType);
                 var purchaseServices = await _unitOfWork.IRepositoryPurchaseOrderItem.GetByAsync(x => x.IdService.Equals(service.Id) && x.RecordSituation.Equals(RecordSituation.ACTIVE));
                 var sold = 0;
-                sold = purchaseServices.Count();
+                foreach (var itemOrder in purchaseServices)
+                {
+                    sold += itemOrder.Quantity;
+
+                }
                 var item = new GetServiceViewModel(service.Id, service.IdPartner, service.Title, service.Description, serviceType, (int)service.ServiceType, service.SingleUser, service.DateDuration.ToString("d", culture), service.Value.ToString("F2"), service.Value, service.WriteDate.ToString("d", culture), service.User.FullName, sold);
 
 
@@ -124,7 +136,11 @@ namespace PetClub.AppService.AppServices.ServiceAppService
                 var serviceType = GetServiceType(service.ServiceType);
                 var purchaseServices = await _unitOfWork.IRepositoryPurchaseOrderItem.GetByAsync(x => x.IdService.Equals(service.Id) && x.RecordSituation.Equals(RecordSituation.ACTIVE));
                 var sold = 0;
-                sold = purchaseServices.Count();
+                foreach (var itemOrder in purchaseServices)
+                {
+                    sold += itemOrder.Quantity;
+
+                }
                 var item = new GetServiceViewModel(service.Id, service.IdPartner, service.Title, service.Description, serviceType, (int)service.ServiceType, service.SingleUser, service.DateDuration.ToString("d", culture), service.Value.ToString("F2"), service.Value, service.WriteDate.ToString("d", culture), service.User.FullName, sold);
 
                 list.Add(item);
@@ -153,7 +169,7 @@ namespace PetClub.AppService.AppServices.ServiceAppService
             if (service == null)
             {
                 _notifier.Handle(new NotificationMessage("pet", "Registro não encontrado."));
-                throw new Exception();
+                throw new Exception("Registro não encontrado.");
             }
 
             service.Title = model.Title;
@@ -173,7 +189,7 @@ namespace PetClub.AppService.AppServices.ServiceAppService
             if (service == null)
             {
                 _notifier.Handle(new NotificationMessage("pet", "Registro não encontrado."));
-                throw new Exception();
+                throw new Exception("Registro não encontrado.");
             }
 
             service.RecordSituation = RecordSituation.INACTIVE;

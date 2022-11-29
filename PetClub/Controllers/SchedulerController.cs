@@ -45,7 +45,8 @@ namespace PetClub.Controllers
             }
             catch (Exception e)
             {
-                return CustomResponse(e.Message);
+                ErrorNotifier("erro", e.Message);
+                return CustomResponse();
             }
         }
 
@@ -63,7 +64,8 @@ namespace PetClub.Controllers
             }
             catch (Exception e)
             {
-                return CustomResponse(e.Message);
+                ErrorNotifier("erro", e.Message);
+                return CustomResponse();
             }
         }
 
@@ -80,7 +82,8 @@ namespace PetClub.Controllers
             }
             catch (Exception e)
             {
-                return CustomResponse(e.Message);
+                ErrorNotifier("erro", e.Message);
+                return CustomResponse();
             }
         }
 
@@ -97,7 +100,8 @@ namespace PetClub.Controllers
             }
             catch (Exception e)
             {
-                return CustomResponse(e.Message);
+                ErrorNotifier("erro", e.Message);
+                return CustomResponse();
             }
         }
 
@@ -114,7 +118,8 @@ namespace PetClub.Controllers
             }
             catch (Exception e)
             {
-                return CustomResponse(e.Message);
+                ErrorNotifier("erro", e.Message);
+                return CustomResponse();
             }
         }
 
@@ -131,7 +136,8 @@ namespace PetClub.Controllers
             }
             catch (Exception e)
             {
-                return CustomResponse(e.Message);
+                ErrorNotifier("erro", e.Message);
+                return CustomResponse();
             }
         }        
 
@@ -148,7 +154,8 @@ namespace PetClub.Controllers
             }
             catch (Exception e)
             {
-                return CustomResponse(e.Message);
+                ErrorNotifier("erro", e.Message);
+                return CustomResponse();
             }
         }
     }

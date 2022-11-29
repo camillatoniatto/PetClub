@@ -40,7 +40,7 @@ namespace PetClub.AppService.AppServices.PurchaseOrderItemAppService
                 if (service == null)
                 {
                     _notifier.Handle(new NotificationMessage("erro", "Serviço não encontrado."));
-                    throw new Exception();
+                    throw new Exception("Serviço não encontrado.");
                 }
                 var idOrderItem = await _unitOfWork.IRepositoryPurchaseOrderItem.AddReturnIdAsync(new PurchaseOrderItem(model.IdPurchaseOrder, model.IdService, model.Quantity, service.Value));
                 await _unitOfWork.CommitAsync();
@@ -49,7 +49,7 @@ namespace PetClub.AppService.AppServices.PurchaseOrderItemAppService
             catch (Exception e)
             {
                 _notifier.Handle(new NotificationMessage("erro", e.Message));
-                throw new Exception();
+                throw new Exception(e.Message);
             }
         }
 
@@ -59,13 +59,13 @@ namespace PetClub.AppService.AppServices.PurchaseOrderItemAppService
             if (orderItem == null)
             {
                 _notifier.Handle(new NotificationMessage("erro", "Item de pedido não encontrado."));
-                throw new Exception();
+                throw new Exception("Item de pedido não encontrado.");
             }
             var service = await _unitOfWork.IRepositoryService.GetByIdAsync(x => x.Id.Equals(model.IdService));
             if (service == null)
             {
                 _notifier.Handle(new NotificationMessage("erro", "Serviço não encontrado."));
-                throw new Exception();
+                throw new Exception("Serviço não encontrado.");
             }
 
             if (!model.Delete)

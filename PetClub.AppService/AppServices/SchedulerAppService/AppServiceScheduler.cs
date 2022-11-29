@@ -41,12 +41,12 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
                 if (model.StartDate == date || model.FinalDate == date)
                 {
                     _notifier.Handle(new NotificationMessage("Date", "Datas inválidas"));
-                    throw new Exception();
+                    throw new Exception ("Datas inválidas");
                 }
                 if (model.StartDate > model.FinalDate)
                 {
                     _notifier.Handle(new NotificationMessage("Date", "A data de início não pode ser maior que a data final."));
-                    throw new Exception();
+                    throw new Exception("A data de início não pode ser maior que a data final.");
                 }
                 await CheckAvailable(model.IdPet, model.StartDate, model.FinalDate, null);
                 var serviceType = GetSchedulerServiceTypeInt(model.ServiceType);
@@ -57,7 +57,7 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
                 if (pet == null)
                 {
                     _notifier.Handle(new NotificationMessage("Erro", "Animal não encontrado."));
-                    throw new Exception();
+                    throw new Exception("Animal não encontrado.");
                 }
                 var scheduler = await _unitOfWork.IRepositoryScheduler.AddReturnIdAsync(new Scheduler(model.IdPartner, model.IdPet, model.StartDate, model.FinalDate,
                                                                                             serviceType, schedulerSituation, DateTime.Now.ToBrasilia()));
@@ -90,7 +90,7 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
             if (schedulers.Count() > 0)
             {
                 _notifier.Handle(new NotificationMessage("Erro", "Já existe um agendamento em aberto para este animal entre as datas "+ startDate.ToString("d", culture)+ " e "+ endDate.ToString("d", culture)));
-                throw new Exception();
+                throw new Exception("Já existe um agendamento em aberto para este animal entre as datas " + startDate.ToString("d", culture) + " e " + endDate.ToString("d", culture));
             }
         }
 
@@ -163,13 +163,13 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
                 if (model.StartDate == date || model.FinalDate == date)
                 {
                     _notifier.Handle(new NotificationMessage("Date", "Datas inválidas"));
-                    throw new Exception();
+                    throw new Exception("Datas inválidas");
                 }
                 var scheduler = await _unitOfWork.IRepositoryScheduler.GetByIdAsync(x => x.Id.Equals(model.IdScheduler));
                 if (model.StartDate > model.FinalDate)
                 {
                     _notifier.Handle(new NotificationMessage("Date", "A data de início não pode ser maior que a data final."));
-                    throw new Exception();
+                    throw new Exception("A data de início não pode ser maior que a data final.");
                 }
                 await CheckAvailable(model.IdPet, model.StartDate, model.FinalDate, model.IdScheduler);
                 var schedulerSituation = GetSchedulerSituationTypeInt(model.SchedulerSituation);
@@ -180,7 +180,7 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
                 if (pet == null)
                 {
                     _notifier.Handle(new NotificationMessage("Erro", "Animal não encontrado."));
-                    throw new Exception();
+                    throw new Exception("Animal não encontrado.");
                 }
                 scheduler.IdPet = model.IdPet;
                 scheduler.StartDate = model.StartDate;
