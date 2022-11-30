@@ -268,13 +268,13 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
                     _notifier.Handle(new NotificationMessage("Erro", "Não é possível encontrar essa conta."));
                     throw new Exception("Não é possível encontrar essa conta.");
                 }
-                if (Bills.IdUserWriteOff != null && !user.IsAdmin)
+                if (!string.IsNullOrEmpty(Bills.IdUserWriteOff) && !user.IsAdmin)
                 {
                     _notifier.Handle(new NotificationMessage("Erro", "Não é possível deletar uma conta que já foi dado baixa."));
                     throw new Exception("Não é possível deletar uma conta que já foi dado baixa.");
                 }
 
-                if (Bills.IdPurchaseOrder != null)
+                if (!string.IsNullOrEmpty(Bills.IdPurchaseOrder))
                 {
                     //Func<IQueryable<PurchaseOrder>, IIncludableQueryable<PurchaseOrder, object>> include = t => t.Include(a => a.PurchaseOrderItem);
                     var order = await _unitOfWork.IRepositoryPurchaseOrder.GetByIdAsync(x => x.Id.Equals(Bills.IdPurchaseOrder));

@@ -70,7 +70,7 @@ namespace PetClub.AppService.AppServices.PetAppService
 
         public async Task<List<GetPetViewModel>> GetPetsUser(string idUser, string otherId)
         {
-            if (idUser.Equals("undefined"))
+            if (idUser == null || idUser == "undefined")
             {
                 idUser = otherId;
             }

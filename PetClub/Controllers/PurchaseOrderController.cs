@@ -8,6 +8,7 @@ using PetClub.AppService.AppServices.UriAppService.Interfaces;
 using PetClub.AppService.AppServices.UserAppService;
 using PetClub.AppService.ViewModels.PaymentMethod;
 using PetClub.AppService.ViewModels.PurchaseOrder;
+using PetClub.AppService.ViewModels.PurchaseOrderItem;
 using PetClub.Configurations;
 using PetClub.CrossCutting.Identity.Interfaces;
 
@@ -49,6 +50,24 @@ namespace PetClub.Controllers
                 return CustomResponse();
             }
         }
+
+        [HttpPost]
+        [Route("get-value-order-itens")]
+        [AllowAnonymous]
+        //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.PARTNER)]
+        public async Task<IActionResult> GetValue(List<CreatePurchaseOrderItemViewModel> model)
+        {
+            try
+            {
+                var response = await _appServicePurchaseOrder.GetValue(model);
+                return CustomResponse(response);
+            }
+            catch (Exception e)
+            {
+                ErrorNotifier("erro", e.Message);
+                return CustomResponse();
+            }
+        }        
 
         [HttpGet]
         [Route("get-order-byid")]

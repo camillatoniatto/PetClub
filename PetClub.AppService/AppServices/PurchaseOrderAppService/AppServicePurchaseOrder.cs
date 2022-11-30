@@ -190,6 +190,17 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
             await _unitOfWork.CommitAsync();
         }
 
+        public async Task<string> GetValue(List<CreatePurchaseOrderItemViewModel> itens)
+        {
+            var finalValue = 0M;
+            foreach (var item in itens.Where(x => x.Quantity != 0))
+            {
+                var service = await _unitOfWork.IRepositoryService.GetByIdAsync(x => x.Id.Equals(item.IdService));
+                finalValue += service.Value + item.Quantity;
+            }
+            return finalValue.ToString("F2");
+        }
+
         public async Task<GetPurchaseOrderViewModel> GetPurchaseOrderById(string idPurchaseOrder)
         {
             CultureInfo culture = new CultureInfo("pt-BR");

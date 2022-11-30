@@ -1,4 +1,5 @@
 ﻿using PetClub.AppService.ViewModels.PurchaseOrder;
+using PetClub.AppService.ViewModels.PurchaseOrderItem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +16,6 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
         Task UpdadePurchaseOrder(UpdatePurchaseOrderViewModel model);
         Task DeletePurchaseOrder(string idPurchaseOrder);
         Task ConcluedPurchaseOrder(string idPurchaseOrder, bool isPaid);
+        Task<string> GetValue(List<CreatePurchaseOrderItemViewModel> itens);
     }
 }
