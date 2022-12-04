@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PetClub.AppService.AppServices.DashboardAppService
+namespace PetClub.AppService.AppServices.ImageAppService
 {
-    public interface IAppServiceDashboard
+    public interface IAppServiceImage
     {
     }
 }

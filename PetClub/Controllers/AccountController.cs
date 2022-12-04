@@ -1,5 +1,4 @@
 ﻿using AutoMapper.Execution;
-using Datletica.Api.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -201,78 +200,6 @@ namespace PetClub.Controllers
             }
 
             return CustomResponse();
-        }
-
-
-        [HttpGet]
-        [AllowAnonymous]
-        [Route("send-password-reset-link")]
-        public async Task<ActionResult> SendPasswordResetLink(string userName)
-        {
-            var user = await _userManager.FindByNameAsync(userName);
-
-            if (user == null || !user.IsActive)
-            {
-                ErrorNotifier("Cpf", "Esse cpf não existe ou é inválido.");
-                return CustomResponse();
-            }
-
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            string resetLink = "";
-            string email = "";
-            try
-            {
-
-                //resetLink =  Url.Action("ResetPassword", "Account", new {version = "1.0", user.UserName}, _httpContextAccessor.HttpContext.Request.Scheme);
-                resetLink = "http://painel.datletica.com.br/resetpassword/" + user.UserName + "/" + HttpUtility.HtmlEncode(token);
-                email = Emails.PasswordReset(resetLink, user.FullName);
-                await _emailSender.SendEmailAsync(user.Email, "Datlética - Alteração de senha", email);
-
-            }
-            catch (Exception e)
-            {
-                return CustomResponse(e.Message);
-            }
-
-            return CustomResponse("Link para alteração de senha foi enviado com sucesso no seu email");
-        }
-
-        [HttpPost]
-        [Route("reset-password")]
-        [AllowAnonymous]
-        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel resetPasswordViewModel)
-        {
-
-            try
-            {
-                var user = await _userManager.FindByNameAsync(resetPasswordViewModel.UserName);
-                if (!user.IsActive)
-                    ErrorNotifier("Reset", "Usuário não encontrado no sistema");
-                else
-                {
-                    var result =
-                        await _userManager.ResetPasswordAsync(user, resetPasswordViewModel.Token,
-                            resetPasswordViewModel.Password);
-
-                    if (result.Succeeded)
-                    {
-                        var email = Emails.PasswordResetConfirmed(user.FullName);
-                        await _emailSender.SendEmailAsync(user.Email, "Datlética - Alteração de senha", email);
-                        return CustomResponse("Senha alterada com sucesso!");
-                    }
-                    else
-                    {
-                        //ErrorNotifier("Reset", result.Errors.ElementAt(0).Description);
-                        ErrorNotifier("Reset", "O tempo de troca de senha foi expirado ou token já foi utilizado. Caso não tenha conseguido trocar a senha, por favor reenvie novamente um email de alteração de senha.");
-
-                    }
-                }
-                return CustomResponse();
-            }
-            catch (Exception e)
-            {
-                return CustomResponse(e.Message);
-            }
         }
 
         private async Task<ApplicationUser> ValidRegisterUser(UserViewModel user, bool isAdmin, bool isPartner)

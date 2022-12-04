@@ -1,5 +1,4 @@
-﻿using Datletica.Infra.Persistence.Map;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using PetClub.Domain.Entities;
 using PetClub.Infra.Persistence.Map;
 using System;

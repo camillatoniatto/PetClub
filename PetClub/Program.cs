@@ -8,7 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using PetClub;
 
-namespace Datletica.Api
+namespace PetClub
 {
     public class Program
     {

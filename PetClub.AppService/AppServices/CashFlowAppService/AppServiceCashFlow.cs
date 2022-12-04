@@ -35,6 +35,12 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
             try
             {
                 decimal netValue = 0M;
+                if (model.LaunchValue < 0 || model.LaunchValue == 0)
+                {
+                    _notifier.Handle(new NotificationMessage("Erro", "O valor da movimentação precisa ser maior que zero."));
+                    throw new Exception("O valor da movimentação precisa ser maior que zero.");
+                }
+
                 var payment = await _unitOfWork.IRepositoryPaymentMethod.GetByIdAsync(x => x.Id.Equals(model.IdPaymentMethod));
                 if (payment != null)
                 {
@@ -45,32 +51,61 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
                     }
                 }
 
-                CashFlow cashFlow;
-                for (int i = 1; i <= payment.NumberInstallments; i++)
+                var movimentacao = model.isOutflow ? "saída" : "entrada";
+                var tipoData = model.isOutflow ? "data de vencimento" : "previsão de recebimento";
+                var bill = await _unitOfWork.IRepositoryCashFlow.GetByIdAsync(x => x.Title.Equals(model.Title) && x.IdUserCreate.Equals(idUser) && x.isOutflow.Equals(model.isOutflow) && x.WriteDate.Date.Equals(model.ExpirationDate.Date));
+                if (bill != null)
                 {
-                    var value = netValue / payment.NumberInstallments;
+                    _notifier.Handle(new NotificationMessage("Erro", "Já existe uma "+movimentacao+" de caixa registrada com a "+ tipoData + " e título iguais."));
+                    throw new Exception("Já existe uma " + movimentacao + " de caixa registrada na data de " + tipoData + " com este título.");
+                }
+
+                CashFlow cashFlow;
+                if (string.IsNullOrEmpty(model.IdPurchaseOrder))
+                {
+                    for (int i = 1; i <= payment.NumberInstallments; i++)
+                    {
+                        var value = netValue / payment.NumberInstallments;
+                        DateTime dateTypePayment = model.ExpirationDate;
+                        if (payment.PaymentType == PaymentType.CREDIT_CARD)
+                        {
+                            dateTypePayment = DateTime.Now.ToBrasilia().AddDays(30 * i);
+                        }
+
+                        string userWriteOff = "";
+                        if (model.WriteOffDate != DateTime.MinValue)
+                            userWriteOff = idUser;
+
+                        cashFlow = new CashFlow(model.Title, model.Description, idUser, model.IdPurchaseOrder, model.IdPaymentMethod, model.LaunchValue,
+                                        netValue, dateTypePayment, model.WriteOffDate, userWriteOff, "", model.isOutflow, DateTime.Now.ToBrasilia());
+                        await _unitOfWork.IRepositoryCashFlow.AddAsync(cashFlow);
+
+                    }
+                }
+                else
+                {
+                    var value = netValue;
                     DateTime dateTypePayment = model.ExpirationDate;
                     if (payment.PaymentType == PaymentType.CREDIT_CARD)
                     {
-                        dateTypePayment = DateTime.Now.ToBrasilia().AddDays(30 * i);
+                        dateTypePayment = DateTime.Now.ToBrasilia().AddDays(30);
                     }
 
                     string userWriteOff = "";
                     if (model.WriteOffDate != DateTime.MinValue)
                         userWriteOff = idUser;
 
-                    cashFlow = new CashFlow(model.Title, model.Description, idUser, model.IdPurchaseOrder, model.IdPaymentMethod, model.LaunchValue, 
+                    cashFlow = new CashFlow(model.Title, model.Description, idUser, model.IdPurchaseOrder, model.IdPaymentMethod, model.LaunchValue,
                                     netValue, dateTypePayment, model.WriteOffDate, userWriteOff, "", model.isOutflow, DateTime.Now.ToBrasilia());
                     await _unitOfWork.IRepositoryCashFlow.AddAsync(cashFlow);
-
                 }
 
                 await _unitOfWork.CommitAsync();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                _notifier.Handle(new NotificationMessage("Erro", "Erro ao gerar uma conta!"));
-                throw new Exception("Erro ao gerar uma conta!");
+                _notifier.Handle(new NotificationMessage("Erro", e.Message));
+                throw new Exception(e.Message);
             }
         }
 

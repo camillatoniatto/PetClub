@@ -36,7 +36,7 @@ namespace PetClub.AppService.AppServices.PetAppService
         {
             try
             {
-                var pet = await _unitOfWork.IRepositoryPet.GetByIdAsync(x => x.Name.Equals(model.Name) && x.Specie.Equals(model.Specie) && x.Brand.Equals(model.Brand) && x.IdUser.Equals(model.idUser) && x.Birthdate.Equals(model.Birthdate) && x.IsAlive.Equals(true));
+                var pet = await _unitOfWork.IRepositoryPet.GetByIdAsync(x => x.Name.Equals(model.Name) && x.Specie.Equals(model.Specie) && x.Brand.Equals(model.Brand) && x.IdUser.Equals(model.idUser) && x.Birthdate.Date.Equals(model.Birthdate.Date) && x.IsAlive.Equals(true));
                 if (pet != null)
                 {
                     _notifier.Handle(new NotificationMessage("pet", "Ops, parece que esse animal já foi cadastrado anteriormente."));

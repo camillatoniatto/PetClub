@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Datletica.Infra.Persistence.Map
+namespace PetClub.Infra.Persistence.Map
 {
     public class MapUser : IEntityTypeConfiguration<User>
     {

@@ -1,5 +1,4 @@
-﻿using Datletica.Api.Controllers;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PetClub.AppService.AppServices.CashFlowAppService;
 using PetClub.AppService.AppServices.NotifierAppService;

@@ -37,6 +37,11 @@ namespace PetClub.AppService.AppServices.UsersPartnersAppService
         public async Task<string> CreateUsersPartners(string idUser, string idPartner)
         {
             var userPartner = await _unitOfWork.IRepositoryUsersPartners.GetByIdAsync(x => x.IdPartner.Equals(idPartner) && x.IdUser.Equals(idUser));
+            if (userPartner != null)
+            {
+                _notifier.Handle(new NotificationMessage("Erro", "Esse cliente já foi incluido em sua lista anteriormente."));
+                throw new Exception("Esse cliente já foi incluido em sua lista anteriormente.");
+            }
             var id = "";
             if (userPartner == null)
             {
@@ -65,19 +70,12 @@ namespace PetClub.AppService.AppServices.UsersPartnersAppService
             Func<IQueryable<UsersPartners>, IIncludableQueryable<UsersPartners, object>> include = t => t.Include(a => a.User).ThenInclude(x => x.Pet);
             var userPartners = await _unitOfWork.IRepositoryUsersPartners.GetByOrderAsync(x => x.IdPartner.Equals(idPartner) && x.RecordSituation == RecordSituation.ACTIVE, x => x.User.FullName, false, include);
             var partner = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(idPartner));
-            if (userPartners != null)
+            foreach (var item in userPartners)
             {
-                foreach (var item in userPartners)
-                {
-                    list.Add(new GetUsersPartnersViewModel(item.Id, item.IdUser, item.User.FullName, item.User.Cpf, item.User.Email, item.User.PhoneNumber, partner.Id, partner.FullName, partner.Cpf, item.DateCreation.ToString("d", culture)));
-                }
-                return list;
+                list.Add(new GetUsersPartnersViewModel(item.Id, item.IdUser, item.User.FullName, item.User.Cpf, item.User.Email, item.User.PhoneNumber, partner.Id, partner.FullName, partner.Cpf, item.DateCreation.ToString("d", culture)));
             }
-            else
-            {
-                _notifier.Handle(new NotificationMessage("userPartner", "Não há clientes registrados."));
-                throw new Exception();
-            }
+            return list;
+
         }
 
         public async Task<GetUsersPartnersViewModel> GetByIdUsersPartners(string idUsersPartners)

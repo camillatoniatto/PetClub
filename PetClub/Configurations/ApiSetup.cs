@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Localization;
 using PetClub.AppService.AppServices.UriAppService.Interfaces;
 using PetClub.AppService.AppServices.UtilAppService;
 
-namespace Datletica.Api.Configurations
+namespace PetClub.Configurations
 {
     public static class ApiSetup
     {
@@ -37,11 +37,6 @@ namespace Datletica.Api.Configurations
             });
 
             services.AddCors();
-
-            //services.AddHealthChecks().AddSqlServer(configuration.GetConnectionString("DefaultConnection"));
-            //services.AddHealthChecksUI();
-
-
             services.AddControllers();
 
             //services.AddTransient<IAppServiceEmails, AppServiceEmails>(email =>

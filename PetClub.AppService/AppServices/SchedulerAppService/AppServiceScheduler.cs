@@ -201,6 +201,11 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
         public async Task DeleteScheduler(string idScheduler)
         {
             var scheduler = await _unitOfWork.IRepositoryScheduler.GetByIdAsync(x => x.Id.Equals(idScheduler));
+            if (scheduler.SchedulerSituation != SchedulerSituation.SCHEDULED)
+            {
+                _notifier.Handle(new NotificationMessage("Erro", "Só é possível cancelar ou excluir agendamento com a situação 'Agendado'."));
+                throw new Exception("Só é possível cancelar ou excluir agendamento com a situação 'Agendado'.");
+            }
             scheduler.RecordSituation = RecordSituation.INACTIVE;
             scheduler.SchedulerSituation = SchedulerSituation.CANCELED;
             await _unitOfWork.IRepositoryScheduler.UpdateAsync(scheduler);

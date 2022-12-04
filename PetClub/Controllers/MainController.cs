@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PetClub.AppService.AppServices.NotifierAppService;
 using PetClub.AppService.ViewModels.Account;
 
-namespace Datletica.Api.Controllers
+namespace PetClub.Controllers
 {
     public abstract class MainController : ControllerBase
     {

@@ -11,7 +11,6 @@ using Hangfire.SqlServer;
 using System;
 using PetClub.CrossCutting.Identity.Configuration;
 using PetClub.CrossCutting.Ioc;
-using Datletica.Api.Configurations;
 
 namespace PetClub
 {
@@ -33,7 +32,6 @@ namespace PetClub
             DependencyInjectionSetup.AddDependencyInjectionSetup(services, Configuration);
             SecuritySetup.AddSecuritySetup(services, Configuration);
             ApiSetup.AddApiSetup(services, Configuration);
-            //HangfireSetup.AddHangfireSetup(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,31 +42,10 @@ namespace PetClub
                 app.UseDeveloperExceptionPage();
             }
 
-            //var builder = WebApplication.CreateBuilder(args);
-
-            //app.Run(async (context) =>
-            //{
-            //    await context.Response.WriteAsync("Hello World!");
-            //});
-
-            //app.UseHttpsRedirection();
-            //app.UseStaticFiles();
-            //app.UseRouting();
-            //app.UseAuthorization();
-            //app.MapRazorPages();
-            //app.Run();
-
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseSwaggerSetup();
             app.UseMvcConfiguration();
-            //app.UseHangfireDashboard();
-            //app.UseHangfireServer();
-
-            //app.UseEndpoints(endpoints =>
-            //{
-            //    endpoints.MapHangfireDashboard();
-            //});
         }
     }
 }
