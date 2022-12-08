@@ -15,6 +15,7 @@ namespace PetClub.AppService.AppServices.UserAppService
         Task<List<GetUserByIdViewModel>> GetAllUsersFilter(string value);
         Task<UserBasicViewModel> GetByCpf(string Cpf);
         Task<GetUserByIdViewModel> GetByIdAsync(string Id);
+        Task<HomeViewModel> GetHomeDetails(string idUser);
         Task<GetUsersAmountViewModel> TotalUsersAmount();
         Task<GetUserByIdViewModel> UpdateAdmin(UserAdminUpdateViewModel user, string idAdmin);
         Task<UserUpdateViewModel> UpdateAsync(UpdatePerfilUserViewModel updatePerfilUserView);

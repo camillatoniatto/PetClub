@@ -56,6 +56,25 @@ namespace PetClub.Controllers
         }
 
         [HttpGet]
+        [Route("get-home-cards")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetHomeDetails()
+        {
+            try
+            {
+                var user = GetUser();
+                var result = await _appServiceUser.GetHomeDetails(user.Id);
+                return CustomResponse(result);
+            }
+            catch (Exception e)
+            {
+                ErrorNotifier("erro", e.Message);
+                return CustomResponse();
+            }
+        }
+
+
+        [HttpGet]
         [Route("get-all-users-filter")]
         [AllowAnonymous]
         //[ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.ADMIN_SYSTEM)]
