@@ -16,6 +16,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PetClub.AppService.AppServices.UserAppService;
 using System.Globalization;
+using System.Drawing;
 
 namespace PetClub.AppService.AppServices.UsersPartnersAppService
 {
@@ -72,7 +73,8 @@ namespace PetClub.AppService.AppServices.UsersPartnersAppService
             var partner = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(idPartner));
             foreach (var item in userPartners)
             {
-                list.Add(new GetUsersPartnersViewModel(item.Id, item.IdUser, item.User.FullName, item.User.Cpf, item.User.Email, item.User.PhoneNumber, partner.Id, partner.FullName, partner.Cpf, item.DateCreation.ToString("d", culture)));
+                var pets = await _unitOfWork.IRepositoryPet.GetByAsync(x => x.IdUser.Equals(item.IdUser));
+                list.Add(new GetUsersPartnersViewModel(item.Id, item.IdUser, item.User.FullName, item.User.Cpf, item.User.Email, item.User.PhoneNumber, partner.Id, partner.FullName, partner.Cpf, item.DateCreation.ToString("d", culture), pets.Count()));
             }
             return list;
 
@@ -86,8 +88,8 @@ namespace PetClub.AppService.AppServices.UsersPartnersAppService
             var userPartners = await _unitOfWork.IRepositoryUsersPartners.GetByIdAsync(x => x.Id.Equals(idUsersPartners), include);
             var partner = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(userPartners.IdPartner));
             var user = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(userPartners.IdUser));
-            
-            return new GetUsersPartnersViewModel(idUsersPartners, user.Id, user.FullName, user.Cpf, user.Email, user.PhoneNumber, partner.Id, partner.FullName, partner.Cpf, userPartners.DateCreation.ToString("d", culture));
+            var pets = await _unitOfWork.IRepositoryPet.GetByAsync(x => x.IdUser.Equals(user.Id));
+            return new GetUsersPartnersViewModel(idUsersPartners, user.Id, user.FullName, user.Cpf, user.Email, user.PhoneNumber, partner.Id, partner.FullName, partner.Cpf, userPartners.DateCreation.ToString("d", culture), pets.Count());
         }
 
         //public async Task UpdateUsersPartners(UpdateGatewayBuyerViewModel model, string idGatewayBuyer, string idUser)

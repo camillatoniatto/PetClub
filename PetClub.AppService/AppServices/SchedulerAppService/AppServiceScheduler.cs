@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
 using PetClub.AppService.AppServices.CashFlowAppService;
 using PetClub.AppService.AppServices.NotifierAppService;
 using PetClub.AppService.AppServices.PetAppService;
@@ -104,9 +106,30 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
 
         public async Task<List<GetSchedulerViewModel>> GetSchedulersByPartner(string idPartner)
         {
+            IList<Scheduler> schedulers = new List<Scheduler>();
+            var user = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(idPartner));
+            if (user.IsPartner)
+            {
+                schedulers = await _unitOfWork.IRepositoryScheduler.GetByOrderAsync(x => x.IdPartner.Equals(idPartner), x => x.DateCreation, false);
+            }
+            else if (user.IsAdmin)
+            {
+                schedulers = await _unitOfWork.IRepositoryScheduler.GetByOrderAsync(x => x.IdPartner != null, x => x.DateCreation, false);
+            }
+            else
+            {
+                var pets = await _unitOfWork.IRepositoryPet.GetByAsync(x => x.IdUser.Equals(idPartner));
+                foreach (var pet in pets)
+                {
+                    var schedulerPet = await _unitOfWork.IRepositoryScheduler.GetByOrderAsync(x => x.IdPet.Equals(pet.Id), x => x.DateCreation, false);
+                    foreach (var schedulerPetitem in schedulerPet)
+                    {
+                        schedulers.Add(schedulerPetitem);
+                    }
+                }
+            }
             CultureInfo culture = new CultureInfo("pt-BR");
             var list = new List<GetSchedulerViewModel>();
-            var schedulers = await _unitOfWork.IRepositoryScheduler.GetByOrderAsync(x => x.IdPartner.Equals(idPartner), x => x.DateCreation, false);
             foreach (var item in schedulers)
             {
                 var pet = await _appServicePet.GetPetById(item.IdPet);

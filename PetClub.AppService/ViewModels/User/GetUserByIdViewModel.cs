@@ -10,7 +10,7 @@ namespace PetClub.AppService.ViewModels.User
 {
     public class GetUserByIdViewModel
     {
-        public GetUserByIdViewModel(string id, string fullName, string cpf, string email, string phoneNumber, string birthdate, string image, bool isAdmin, bool isPartner, string addressName, string number, string complement, string neighborhood, string city, string state, string zipCode, IList<GetPetViewModel> pet, bool isActive, string roles, DateTime writeDate)
+        public GetUserByIdViewModel(string id, string fullName, string cpf, string email, string phoneNumber, string birthdate, string image, bool isAdmin, bool isPartner, string addressName, string number, string complement, string neighborhood, string city, string state, string zipCode, IList<GetPetViewModel> pet, bool isActive, string roles, DateTime writeDate, int quantityPet)
         {
             Id = id;
             FullName = fullName;
@@ -32,6 +32,7 @@ namespace PetClub.AppService.ViewModels.User
             IsActive = isActive;
             Roles = roles;
             WriteDate = writeDate;
+            QuantityPet = quantityPet;
         }
 
         public string Id { get; set; }
@@ -58,5 +59,7 @@ namespace PetClub.AppService.ViewModels.User
         public bool IsActive { get; set; }
         public string Roles { get; set; }
         public DateTime WriteDate { get; set; }
+        public int QuantityPet { get; set; }
+
     }
 }

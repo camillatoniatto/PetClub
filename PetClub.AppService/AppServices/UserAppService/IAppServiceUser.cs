@@ -11,6 +11,7 @@ namespace PetClub.AppService.AppServices.UserAppService
     public interface IAppServiceUser
     {
         Task AcceptTermsOfUse(string idUser);
+        Task<List<GetUserByIdViewModel>> GetAllPartners();
         Task<List<GetUserByIdViewModel>> GetAllUsers();
         Task<List<GetUserByIdViewModel>> GetAllUsersFilter(string value);
         Task<UserBasicViewModel> GetByCpf(string Cpf);

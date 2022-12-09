@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
 using PetClub.AppService.AppServices.NotifierAppService;
 using PetClub.AppService.AppServices.PetAppService;
 using PetClub.AppService.Image.Model;
 using PetClub.AppService.ViewModels.Account;
+using PetClub.AppService.ViewModels.Pet;
 using PetClub.AppService.ViewModels.User;
 using PetClub.Domain.Entities;
 using PetClub.Domain.Enum;
@@ -11,6 +14,7 @@ using PetClub.Domain.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -40,6 +44,9 @@ namespace PetClub.AppService.AppServices.UserAppService
             var agendamentos = 0;
             var animaisCadastrados = 0;
             var aniversarios = 0;
+            List<AniversarioPetViewModel> petAniversarios = new();
+            CultureInfo culture = new CultureInfo("pt-BR");
+            Func<IQueryable<Pet>, IIncludableQueryable<Pet, object>> include = t => t.Include(a => a.User);
 
             var user = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(idUser));
             if (user != null)
@@ -47,37 +54,50 @@ namespace PetClub.AppService.AppServices.UserAppService
                 if (idUser != null && user.IsAdmin)
                 {
                     var scheduler = await _unitOfWork.IRepositoryScheduler.GetByAsync(x => x.StartDate <= now && x.FinalDate >= now && x.RecordSituation.Equals(RecordSituation.ACTIVE));
-                    var pets = await _unitOfWork.IRepositoryPet.GetByAsync(x => x.RecordSituation.Equals(RecordSituation.ACTIVE));
+                    var pets = await _unitOfWork.IRepositoryPet.GetByAsync(x => x.RecordSituation.Equals(RecordSituation.ACTIVE), include);
 
                     agendamentos = scheduler.Count();
                     animaisCadastrados = pets.Count();
-                    aniversarios = pets.Where(x => x.Birthdate.DayOfYear.Equals(now.DayOfYear)).Count();
+                    aniversarios = pets.Where(x => x.Birthdate.Month.Equals(now.Month)).Count();
+                    foreach (var pet in pets.Where(x => x.Birthdate.Month.Equals(now.Month)))
+                    {
+                        var genre = GetGenre(pet.Genre);
+                        petAniversarios.Add(new AniversarioPetViewModel(pet.Id, pet.User.FullName, pet.Name, genre, pet.Specie, pet.Brand, pet.Birthdate.ToString("d", culture)));
+                    }
                 }
                 else if (idUser != null && user.IsPartner)
                 {
                     var scheduler = await _unitOfWork.IRepositoryScheduler.GetByAsync(x => x.StartDate <= now && x.FinalDate >= now && x.IdPartner.Equals(idUser) && x.RecordSituation.Equals(RecordSituation.ACTIVE));
                     var pets = await _appServicePet.GetAllPetsClient(idUser);
-                    var petAniversario = pets.Where(x => x.BirthdateDate.DayOfYear.Equals(now.DayOfYear));
+                    var petAniversario = pets.Where(x => x.BirthdateDate.Month.Equals(now.Month));
 
                     agendamentos = scheduler.Count();
                     animaisCadastrados = pets.Count();
                     aniversarios = petAniversario.Count();
+                    foreach (var pet in petAniversario)
+                    {
+                        petAniversarios.Add(new AniversarioPetViewModel(pet.IdPet, pet.Tutor, pet.Name, pet.GenreString, pet.Specie, pet.Brand, pet.Birthdate));
+                    }
                 }
                 else if (idUser != null && !user.IsPartner && !user.IsAdmin)
                 {
-                    var pets = await _unitOfWork.IRepositoryPet.GetByAsync(x => x.IdUser.Equals(idUser) && x.RecordSituation.Equals(RecordSituation.ACTIVE));
+                    var pets = await _unitOfWork.IRepositoryPet.GetByAsync(x => x.IdUser.Equals(idUser) && x.RecordSituation.Equals(RecordSituation.ACTIVE), include);
                     foreach (var pet in pets)
                     {
                         var scheduler = await _unitOfWork.IRepositoryScheduler.GetByAsync(x => x.StartDate <= now && x.FinalDate >= now && x.IdPet.Equals(pet.Id) && x.RecordSituation.Equals(RecordSituation.ACTIVE));
                         agendamentos += scheduler.Count();
                     }
                     animaisCadastrados = pets.Count();
-                    aniversarios = pets.Where(x => x.Birthdate.DayOfYear.Equals(now.DayOfYear)).Count();
+                    aniversarios = pets.Where(x => x.Birthdate.Month.Equals(now.Month)).Count();
+                    foreach (var pet in pets.Where(x => x.Birthdate.Month.Equals(now.Month)))
+                    {
+                        var genre = GetGenre(pet.Genre);
+                        petAniversarios.Add(new AniversarioPetViewModel(pet.Id, pet.User.FullName, pet.Name, genre, pet.Specie, pet.Brand, pet.Birthdate.ToString("d", culture)));
+                    }
                 }
             }
-            return new HomeViewModel(agendamentos, animaisCadastrados, aniversarios);
+            return new HomeViewModel(agendamentos, animaisCadastrados, aniversarios, petAniversarios);
         }
-
         public async Task<UserUpdateViewModel> UpdateAsync(UpdatePerfilUserViewModel updatePerfilUserView)
         {
             try
@@ -137,13 +157,25 @@ namespace PetClub.AppService.AppServices.UserAppService
 
             return new GetUserByIdViewModel(user.Id, user.FullName, user.Cpf, user.Email, user.PhoneNumber, user.Birthdate.ToString("d", culture),
                 user.Image, user.IsAdmin, user.IsPartner, user.AddressName, user.Number, user.Complement, user.Neighborhood,
-                user.City, user.State, user.ZipCode, pets, user.IsActive, roles, user.WriteDate);
+                user.City, user.State, user.ZipCode, pets, user.IsActive, roles, user.WriteDate, pets.Count());
         }
 
         public async Task<List<GetUserByIdViewModel>> GetAllUsers()
         {
             var list = new List<GetUserByIdViewModel>();
             var users = await _unitOfWork.IRepositoryUser.GetByOrderAsync(x => x.Id != null, x => x.FullName, false);
+            foreach (var user in users)
+            {
+                var data = await GetByIdAsync(user.Id);
+                list.Add(data);
+            }
+            return list;
+        }
+
+        public async Task<List<GetUserByIdViewModel>> GetAllPartners()
+        {
+            var list = new List<GetUserByIdViewModel>();
+            var users = await _unitOfWork.IRepositoryUser.GetByOrderAsync(x => x.IsPartner, x => x.FullName, false);
             foreach (var user in users)
             {
                 var data = await GetByIdAsync(user.Id);
@@ -213,21 +245,20 @@ namespace PetClub.AppService.AppServices.UserAppService
                 return null;
             }
         }
-
-
-        //public async Task<string> ExportUserManagementEuphoria()
-        //{
-        //    // ajustando para exportar TODOS os usuarios
-        //    var list = new List<UserListExportEuphoriaViewModel>();
-        //    var users = await _unitOfWork.IRepositoryUser.GetByAsync(x => x.Id != null);
-        //    foreach (var user in users)
-        //    {
-        //        var athletic = await _unitOfWork.IRepositoryAthletic.GetByIdAsync(X => X.Id.Equals(user.IdAthletic));
-        //        list.Add(new UserListExportEuphoriaViewModel(user.FullName, user.UserName, user.Email, user.Birthdate.ToShortDateString(), user.PhoneNumber, user.IsActive ? "Ativo" : "Inativo", athletic != null ? athletic.CompanyName : string.Empty));
-        //    }
-
-        //    return await _appServiceExportFile.ExportExcelJson(list);
-        //}
+        public string GetGenre(Genre genre)
+        {
+            var result = "";
+            switch (genre)
+            {
+                case Genre.MALE:
+                    result = "Macho";
+                    break;
+                case Genre.FEMALE:
+                    result = "Fêmea";
+                    break;
+            }
+            return result;
+        }
 
         public async Task AcceptTermsOfUse(string idUser)
         {

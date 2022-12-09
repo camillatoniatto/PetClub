@@ -8,7 +8,7 @@ namespace PetClub.AppService.ViewModels.UsersPartners
 {
     public class GetUsersPartnersViewModel
     {
-        public GetUsersPartnersViewModel(string id, string idUser, string userFullName, string userCpf, string userEmail, string userPhone, string idPartner, string partnerFullName, string parnerCpf, string dateCreation)
+        public GetUsersPartnersViewModel(string id, string idUser, string userFullName, string userCpf, string userEmail, string userPhone, string idPartner, string partnerFullName, string parnerCpf, string dateCreation, int quantityPet)
         {
             Id = id;
             IdUser = idUser;
@@ -20,6 +20,7 @@ namespace PetClub.AppService.ViewModels.UsersPartners
             PartnerFullName = partnerFullName;
             ParnerCpf = parnerCpf;
             DateCreation = dateCreation;
+            QuantityPet = quantityPet;
         }
 
         public string Id { get; set; }
@@ -32,6 +33,7 @@ namespace PetClub.AppService.ViewModels.UsersPartners
         public string PartnerFullName { get; set; }
         public string ParnerCpf { get; set; }
         public string DateCreation { get; set; }
+        public int QuantityPet { get; set; }
 
     }
 }
