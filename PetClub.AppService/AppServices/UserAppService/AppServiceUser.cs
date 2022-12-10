@@ -102,21 +102,11 @@ namespace PetClub.AppService.AppServices.UserAppService
         {
             try
             {
-                //var img = new EventImage();
-                //img.Value = updatePerfilUserView.Image;
-
                 string urlImage = "PetClub";
                 var user = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(updatePerfilUserView.Id));
-
-                //if (!string.IsNullOrEmpty(user.Imagem))
-                //{
-                //    urlImage = await _appServiceAwsS3.UploadImageToS3(img, "User");
-                //    await _appServiceAwsS3.DeleteAsync(user.Imagem);
-                //}
                 var date = DateTime.MinValue;
 
                 user.FullName = updatePerfilUserView.FullName != null ? updatePerfilUserView.FullName : user.FullName;
-                //user.Image = urlImage != null ? urlImage : user.Image;
                 user.Email = updatePerfilUserView.Email != null ? updatePerfilUserView.Email : user.Email;
                 user.Birthdate = updatePerfilUserView.Birthdate != date ? updatePerfilUserView.Birthdate : user.Birthdate;
                 user.PhoneNumber = updatePerfilUserView.PhoneNumber != null ? updatePerfilUserView.PhoneNumber : user.PhoneNumber;
@@ -145,6 +135,31 @@ namespace PetClub.AppService.AppServices.UserAppService
                 throw;
             }
             
+        }
+
+        public async Task DeleteUser(string Id)
+        {
+            CultureInfo culture = new CultureInfo("pt-BR");
+
+            var userById = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(Id));
+            userById.Email = "";
+            userById.Birthdate = DateTime.MinValue;
+            userById.FullName = "";
+            userById.PhoneNumber = "";
+            userById.IsAdmin = false;
+            userById.IsPartner = false;
+            userById.IsActive = false;
+            userById.AddressName = "";
+            userById.Number = "";
+            userById.Complement = "";
+            userById.Neighborhood = "";
+            userById.City = "";
+            userById.State = "";
+            userById.ZipCode = "";
+            userById.Image = "";
+            userById.WriteDate = DateTime.Now.ToBrasilia();
+            await _unitOfWork.IRepositoryUser.UpdateAsync(userById);
+            await _unitOfWork.CommitAsync();
         }
 
         public async Task<GetUserByIdViewModel> GetByIdAsync(string Id)

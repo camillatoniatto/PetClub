@@ -130,7 +130,9 @@ namespace PetClub.Controllers
         {
             try
             {
-                await _appServiceScheduler.UpdateScheduler(model);
+                var user = GetUser();
+                model.IdPartner = user.Id;
+                await _appServiceScheduler.UpdateScheduler(model, user.Id);
                 return CustomResponse();
             }
             catch (Exception e)

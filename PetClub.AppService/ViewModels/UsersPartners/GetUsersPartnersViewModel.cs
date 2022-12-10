@@ -8,7 +8,7 @@ namespace PetClub.AppService.ViewModels.UsersPartners
 {
     public class GetUsersPartnersViewModel
     {
-        public GetUsersPartnersViewModel(string id, string idUser, string userFullName, string userCpf, string userEmail, string userPhone, string idPartner, string partnerFullName, string parnerCpf, string dateCreation, int quantityPet)
+        public GetUsersPartnersViewModel(string id, string idUser, string userFullName, string userCpf, string userEmail, string userPhone, string idPartner, string partnerFullName, string parnerCpf, string dateCreation, int quantityPet, string birthdate, string addressName, string number, string complement, string neighborhood, string city, string state, string zipCode)
         {
             Id = id;
             IdUser = idUser;
@@ -21,6 +21,14 @@ namespace PetClub.AppService.ViewModels.UsersPartners
             ParnerCpf = parnerCpf;
             DateCreation = dateCreation;
             QuantityPet = quantityPet;
+            Birthdate = birthdate;
+            AddressName = addressName;
+            Number = number;
+            Complement = complement;
+            Neighborhood = neighborhood;
+            City = city;
+            State = state;
+            ZipCode = zipCode;
         }
 
         public string Id { get; set; }
@@ -34,6 +42,14 @@ namespace PetClub.AppService.ViewModels.UsersPartners
         public string ParnerCpf { get; set; }
         public string DateCreation { get; set; }
         public int QuantityPet { get; set; }
+        public string Birthdate { get; set; }
+        public string AddressName { get; set; }
+        public string Number { get; set; }
+        public string Complement { get; set; }
+        public string Neighborhood { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string ZipCode { get; set; }
 
     }
 }

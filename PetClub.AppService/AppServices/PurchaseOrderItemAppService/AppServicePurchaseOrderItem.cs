@@ -92,7 +92,7 @@ namespace PetClub.AppService.AppServices.PurchaseOrderItemAppService
             CultureInfo culture = new CultureInfo("pt-BR");
             var list = new List<GetOrderItensViewModel>();
             Func<IQueryable<PurchaseOrderItem>, IIncludableQueryable<PurchaseOrderItem, object>> include = t => t.Include(a => a.Service);
-            var orderItens = await _unitOfWork.IRepositoryPurchaseOrderItem.GetByOrderAsync(x => x.IdPurchaseOrder.Equals(idPurchaseOrder) && x.RecordSituation == RecordSituation.ACTIVE, x => x.DateCreation, false, include);
+            var orderItens = await _unitOfWork.IRepositoryPurchaseOrderItem.GetByOrderAsync(x => x.IdPurchaseOrder.Equals(idPurchaseOrder), x => x.DateCreation, false, include);
             foreach (var item in orderItens)
             {
                 list.Add(new GetOrderItensViewModel(item.Id, item.IdPurchaseOrder, item.IdService, item.Service.Title, item.Service.Description, item.Quantity, item.Value, item.WriteDate.ToString("d", culture)));

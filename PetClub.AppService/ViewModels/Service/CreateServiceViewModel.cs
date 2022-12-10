@@ -15,5 +15,6 @@ namespace PetClub.AppService.ViewModels.Service
         public bool SingleUse { get; set; }
         public DateTime DateDuration { get; set; }
         public decimal Value { get; set; }
+        public string idPartner { get; set; }
     }
 }

@@ -16,6 +16,6 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
         Task<GetSchedulerViewModel> GetSchedulersById(string idScheduler);
         Task<List<GetSchedulerViewModel>> GetSchedulersByPartner(string idPartner);
         Task<List<GetSchedulerPetViewModel>> GetSchedulersByPet(string idPet);
-        Task UpdateScheduler(UpdateSchedulerViewModel model);
+        Task UpdateScheduler(UpdateSchedulerViewModel model, string idUser);
     }
 }

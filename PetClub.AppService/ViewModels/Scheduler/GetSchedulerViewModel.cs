@@ -10,10 +10,11 @@ namespace PetClub.AppService.ViewModels.Scheduler
 {
     public class GetSchedulerViewModel
     {
-        public GetSchedulerViewModel(string idScheduler, string idPartner, string idClient, string idPet, string petName, DateTime startDate, DateTime finalDate, string startDateString, string finalDateString, int serviceType, string serviceTypeString, int schedulerSituation, string schedulerSituationString, string writeDate)
+        public GetSchedulerViewModel(string idScheduler, string idPartner, string partnerName, string idClient, string idPet, string petName, DateTime startDate, DateTime finalDate, string startDateString, string finalDateString, int serviceType, string serviceTypeString, int schedulerSituation, string schedulerSituationString, string writeDate)
         {
             IdScheduler = idScheduler;
             IdPartner = idPartner;
+            PartnerName = partnerName;
             IdClient = idClient;
             IdPet = idPet;
             PetName = petName;
@@ -30,6 +31,7 @@ namespace PetClub.AppService.ViewModels.Scheduler
 
         public string IdScheduler { get; set; }
         public string IdPartner { get; set; }
+        public string PartnerName { get; set; }
         public string IdClient { get; set; }
         public string IdPet { get; set; }
         public string PetName { get; set; }

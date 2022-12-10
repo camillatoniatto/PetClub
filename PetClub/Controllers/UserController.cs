@@ -166,5 +166,22 @@ namespace PetClub.Controllers
                 return CustomResponse();
             }
         }
+
+        [HttpDelete]
+        [Route("delete-user")]
+        [ClaimsAuthorize(AuthorizeSetup.CLAIM_TYPE_OCCUPATION, AuthorizeSetup.ADMIN_SYSTEM)]
+        public async Task<IActionResult> DeleteUser(string idUser)
+        {
+            try
+            {
+                await _appServiceUser.DeleteUser(idUser);
+                return CustomResponse();
+            }
+            catch (Exception e)
+            {
+                ErrorNotifier("erro", e.Message);
+                return CustomResponse();
+            }
+        }
     }
 }

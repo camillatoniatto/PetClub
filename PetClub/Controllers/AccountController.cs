@@ -63,6 +63,9 @@ namespace PetClub.Controllers
         public async Task<ActionResult> Register(UserViewModel user)
         {
             user.Cpf = OnlyNumber(user.Cpf);
+
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
             var request = await _appServiceUser.GetByCpf(user.Cpf);
             var userData = await ValidRegisterUser(user, user.IsAdmin, user.IsPartner);
             if (userData == null) return CustomResponse();

@@ -135,8 +135,10 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
                 var pet = await _appServicePet.GetPetById(item.IdPet);
                 var serviceType = GetSchedulerServiceType(item.ServiceType);
                 var schedulerSituation = GetSchedulerSituation(item.SchedulerSituation, item.StartDate);
-                list.Add(new GetSchedulerViewModel(item.Id, item.IdPartner, pet.IdUser, pet.IdPet, pet.Name, item.StartDate, item.FinalDate,
-                                                   item.StartDate.ToString("g", culture), item.FinalDate.ToString("g", culture),
+                var partner = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(item.IdPartner));
+
+                list.Add(new GetSchedulerViewModel(item.Id, item.IdPartner, partner.FullName, pet.IdUser, pet.IdPet, pet.Name, item.StartDate, 
+                                                   item.FinalDate, item.StartDate.ToString("g", culture), item.FinalDate.ToString("g", culture),
                                                    (int)item.ServiceType, serviceType, (int)item.SchedulerSituation, schedulerSituation,
                                                    item.WriteDate.ToString("d", culture)));
 
@@ -169,36 +171,44 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
             CultureInfo culture = new CultureInfo("pt-BR");
             var list = new List<GetSchedulerViewModel>();
             var scheduler = await _unitOfWork.IRepositoryScheduler.GetByIdAsync(x => x.Id.Equals(idScheduler));
+            var partner = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(scheduler.IdPartner));
             var pet = await _appServicePet.GetPetById(scheduler.IdPet);
             var serviceType = GetSchedulerServiceType(scheduler.ServiceType);
             var schedulerSituation = GetSchedulerSituation(scheduler.SchedulerSituation, scheduler.StartDate);
-            return new GetSchedulerViewModel(scheduler.Id, scheduler.IdPartner, pet.IdUser, pet.IdPet, pet.Name, scheduler.StartDate, scheduler.FinalDate,
-                                    scheduler.StartDate.ToString("g", culture), scheduler.FinalDate.ToString("g", culture),
+            return new GetSchedulerViewModel(scheduler.Id, scheduler.IdPartner, partner.FullName, pet.IdUser, pet.IdPet, pet.Name, scheduler.StartDate, 
+                                    scheduler.FinalDate, scheduler.StartDate.ToString("g", culture), scheduler.FinalDate.ToString("g", culture),
                                     (int)scheduler.ServiceType, serviceType, (int)scheduler.SchedulerSituation, schedulerSituation,
                                     scheduler.WriteDate.ToString("d", culture));
         }
 
-        public async Task UpdateScheduler(UpdateSchedulerViewModel model)
+        public async Task UpdateScheduler(UpdateSchedulerViewModel model, string idUser)
         {
             try
             {
+                var scheduler = await _unitOfWork.IRepositoryScheduler.GetByIdAsync(x => x.Id.Equals(model.IdScheduler));
+                if (scheduler.SchedulerSituation == SchedulerSituation.CANCELED)
+                {
+                    _notifier.Handle(new NotificationMessage("Erro", "Não é possível editar um agendamento com a situação 'Cancelado'."));
+                    throw new Exception("Não é possível editar um agendamento com a situação 'Cancelado'.");
+                }
+
                 var date = DateTime.MinValue;
                 if (model.StartDate == date || model.FinalDate == date)
                 {
                     _notifier.Handle(new NotificationMessage("Date", "Datas inválidas"));
                     throw new Exception("Datas inválidas");
                 }
-                var scheduler = await _unitOfWork.IRepositoryScheduler.GetByIdAsync(x => x.Id.Equals(model.IdScheduler));
                 if (model.StartDate > model.FinalDate)
                 {
                     _notifier.Handle(new NotificationMessage("Date", "A data de início não pode ser maior que a data final."));
                     throw new Exception("A data de início não pode ser maior que a data final.");
                 }
+
                 await CheckAvailable(model.IdPet, model.StartDate, model.FinalDate, model.IdScheduler);
                 var schedulerSituation = GetSchedulerSituationTypeInt(model.SchedulerSituation);
                 var serviceType = GetSchedulerServiceTypeInt(model.ServiceType);
 
-                var partner = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(model.IdPartner));
+                var partner = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(idUser));
                 var pet = await _unitOfWork.IRepositoryPet.GetByIdAsync(x => x.Id.Equals(model.IdPet));
                 if (pet == null)
                 {
@@ -206,6 +216,7 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
                     throw new Exception("Animal não encontrado.");
                 }
                 scheduler.IdPet = model.IdPet;
+                scheduler.IdPartner = idUser;
                 scheduler.StartDate = model.StartDate;
                 scheduler.FinalDate = model.FinalDate;
                 scheduler.ServiceType = serviceType;

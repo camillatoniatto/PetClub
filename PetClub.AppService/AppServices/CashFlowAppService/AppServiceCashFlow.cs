@@ -34,6 +34,11 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
         {
             try
             {
+                var isAdmin = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(idUser) && x.IsAdmin);
+                if (isAdmin != null)
+                {
+                    idUser = model.IdUserCreate;
+                }
                 decimal netValue = 0M;
                 if (model.LaunchValue < 0 || model.LaunchValue == 0)
                 {

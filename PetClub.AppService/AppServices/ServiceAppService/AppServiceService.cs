@@ -35,6 +35,11 @@ namespace PetClub.AppService.AppServices.ServiceAppService
         {
             try
             {
+                var isAdmin = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(idUser) && x.IsAdmin);
+                if (isAdmin != null)
+                {
+                    idUser = model.idPartner;
+                }
                 var service = await _unitOfWork.IRepositoryService.GetByIdAsync(x => x.Title.Equals(model.Title) && x.IdPartner.Equals(idUser) && x.RecordSituation.Equals(RecordSituation.ACTIVE));
                 if (service != null)
                 {

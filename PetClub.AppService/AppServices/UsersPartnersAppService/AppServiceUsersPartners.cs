@@ -73,8 +73,10 @@ namespace PetClub.AppService.AppServices.UsersPartnersAppService
             var partner = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(idPartner));
             foreach (var item in userPartners)
             {
+                var user = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(item.IdUser));
                 var pets = await _unitOfWork.IRepositoryPet.GetByAsync(x => x.IdUser.Equals(item.IdUser));
-                list.Add(new GetUsersPartnersViewModel(item.Id, item.IdUser, item.User.FullName, item.User.Cpf, item.User.Email, item.User.PhoneNumber, partner.Id, partner.FullName, partner.Cpf, item.DateCreation.ToString("d", culture), pets.Count()));
+                list.Add(new GetUsersPartnersViewModel(item.Id, item.IdUser, item.User.FullName, item.User.Cpf, item.User.Email, item.User.PhoneNumber, partner.Id, partner.FullName, partner.Cpf, item.DateCreation.ToString("d", culture), 
+                                                       pets.Count(), user.Birthdate.ToString("d", culture), user.AddressName, user.Number, user.Complement, user.Neighborhood, user.City, user.State, user.ZipCode));
             }
             return list;
 
@@ -89,38 +91,9 @@ namespace PetClub.AppService.AppServices.UsersPartnersAppService
             var partner = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(userPartners.IdPartner));
             var user = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(userPartners.IdUser));
             var pets = await _unitOfWork.IRepositoryPet.GetByAsync(x => x.IdUser.Equals(user.Id));
-            return new GetUsersPartnersViewModel(idUsersPartners, user.Id, user.FullName, user.Cpf, user.Email, user.PhoneNumber, partner.Id, partner.FullName, partner.Cpf, userPartners.DateCreation.ToString("d", culture), pets.Count());
+            return new GetUsersPartnersViewModel(idUsersPartners, user.Id, user.FullName, user.Cpf, user.Email, user.PhoneNumber, partner.Id, partner.FullName, partner.Cpf, userPartners.DateCreation.ToString("d", culture), 
+                                                pets.Count(), user.Birthdate.ToString("d", culture), user.AddressName, user.Number, user.Complement, user.Neighborhood, user.City, user.State, user.ZipCode);
         }
-
-        //public async Task UpdateUsersPartners(UpdateGatewayBuyerViewModel model, string idGatewayBuyer, string idUser)
-        //{
-        //    var id_gateway_fk = await _unitOfWork.IRepositoryUsersPartners.GetByIdAsync(x => x.Id.Equals(idGatewayBuyer));
-        //    if (id_gateway_fk != null)
-        //    {
-        //        var association = await _unitOfWork.IRepositoryUsersPartners.GetByIdAsync(x => x.Gtfk_Buyer_id.Equals(model.Gtfk_Buyer_id) && x.Id != idGatewayBuyer);
-        //        if (association == null)
-        //        {
-        //            id_gateway_fk.Gtfk_Buyer_id = model.Gtfk_Buyer_id != null ? model.Gtfk_Buyer_id : id_gateway_fk.Gtfk_Buyer_id;
-        //            id_gateway_fk.IdUser = model.IdUser != null ? model.IdUser : id_gateway_fk.IdUser;
-        //            id_gateway_fk.IdGatewayKey = model.IdGatewayKey != null ? model.IdGatewayKey : id_gateway_fk.IdGatewayKey;
-        //            id_gateway_fk.WriteUid = idUser;
-        //            id_gateway_fk.WriteDate = DateTime.Now.ToBrasilia();
-
-        //            await _unitOfWork.IRepositoryUsersPartners.UpdateAsync(id_gateway_fk);
-        //            await _unitOfWork.CommitAsync();
-        //        }
-        //        else
-        //        {
-        //            _notifier.Handle(new NotificationMessage("GatewayBuyer", "Gtfk_Buyer_id já foi cadastrado com outro IdUser"));
-        //            throw new Exception();
-        //        }
-        //    }
-        //    else
-        //    {
-        //        _notifier.Handle(new NotificationMessage("GatewayBuyer", "IdGatewayBuyer não encontrado"));
-        //        throw new Exception();
-        //    }
-        //}
 
         public async Task DeleteUsersPartners(string idUsersPartners)
         {
