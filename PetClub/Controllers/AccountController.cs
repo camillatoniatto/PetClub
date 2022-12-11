@@ -63,28 +63,29 @@ namespace PetClub.Controllers
         public async Task<ActionResult> Register(UserViewModel user)
         {
             user.Cpf = OnlyNumber(user.Cpf);
+            user.PhoneNumber = OnlyNumber(user.PhoneNumber);
+            var password = user.Cpf;
 
+            if (string.IsNullOrEmpty(user.ZipCode))
+            {
+                user.AddressName = "";
+                user.Number = "";
+                user.Complement = "";
+                user.Neighborhood = "";
+                user.City = "";
+                user.State = "";
+                user.ZipCode = "";
+            }
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
             var request = await _appServiceUser.GetByCpf(user.Cpf);
             var userData = await ValidRegisterUser(user, user.IsAdmin, user.IsPartner);
             if (userData == null) return CustomResponse();
 
-            string imageUrl = string.Empty;
-            string folder = "PetClub";
-            //{
-            //    var img = new EventImage();
-            //    img.Value = user.Image;
-            //    user.UrlImage = await _appServiceAwsS3.UploadImageToS3(img, folder);
-            //}
-
             IdentityResult result;
             //_userManager.SetUserNameAsync(userData, );
             userData.UserName = user.Cpf;
-            if (string.IsNullOrEmpty(user.Password))
-            {
-                user.Password = userData.UserName;
-            }
+            password = userData.UserName;
 
             if (userData.IsActive)
             {
@@ -95,7 +96,7 @@ namespace PetClub.Controllers
                 userData.City = userData.City != null ? userData.City : "";
                 userData.State = userData.State != null ? userData.State : "";
                 userData.ZipCode = userData.ZipCode != null ? userData.ZipCode : "";
-                result = await _userManager.CreateAsync(userData, user.Password);
+                result = await _userManager.CreateAsync(userData, password);
             }
             else
             {
@@ -105,7 +106,7 @@ namespace PetClub.Controllers
                 userById.Birthdate = user.Birthdate;
                 userById.Cpf = user.Cpf;
                 userById.FullName = user.FullName;
-                userById.PhoneNumber = user.PhoneNumber;
+                userById.PhoneNumber = OnlyNumber(user.PhoneNumber);
                 userById.IsAdmin = user.IsAdmin;
                 userById.IsPartner = user.IsPartner;
                 userById.IsActive = true;
@@ -123,7 +124,7 @@ namespace PetClub.Controllers
                 result = await _userManager.UpdateAsync(userById);
 
                 var token = await _userManager.GeneratePasswordResetTokenAsync(userById);
-                var passwd = await _userManager.ResetPasswordAsync(userById, token, user.Password);
+                var passwd = await _userManager.ResetPasswordAsync(userById, token, password);
 
                 var claims = await _userManager.GetClaimsAsync(userData);
                 await _userManager.RemoveClaimAsync(userData, claims.FirstOrDefault());

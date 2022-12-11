@@ -58,8 +58,8 @@ namespace PetClub.AppService.AppServices.UserAppService
 
                     agendamentos = scheduler.Count();
                     animaisCadastrados = pets.Count();
-                    aniversarios = pets.Where(x => x.Birthdate.Month.Equals(now.Month)).Count();
-                    foreach (var pet in pets.Where(x => x.Birthdate.Month.Equals(now.Month)))
+                    aniversarios = pets.Where(x => x.Birthdate.Month.Equals(now.Month) && x.IsAlive).Count();
+                    foreach (var pet in pets.Where(x => x.Birthdate.Month.Equals(now.Month) && x.IsAlive))
                     {
                         var genre = GetGenre(pet.Genre);
                         petAniversarios.Add(new AniversarioPetViewModel(pet.Id, pet.User.FullName, pet.Name, genre, pet.Specie, pet.Brand, pet.Birthdate.ToString("d", culture)));
@@ -69,7 +69,7 @@ namespace PetClub.AppService.AppServices.UserAppService
                 {
                     var scheduler = await _unitOfWork.IRepositoryScheduler.GetByAsync(x => x.StartDate <= now && x.FinalDate >= now && x.IdPartner.Equals(idUser) && x.RecordSituation.Equals(RecordSituation.ACTIVE));
                     var pets = await _appServicePet.GetAllPetsClient(idUser);
-                    var petAniversario = pets.Where(x => x.BirthdateDate.Month.Equals(now.Month));
+                    var petAniversario = pets.Where(x => x.BirthdateDate.Month.Equals(now.Month) && x.IsAlive);
 
                     agendamentos = scheduler.Count();
                     animaisCadastrados = pets.Count();
@@ -88,15 +88,15 @@ namespace PetClub.AppService.AppServices.UserAppService
                         agendamentos += scheduler.Count();
                     }
                     animaisCadastrados = pets.Count();
-                    aniversarios = pets.Where(x => x.Birthdate.Month.Equals(now.Month)).Count();
-                    foreach (var pet in pets.Where(x => x.Birthdate.Month.Equals(now.Month)))
+                    aniversarios = pets.Where(x => x.Birthdate.Month.Equals(now.Month) && x.IsAlive).Count();
+                    foreach (var pet in pets.Where(x => x.Birthdate.Month.Equals(now.Month) && x.IsAlive))
                     {
                         var genre = GetGenre(pet.Genre);
                         petAniversarios.Add(new AniversarioPetViewModel(pet.Id, pet.User.FullName, pet.Name, genre, pet.Specie, pet.Brand, pet.Birthdate.ToString("d", culture)));
                     }
                 }
             }
-            return new HomeViewModel(agendamentos, animaisCadastrados, aniversarios, petAniversarios);
+            return new HomeViewModel(agendamentos, animaisCadastrados, aniversarios, petAniversarios.OrderBy(x => x.Birthdate).ToList());
         }
         public async Task<UserUpdateViewModel> UpdateAsync(UpdatePerfilUserViewModel updatePerfilUserView)
         {

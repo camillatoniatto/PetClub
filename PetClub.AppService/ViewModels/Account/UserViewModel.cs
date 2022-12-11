@@ -28,8 +28,7 @@ namespace PetClub.AppService.ViewModels.Account
         [Display(Name = "Data de Nascimento")]
         [Required(ErrorMessage = "O campo Data de Nascimento é obrigatório")]
         public DateTime Birthdate { get; set; }
-        public string Password { get; set; }
-        public string Image { get; set; }
+        //public string Password { get; set; }
         // endereço
         public string AddressName { get; set; }
         public string Number { get; set; }

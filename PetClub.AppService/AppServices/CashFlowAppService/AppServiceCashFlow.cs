@@ -81,8 +81,8 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
                         if (model.WriteOffDate != DateTime.MinValue)
                             userWriteOff = idUser;
 
-                        cashFlow = new CashFlow(model.Title, model.Description, idUser, model.IdPurchaseOrder, model.IdPaymentMethod, model.LaunchValue,
-                                        netValue, dateTypePayment, model.WriteOffDate, userWriteOff, "", model.isOutflow, DateTime.Now.ToBrasilia());
+                        cashFlow = new CashFlow(model.Title, model.Description, idUser, model.IdPurchaseOrder, model.IdPaymentMethod, value,
+                                        value, dateTypePayment, model.WriteOffDate, userWriteOff, "", model.isOutflow, DateTime.Now.ToBrasilia());
                         await _unitOfWork.IRepositoryCashFlow.AddAsync(cashFlow);
 
                     }

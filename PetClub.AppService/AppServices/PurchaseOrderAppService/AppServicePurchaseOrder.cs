@@ -196,7 +196,7 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
             foreach (var item in itens.Where(x => x.Quantity != 0))
             {
                 var service = await _unitOfWork.IRepositoryService.GetByIdAsync(x => x.Id.Equals(item.IdService));
-                finalValue += service.Value + item.Quantity;
+                finalValue += service.Value * item.Quantity;
             }
             return finalValue.ToString("F2");
         }
