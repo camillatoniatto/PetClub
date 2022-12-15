@@ -126,7 +126,7 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
             {
                 list = await GetCashFlowAdmin();
             }
-            return list;
+            return list.OrderByDescending(x => x.ExpirationDate).ToList();
 
         }
 
@@ -172,7 +172,7 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
                                                   item.NetValue, item.ExpirationDate.ToString("d", culture), item.WriteOffDate != DateTime.MinValue ? item.WriteOffDate.ToString("d", culture) : null,
                                                   item.IdUserWriteOff, userCreate.FullName, item.IdUserInactivate, null, item.isOutflow, item.WriteDate));
             }
-            return list;
+            return list.OrderByDescending(x => x.ExpirationDate).ToList();
         }
 
         public async Task<List<GetCashFlowViewModel>> GetCashFlowAdmin()
@@ -216,7 +216,7 @@ namespace PetClub.AppService.AppServices.CashFlowAppService
                                                   item.NetValue, item.ExpirationDate.ToString("d", culture), item.WriteOffDate != DateTime.MinValue ? item.WriteOffDate.ToString("d", culture) : null,
                                                   item.IdUserWriteOff, userCreate.FullName, item.IdUserInactivate, null, item.isOutflow, item.WriteDate));
             }
-            return list;
+            return list.OrderByDescending(x => x.ExpirationDate).ToList();
         }
 
         public async Task<UpdateCashFlowViewModel> UpdateAsync(UpdateCashFlowViewModel model, string idUser)

@@ -238,11 +238,11 @@ namespace PetClub.AppService.AppServices.PurchaseOrderAppService
             IList<PurchaseOrder> orders = new List<PurchaseOrder>();
             if (isApp)
             {
-                orders = await _unitOfWork.IRepositoryPurchaseOrder.GetByOrderAsync(x => x.IdUser.Equals(idUser), x => x.DateCreation, false, include);
+                orders = await _unitOfWork.IRepositoryPurchaseOrder.GetByOrderAsync(x => x.IdUser.Equals(idUser), x => x.DateCreation, true, include);
             }
             else
             {
-                orders = await _unitOfWork.IRepositoryPurchaseOrder.GetByOrderAsync(x => x.IdPartner.Equals(idUser), x => x.DateCreation, false, include);
+                orders = await _unitOfWork.IRepositoryPurchaseOrder.GetByOrderAsync(x => x.IdPartner.Equals(idUser), x => x.DateCreation, true, include);
             }
 
             foreach (var order in orders)

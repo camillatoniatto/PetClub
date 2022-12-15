@@ -80,13 +80,13 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
             if (!string.IsNullOrEmpty(idScheduler))
             {
                 schedulers = await _unitOfWork.IRepositoryScheduler.GetByOrderAsync(x => x.IdPet.Equals(idPet) && x.StartDate >= startDate && x.FinalDate <= endDate
-                                                        && (x.SchedulerSituation != SchedulerSituation.CANCELED && x.SchedulerSituation != SchedulerSituation.CONCLUDED) && !x.Id.Equals(idScheduler), x => x.DateCreation, false);
+                                                        && (x.SchedulerSituation != SchedulerSituation.CANCELED && x.SchedulerSituation != SchedulerSituation.CONCLUDED) && !x.Id.Equals(idScheduler), x => x.DateCreation, true);
 
             }
             else
             {
                 schedulers = await _unitOfWork.IRepositoryScheduler.GetByOrderAsync(x => x.IdPet.Equals(idPet) && x.StartDate >= startDate && x.FinalDate <= endDate
-                                        && (x.SchedulerSituation != SchedulerSituation.CANCELED && x.SchedulerSituation != SchedulerSituation.CONCLUDED), x => x.DateCreation, false);
+                                        && (x.SchedulerSituation != SchedulerSituation.CANCELED && x.SchedulerSituation != SchedulerSituation.CONCLUDED), x => x.DateCreation, true);
 
             }
             if (schedulers.Count() > 0)
@@ -100,7 +100,7 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
         {
             CultureInfo culture = new CultureInfo("pt-BR");
             var schedulers = await _unitOfWork.IRepositoryScheduler.GetByOrderAsync(x => x.StartDate >= startDate && x.FinalDate <= endDate
-                                        && (x.SchedulerSituation != SchedulerSituation.CANCELED && x.SchedulerSituation != SchedulerSituation.CONCLUDED), x => x.DateCreation, false);
+                                        && (x.SchedulerSituation != SchedulerSituation.CANCELED && x.SchedulerSituation != SchedulerSituation.CONCLUDED), x => x.DateCreation, true);
             return schedulers.Count();
         }
 
@@ -110,18 +110,18 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
             var user = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(idPartner));
             if (user.IsPartner)
             {
-                schedulers = await _unitOfWork.IRepositoryScheduler.GetByOrderAsync(x => x.IdPartner.Equals(idPartner), x => x.DateCreation, false);
+                schedulers = await _unitOfWork.IRepositoryScheduler.GetByOrderAsync(x => x.IdPartner.Equals(idPartner), x => x.DateCreation, true);
             }
             else if (user.IsAdmin)
             {
-                schedulers = await _unitOfWork.IRepositoryScheduler.GetByOrderAsync(x => x.IdPartner != null, x => x.DateCreation, false);
+                schedulers = await _unitOfWork.IRepositoryScheduler.GetByOrderAsync(x => x.IdPartner != null, x => x.DateCreation, true);
             }
             else
             {
                 var pets = await _unitOfWork.IRepositoryPet.GetByAsync(x => x.IdUser.Equals(idPartner));
                 foreach (var pet in pets)
                 {
-                    var schedulerPet = await _unitOfWork.IRepositoryScheduler.GetByOrderAsync(x => x.IdPet.Equals(pet.Id), x => x.DateCreation, false);
+                    var schedulerPet = await _unitOfWork.IRepositoryScheduler.GetByOrderAsync(x => x.IdPet.Equals(pet.Id), x => x.DateCreation, true);
                     foreach (var schedulerPetitem in schedulerPet)
                     {
                         schedulers.Add(schedulerPetitem);
@@ -150,7 +150,7 @@ namespace PetClub.AppService.AppServices.SchedulerAppService
         {
             CultureInfo culture = new CultureInfo("pt-BR");
             var list = new List<GetSchedulerPetViewModel>();
-            var schedulers = await _unitOfWork.IRepositoryScheduler.GetByOrderAsync(x => x.IdPet.Equals(idPet), x => x.DateCreation, false);
+            var schedulers = await _unitOfWork.IRepositoryScheduler.GetByOrderAsync(x => x.IdPet.Equals(idPet), x => x.DateCreation, true);
             foreach (var item in schedulers)
             {
                 var partner = await _unitOfWork.IRepositoryUser.GetByIdAsync(x => x.Id.Equals(item.IdPartner));
